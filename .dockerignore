@@ -1,0 +1,31 @@
+# Docker build context exclusions
+.git
+.gitignore
+*.md
+README.md
+
+# Frontend node_modules and cache (built in Docker)
+frontend/node_modules/
+frontend/.next/
+frontend/.cache/
+
+# Python caches
+backend/__pycache__/
+backend/**/__pycache__/
+backend/*.pyc
+backend/**/*.pyc
+.venv/
+venv/
+
+# K8s manifests and dev files
+k8s/
+*.log
+.env
+.env.*
+!.env.example
+
+# IDE & OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

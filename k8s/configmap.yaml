@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: raphragrance-config
+  namespace: default
+  labels:
+    app: raphragrance
+    app.kubernetes.io/name: raphragrance
+    app.kubernetes.io/component: config
+data:
+  APP_ENV: "production"
+  DATABASE_URL: ""
+  LOG_LEVEL: "INFO"
+  PORT: "8080"
