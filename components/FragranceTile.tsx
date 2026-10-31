@@ -44,18 +44,15 @@ export function FragranceTile({ fragrance, priority = false }: FragranceTileProp
     >
       <div className="im">
         {fragrance.imageUrl ? (
-          <>
-            <img
-              src={fragrance.imageUrl}
-              alt={`${fragrance.brand} ${fragrance.name} bottle`}
-              loading={priority ? "eager" : "lazy"}
-              fetchPriority={priority ? "high" : "low"}
-              decoding={priority ? "sync" : "async"}
-              width={250}
-              height={333}
-            />
-            <BottleSvg />
-          </>
+          <img
+            src={fragrance.imageUrl}
+            alt={`${fragrance.brand} ${fragrance.name} bottle`}
+            loading={priority ? "eager" : "lazy"}
+            fetchPriority={priority ? "high" : "low"}
+            decoding={priority ? "sync" : "async"}
+            width={250}
+            height={333}
+          />
         ) : (
           <BottleSvg />
         )}

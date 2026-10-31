@@ -14,6 +14,7 @@ COPY . .
 
 # Run palette contrast verification and Next.js build
 ENV NEXT_TELEMETRY_DISABLED=1
+ENV OUTPUT_STANDALONE=1
 RUN npm run build
 
 # Stage 3: Runner

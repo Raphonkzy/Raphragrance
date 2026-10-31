@@ -33,7 +33,8 @@ export function CatalogView({
   const [sort, setSort] = useState<string>(initialSort);
   const [selectedAccords, setSelectedAccords] = useState<string[]>(initialAccords);
   const [moreFiltersOpen, setMoreFiltersOpen] = useState(initialAccords.length > 0);
-  const [visibleCount, setVisibleCount] = useState(16);
+  const [visibleCount, setVisibleCount] = useState(20);
+  const [gridCols, setGridCols] = useState(5);
 
   // Live API search results & pagination across 131,930 database
   const [apiResults, setApiResults] = useState<CatalogFragrance[] | null>(null);
@@ -62,6 +63,26 @@ export function CatalogView({
       setSelectedAccords(acc.split(",").filter(Boolean));
       setMoreFiltersOpen(true);
     }
+  }, []);
+
+  // Synchronize visible count with the computed grid columns so every row is completely filled
+  useEffect(() => {
+    function syncGridRows() {
+      const grid = document.getElementById("catalog-grid");
+      if (!grid) return;
+      const computed = window.getComputedStyle(grid);
+      const cols = computed.gridTemplateColumns.split(" ").filter(Boolean).length;
+      if (cols > 0) {
+        setGridCols(cols);
+        setVisibleCount((prev) => {
+          const remainder = prev % cols;
+          return remainder === 0 ? prev : prev + (cols - remainder);
+        });
+      }
+    }
+    syncGridRows();
+    window.addEventListener("resize", syncGridRows);
+    return () => window.removeEventListener("resize", syncGridRows);
   }, []);
 
   // Keyboard shortcut: '/' and 'Ctrl+K' / 'Cmd+K' to focus search
@@ -137,7 +158,7 @@ export function CatalogView({
         const json = await res.json();
         setApiResults(json.data);
         setApiTotal(json.total);
-        setVisibleCount(24);
+        setVisibleCount(gridCols > 0 ? gridCols * 4 : 20);
       } catch (e: unknown) {
         if ((e as Error)?.name !== "AbortError") {
           console.error("Search fetch error:", e);
@@ -284,10 +305,11 @@ export function CatalogView({
     setSelectedAccords([]);
     setApiResults(null);
     setApiTotal(null);
-    setVisibleCount(24);
+    setVisibleCount(gridCols > 0 ? gridCols * 4 : 20);
   }
 
   async function handleLoadMore() {
+    const step = gridCols > 0 ? gridCols * 2 : 20;
     if (apiResults && apiTotal !== null && apiResults.length < apiTotal) {
       try {
         const params = new URLSearchParams();
@@ -296,7 +318,7 @@ export function CatalogView({
         if (sort !== "Popular") params.set("sort", sort.toLowerCase());
         if (selectedAccords.length > 0) params.set("accord", selectedAccords.join(","));
         params.set("offset", String(apiResults.length));
-        params.set("limit", "24");
+        params.set("limit", String(step));
 
         const res = await fetch(`/api/fragrances?${params.toString()}`);
         if (res.ok) {
@@ -308,7 +330,7 @@ export function CatalogView({
         console.error("Load more fetch error:", e);
       }
     } else {
-      setVisibleCount((prev) => prev + 16);
+      setVisibleCount((prev) => prev + step);
     }
   }
 
@@ -385,7 +407,7 @@ export function CatalogView({
               className={`chip ${gender === g ? "on" : ""}`}
               onClick={() => {
                 setGender(g);
-                setVisibleCount(24);
+                setVisibleCount(gridCols > 0 ? gridCols * 4 : 20);
               }}
               aria-pressed={gender === g}
             >
@@ -401,7 +423,7 @@ export function CatalogView({
               className={`chip ${sort === s ? "on" : ""}`}
               onClick={() => {
                 setSort(s);
-                setVisibleCount(24);
+                setVisibleCount(gridCols > 0 ? gridCols * 4 : 20);
               }}
               aria-pressed={sort === s}
             >

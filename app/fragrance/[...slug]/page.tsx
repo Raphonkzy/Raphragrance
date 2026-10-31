@@ -94,18 +94,15 @@ export default async function FragranceDetailPage({
 
         <div className="im">
           {fragrance.imageUrl ? (
-            <>
-              <img
-                src={fragrance.imageUrl}
-                alt={`${fragrance.brand} ${fragrance.name} bottle`}
-                width={280}
-                height={373}
-                fetchPriority="high"
-                loading="eager"
-                decoding="sync"
-              />
-              <BottleSvg />
-            </>
+            <img
+              src={fragrance.imageUrl}
+              alt={`${fragrance.brand} ${fragrance.name} bottle`}
+              width={280}
+              height={373}
+              fetchPriority="high"
+              loading="eager"
+              decoding="sync"
+            />
           ) : (
             <BottleSvg />
           )}

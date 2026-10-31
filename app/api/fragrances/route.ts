@@ -9,7 +9,7 @@ export async function GET(request: Request) {
   const gender = searchParams.get("gender") || "";
   const sort = searchParams.get("sort") || "popularity";
   const accord = searchParams.get("accord") || "";
-  const limit = Math.min(100, Math.max(1, Number(searchParams.get("limit")) || 24));
+  const limit = Math.min(100, Math.max(1, Number(searchParams.get("limit")) || 20));
   const after = searchParams.get("after") ? Number(searchParams.get("after")) : null;
   const offset = searchParams.get("offset") ? Math.max(0, Number(searchParams.get("offset"))) : 0;
 
