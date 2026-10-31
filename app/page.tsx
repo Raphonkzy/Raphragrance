@@ -1,27 +1,28 @@
-import CatalogView from "@/components/CatalogView";
-import Footer from "@/components/Footer";
-import { getFragrances } from "@/lib/data";
-import type { Metadata } from "next";
-
-export const metadata: Metadata = {
-  title: "Raphragrance",
-  description: "Fragrance encyclopedia. 131,930 perfumes with accord analysis, note pyramids, season radar, and performance gauges.",
-};
+import { Suspense } from "react";
+import { getFragrances } from "../lib/data";
+import { Nav } from "../components/Nav";
+import { Footer } from "../components/Footer";
+import { CatalogView } from "../components/CatalogView";
 
 interface PageProps {
-  searchParams: Promise<{ fixture?: string }>;
+  searchParams: Promise<{ fixture?: string; q?: string; gender?: string; sort?: string; accord?: string }>;
 }
 
-export default async function HomePage({ searchParams }: PageProps) {
-  const params = await searchParams;
-  const useGolden =
-    process.env.NODE_ENV !== "production" && params.fixture === "golden";
-
+export default async function CatalogPage({ searchParams }: PageProps) {
+  const sp = await searchParams;
+  const useGolden = sp.fixture === "golden";
   const fragrances = getFragrances(useGolden);
+  const totalCount = 131930;
 
   return (
     <>
-      <CatalogView initialFragrances={fragrances} />
+      <Nav />
+      <Suspense fallback={<div style={{ padding: "40px 32px" }}>Loading catalog…</div>}>
+        <CatalogView
+          initialFragrances={fragrances}
+          totalDatabaseCount={totalCount}
+        />
+      </Suspense>
       <Footer />
     </>
   );

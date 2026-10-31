@@ -1,7 +1,7 @@
-export default function Footer() {
+export function Footer() {
   return (
-    <footer className="footer" role="contentinfo">
-      Raphragrance · fragrance encyclopedia · data sourced from Fragrantica
+    <footer className="foot" role="contentinfo">
+      Raphragrance, an independent fragrance archive.
     </footer>
   );
 }

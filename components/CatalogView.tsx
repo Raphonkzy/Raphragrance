@@ -1,64 +1,89 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
-import type { Fragrance } from "@/lib/types";
-import FragranceCard from "./FragranceCard";
-import SearchInput from "./SearchInput";
-import { ThemeToggle } from "./ThemeToggle";
+import type { Fragrance } from "../lib/types";
+import { FragranceTile } from "./FragranceTile";
+import { PAL, getColorPair } from "../lib/palette";
 
 interface CatalogViewProps {
   initialFragrances: Fragrance[];
-  totalDatabaseCount?: number;
+  totalDatabaseCount: number;
 }
 
-type SortBy = "popularity" | "rating" | "year" | "name";
+const COMMON_ACCORDS = Object.keys(PAL);
 
-const COMMON_ACCORDS = [
-  "woody",
-  "amber",
-  "citrus",
-  "floral",
-  "vanilla",
-  "warm spicy",
-  "aromatic",
-  "fresh spicy",
-  "sweet",
-  "musky",
-];
-
-export default function CatalogView({
+export function CatalogView({
   initialFragrances,
-  totalDatabaseCount = 131930,
+  totalDatabaseCount,
 }: CatalogViewProps) {
-  const [query, setQuery] = useState("");
-  const [genders, setGenders] = useState<string[]>([]);
-  const [sortBy, setSortBy] = useState<SortBy | "default">("default");
-  const [selectedAccords, setSelectedAccords] = useState<string[]>([]);
-  const [showAllAccords, setShowAllAccords] = useState(false);
-  const [visibleCount, setVisibleCount] = useState(24);
-  const [mobileDrawerOpen, setMobileDrawerOpen] = useState(false);
+  const router = useRouter();
+  const searchParams = useSearchParams();
 
-  // Filter & sort logic
+  const [query, setQuery] = useState(searchParams.get("q") || "");
+  const [gender, setGender] = useState<string>(searchParams.get("gender") || "All");
+  const [sort, setSort] = useState<string>(searchParams.get("sort") || "Popular");
+  const [selectedAccords, setSelectedAccords] = useState<string[]>(
+    searchParams.get("accord") ? searchParams.get("accord")!.split(",").filter(Boolean) : []
+  );
+  const [moreFiltersOpen, setMoreFiltersOpen] = useState(false);
+  const [visibleCount, setVisibleCount] = useState(24);
+
+  // Typeahead state
+  const [typeaheadOpen, setTypeaheadOpen] = useState(false);
+  const [selectedIndex, setSelectedIndex] = useState(-1);
+  const searchInputRef = useRef<HTMLInputElement>(null);
+
+  // Keyboard shortcut: '/' and 'Ctrl+K' / 'Cmd+K' to focus search
+  useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      if ((e.key === "/" && document.activeElement !== searchInputRef.current) ||
+          ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k")) {
+        e.preventDefault();
+        searchInputRef.current?.focus();
+      }
+    }
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
+  // Sync to URL state (shallow update via history.replaceState so scroll is preserved)
+  useEffect(() => {
+    const params = new URLSearchParams();
+    if (query.trim()) params.set("q", query.trim());
+    if (gender !== "All") params.set("gender", gender);
+    if (sort !== "Popular") params.set("sort", sort);
+    if (selectedAccords.length > 0) params.set("accord", selectedAccords.join(","));
+
+    // If fixture parameter was present, preserve it in dev
+    const fix = searchParams.get("fixture");
+    if (fix) params.set("fixture", fix);
+
+    const qs = params.toString();
+    const targetUrl = qs ? `/?${qs}` : "/";
+    window.history.replaceState(null, "", targetUrl);
+  }, [query, gender, sort, selectedAccords, searchParams]);
+
+  // Filtering & Sorting
   const filtered = useMemo(() => {
     let list = initialFragrances;
 
-    if (genders.length > 0) {
+    if (gender !== "All") {
+      const gLower = gender.toLowerCase();
       list = list.filter((f) => {
-        const g = (f.gender || "").toLowerCase();
-        return genders.some((sel) => {
-          if (sel === "Men") return g === "male" || g === "men";
-          if (sel === "Women") return g === "female" || g === "women";
-          if (sel === "Unisex") return g === "unisex";
-          return false;
-        });
+        const fg = (f.gender || "").toLowerCase();
+        if (gLower === "men") return fg === "male" || fg === "men";
+        if (gLower === "women") return fg === "female" || fg === "women";
+        if (gLower === "unisex") return fg === "unisex";
+        return true;
       });
     }
 
     if (selectedAccords.length > 0) {
       list = list.filter((f) =>
-        selectedAccords.every((acc) =>
-          f.accords.some((a) => a.name.toLowerCase() === acc.toLowerCase())
+        selectedAccords.every((sel) =>
+          f.accords.some((a) => a.name.toLowerCase() === sel.toLowerCase())
         )
       );
     }
@@ -69,235 +94,215 @@ export default function CatalogView({
         (f) =>
           f.name.toLowerCase().includes(q) ||
           f.brand.toLowerCase().includes(q) ||
-          f.accords.some((a) => a.name.toLowerCase().includes(q)) ||
-          f.notes.top.some((n) => n.toLowerCase().includes(q)) ||
-          f.notes.heart.some((n) => n.toLowerCase().includes(q)) ||
-          f.notes.base.some((n) => n.toLowerCase().includes(q)) ||
-          f.notes.flat.some((n) => n.toLowerCase().includes(q))
+          f.accords.some((a) => a.name.toLowerCase().includes(q))
       );
     }
 
-    if (sortBy === "default") {
-      return list;
-    }
-
+    // Sort
     const sorted = [...list].sort((a, b) => {
-      switch (sortBy) {
-        case "popularity":
-          return (b.voteCount || 0) - (a.voteCount || 0);
-        case "rating":
+      switch (sort) {
+        case "Rating":
           return (b.rating || 0) - (a.rating || 0);
-        case "year":
+        case "Year":
           return (b.year || 0) - (a.year || 0);
-        case "name":
+        case "Name":
           return a.name.localeCompare(b.name);
+        case "Popular":
+        default:
+          return (b.voteCount || 0) - (a.voteCount || 0);
       }
     });
 
     return sorted;
-  }, [initialFragrances, genders, selectedAccords, query, sortBy]);
+  }, [initialFragrances, gender, selectedAccords, query, sort]);
 
-  const displayedFragrances = filtered.slice(0, visibleCount);
-  const hasMore = visibleCount < filtered.length;
+  // Typeahead suggestions (top 6 matches)
+  const suggestions = useMemo(() => {
+    if (!query.trim() || query.length < 2) return [];
+    const q = query.toLowerCase();
+    return initialFragrances
+      .filter((f) => f.name.toLowerCase().includes(q) || f.brand.toLowerCase().includes(q))
+      .slice(0, 6);
+  }, [initialFragrances, query]);
 
-  function toggleGender(g: string) {
-    setGenders((prev) =>
-      prev.includes(g) ? prev.filter((x) => x !== g) : [...prev, g]
-    );
+  function handleTypeaheadKeyDown(e: React.KeyboardEvent) {
+    if (!typeaheadOpen || suggestions.length === 0) return;
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      setSelectedIndex((prev) => (prev < suggestions.length - 1 ? prev + 1 : 0));
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      setSelectedIndex((prev) => (prev > 0 ? prev - 1 : suggestions.length - 1));
+    } else if (e.key === "Enter" && selectedIndex >= 0) {
+      e.preventDefault();
+      const chosen = suggestions[selectedIndex];
+      router.push(`/fragrance/${chosen.slug}`);
+      setTypeaheadOpen(false);
+    } else if (e.key === "Escape") {
+      setTypeaheadOpen(false);
+    }
   }
 
-  function toggleAccord(a: string) {
+  function toggleAccord(acc: string) {
     setSelectedAccords((prev) =>
-      prev.includes(a) ? prev.filter((x) => x !== a) : [...prev, a]
+      prev.includes(acc) ? prev.filter((a) => a !== acc) : [...prev, acc]
     );
   }
 
-  function clearFilters() {
-    setGenders([]);
-    setSelectedAccords([]);
+  function clearAllFilters() {
     setQuery("");
-    setSortBy("default");
+    setGender("All");
+    setSort("Popular");
+    setSelectedAccords([]);
+    setVisibleCount(24);
   }
 
-  const displayedAccordList = showAllAccords
-    ? COMMON_ACCORDS
-    : COMMON_ACCORDS.slice(0, 5);
-
-  const sortLabel = {
-    default: "popularity ↓",
-    popularity: "popularity ↓",
-    rating: "rating ↓",
-    year: "year ↓",
-    name: "name A–Z",
-  }[sortBy];
-
-  const filterControls = (
-    <>
-      <div>
-        <h4>Gender</h4>
-        {["Men", "Women", "Unisex"].map((g) => (
-          <label key={g}>
-            <input
-              type="checkbox"
-              checked={genders.includes(g)}
-              onChange={() => toggleGender(g)}
-            />
-            {g}
-          </label>
-        ))}
-      </div>
-
-      <div>
-        <h4>Sort</h4>
-        {(
-          [
-            { id: "popularity", label: "Popularity" },
-            { id: "rating", label: "Rating" },
-            { id: "year", label: "Year" },
-            { id: "name", label: "Name" },
-          ] as const
-        ).map((s) => (
-          <label key={s.id}>
-            <input
-              type="radio"
-              name="sort"
-              value={s.id}
-              checked={sortBy === s.id || (sortBy === "default" && s.id === "popularity")}
-              onChange={() => setSortBy(s.id)}
-            />
-            {s.label}
-          </label>
-        ))}
-      </div>
-
-      <div>
-        <h4>Accords</h4>
-        {displayedAccordList.map((a) => (
-          <label key={a}>
-            <input
-              type="checkbox"
-              checked={selectedAccords.includes(a)}
-              onChange={() => toggleAccord(a)}
-            />
-            {a}
-          </label>
-        ))}
-        {COMMON_ACCORDS.length > 5 && (
-          <button
-            type="button"
-            className="more-btn"
-            onClick={() => setShowAllAccords((prev) => !prev)}
-          >
-            {showAllAccords ? "− Less" : "+ More"}
-          </button>
-        )}
-      </div>
-    </>
-  );
+  const displayed = filtered.slice(0, visibleCount);
+  const hasMore = visibleCount < filtered.length;
 
   return (
     <>
-      {/* Sticky Header */}
-      <header className="nav" role="banner">
-        <Link href="/" className="logo" aria-label="Raphragrance home">
-          Raphragrance
-        </Link>
-        <SearchInput
-          fragrances={initialFragrances}
-          query={query}
-          onQueryChange={setQuery}
-        />
-        <ThemeToggle />
-      </header>
-
-      {/* Data Strip */}
-      <div className="strip" role="region" aria-label="Catalog status">
-        <span>
-          <b>{totalDatabaseCount.toLocaleString("en-US")}</b> fragrances
-        </span>
-        <span>
-          showing <b>{displayedFragrances.length}</b>{" "}
-          {initialFragrances.length <= 6 ? "sample rows" : `of ${filtered.length}`}
-        </span>
-        <span>
-          sort: <b>{sortLabel}</b>
-        </span>
-        <div className="strip-links">
-          <Link href="/brands">Brands</Link>
-          <span>·</span>
-          <Link href="/notes">Notes</Link>
-          <span>·</span>
-          <Link href="/accords">Accords</Link>
-        </div>
-      </div>
-
-      {/* Mobile Filter Toggle */}
-      <div className="mobile-filter-bar">
-        <button
-          type="button"
-          className="mobile-filter-btn"
-          onClick={() => setMobileDrawerOpen(true)}
-          aria-expanded={mobileDrawerOpen}
-        >
-          Filters{" "}
-          {genders.length + selectedAccords.length > 0 &&
-            `(${genders.length + selectedAccords.length})`}
-        </button>
-      </div>
-
-      {/* Mobile Drawer */}
-      {mobileDrawerOpen && (
-        <>
-          <div
-            className="drawer-backdrop"
-            onClick={() => setMobileDrawerOpen(false)}
-            aria-hidden="true"
+      <div className="top">
+        <div className="search-wrap">
+          <input
+            ref={searchInputRef}
+            type="search"
+            className="q"
+            placeholder={`Search ${totalDatabaseCount.toLocaleString("en-US")} fragrances`}
+            value={query}
+            onChange={(e) => {
+              setQuery(e.target.value);
+              setTypeaheadOpen(true);
+              setSelectedIndex(-1);
+            }}
+            onFocus={() => {
+              if (query.length >= 2) setTypeaheadOpen(true);
+            }}
+            onBlur={() => {
+              // Delay slightly so clicks register
+              setTimeout(() => setTypeaheadOpen(false), 200);
+            }}
+            onKeyDown={handleTypeaheadKeyDown}
+            aria-label="Search fragrances"
           />
-          <div className="drawer" role="dialog" aria-label="Filters">
-            {filterControls}
-            <div className="drawer-actions">
-              <button
-                type="button"
-                onClick={() => setMobileDrawerOpen(false)}
-                style={{ fontWeight: 500 }}
-              >
-                Apply
-              </button>
-              <button
-                type="button"
-                onClick={clearFilters}
-                style={{ color: "var(--tx2)" }}
-              >
-                Clear
-              </button>
+
+          {typeaheadOpen && suggestions.length > 0 && (
+            <div className="typeahead" role="listbox">
+              {suggestions.map((item, idx) => {
+                const topAcc = item.accords?.[0]?.name;
+                const [fill] = getColorPair(topAcc);
+                const isSelected = idx === selectedIndex;
+                return (
+                  <Link
+                    key={item.id}
+                    href={`/fragrance/${item.slug}`}
+                    className={`typeahead-item ${isSelected ? "selected" : ""}`}
+                    onClick={() => setTypeaheadOpen(false)}
+                  >
+                    <span
+                      className="typeahead-dot"
+                      style={{ background: fill }}
+                      aria-hidden="true"
+                    />
+                    <span className="typeahead-name">{item.name}</span>
+                    <span className="typeahead-brand">{item.brand}</span>
+                  </Link>
+                );
+              })}
             </div>
-          </div>
-        </>
-      )}
+          )}
+        </div>
 
-      {/* Catalog Layout: 200px Sidebar + 1fr Grid */}
-      <div className="lay">
-        <aside className="side" aria-label="Catalog filters">
-          {filterControls}
-        </aside>
-
-        {filtered.length === 0 ? (
-          <main id="catalog" className="empty-state" aria-label="Fragrance catalog">
-            No fragrances match &ldquo;{query}&rdquo;.
-            <a
-              href="#"
-              onClick={(e) => {
-                e.preventDefault();
-                clearFilters();
+        <div className="opts" role="region" aria-label="Filter options">
+          <span className="lab">Gender</span>
+          {["All", "Men", "Women", "Unisex"].map((g) => (
+            <button
+              key={g}
+              type="button"
+              className={`chip ${gender === g ? "on" : ""}`}
+              onClick={() => {
+                setGender(g);
+                setVisibleCount(24);
               }}
+              aria-pressed={gender === g}
             >
-              Clear filters
-            </a>
-          </main>
+              {g}
+            </button>
+          ))}
+
+          <span className="lab">Sort</span>
+          {["Popular", "Rating", "Year", "Name"].map((s) => (
+            <button
+              key={s}
+              type="button"
+              className={`chip ${sort === s ? "on" : ""}`}
+              onClick={() => {
+                setSort(s);
+                setVisibleCount(24);
+              }}
+              aria-pressed={sort === s}
+            >
+              {s}
+            </button>
+          ))}
+
+          <button
+            type="button"
+            className={`chip ${moreFiltersOpen || selectedAccords.length > 0 ? "on" : ""}`}
+            onClick={() => setMoreFiltersOpen((v) => !v)}
+            aria-expanded={moreFiltersOpen}
+          >
+            More filters {selectedAccords.length > 0 ? `(${selectedAccords.length})` : ""}
+          </button>
+
+          <span className="cnt">
+            showing {displayed.length} of {filtered.length}
+          </span>
+        </div>
+
+        {moreFiltersOpen && (
+          <div className="accord-filter-row" aria-label="Accord filters">
+            {COMMON_ACCORDS.map((acc) => {
+              const [fill] = PAL[acc];
+              const isSelected = selectedAccords.includes(acc);
+              return (
+                <button
+                  key={acc}
+                  type="button"
+                  className={`chip ${isSelected ? "on" : ""}`}
+                  onClick={() => toggleAccord(acc)}
+                  aria-pressed={isSelected}
+                >
+                  <span
+                    className="accord-dot"
+                    style={{ background: fill }}
+                    aria-hidden="true"
+                  />
+                  {acc}
+                </button>
+              );
+            })}
+          </div>
+        )}
+      </div>
+
+      <main className="grid" id="catalog-grid" aria-label="Catalog results">
+        {filtered.length === 0 ? (
+          <div className="empty">
+            No fragrances match &ldquo;{query}&rdquo;.
+            <span>Clear the search or change the filters.</span>
+            <button
+              type="button"
+              className="chip on"
+              onClick={clearAllFilters}
+            >
+              Clear
+            </button>
+          </div>
         ) : (
-          <main id="catalog" className="grid" aria-label="Fragrance catalog">
-            {displayedFragrances.map((f, idx) => (
-              <FragranceCard
+          <>
+            {displayed.map((f, idx) => (
+              <FragranceTile
                 key={f.id}
                 fragrance={f}
                 priority={idx < 6}
@@ -305,17 +310,19 @@ export default function CatalogView({
             ))}
 
             {hasMore && (
-              <button
-                type="button"
-                className="load-more"
-                onClick={() => setVisibleCount((prev) => prev + 24)}
-              >
-                Load more · {filtered.length - visibleCount} remaining
-              </button>
+              <div className="load-more-wrap">
+                <button
+                  type="button"
+                  className="chip"
+                  onClick={() => setVisibleCount((prev) => prev + 24)}
+                >
+                  Load more · {filtered.length - visibleCount} remaining
+                </button>
+              </div>
             )}
-          </main>
+          </>
         )}
-      </div>
+      </main>
     </>
   );
 }

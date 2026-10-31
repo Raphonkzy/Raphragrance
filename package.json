@@ -3,7 +3,7 @@
     "name": "raphragrance-rebuilt",
     "scripts": {
         "lint": "next lint",
-        "build": "next build",
+        "build": "node scripts/verify-palette.js && next build",
         "dev": "next dev --turbopack",
         "start": "next start"
     },

@@ -1,62 +1,116 @@
 import { notFound } from "next/navigation";
-import type { Metadata } from "next";
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
-import FragranceCard from "@/components/FragranceCard";
-import fixtureData from "@/fixtures/fragrances.json";
-import type { Fragrance } from "@/lib/types";
+import Link from "next/link";
+import type { CSSProperties } from "react";
+import { getFragrances } from "../../../lib/data";
+import { getColorPair } from "../../../lib/palette";
+import { Nav } from "../../../components/Nav";
+import { Footer } from "../../../components/Footer";
+import { FragranceTile } from "../../../components/FragranceTile";
 
 interface PageProps {
   params: Promise<{ slug: string[] }>;
+  searchParams: Promise<{ fixture?: string }>;
 }
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+export default async function BrandPage({ params, searchParams }: PageProps) {
   const { slug } = await params;
-  const brand = decodeURIComponent(slug.join("/"));
-  return { title: brand };
-}
+  const { fixture } = await searchParams;
+  const useGolden = fixture === "golden";
 
-export default async function BrandPage({ params }: PageProps) {
-  const { slug } = await params;
-  const brand = decodeURIComponent(slug.join("/"));
-  const fragrances = (fixtureData as Fragrance[]).filter(
-    (f) => f.brand.toLowerCase() === brand.toLowerCase()
+  const brandName = decodeURIComponent(slug.join("/"));
+  const all = getFragrances(useGolden);
+
+  const brandFragrances = all.filter(
+    (f) => f.brand.toLowerCase() === brandName.toLowerCase()
   );
 
-  if (fragrances.length === 0) notFound();
+  if (brandFragrances.length === 0) {
+    notFound();
+  }
 
-  const rated = fragrances.filter((f) => f.rating !== null);
+  // Count top accords to find brand's most common top accord
+  const accordCounts: Record<string, number> = {};
+  for (const f of brandFragrances) {
+    const topAcc = f.accords?.[0]?.name;
+    if (topAcc) {
+      accordCounts[topAcc] = (accordCounts[topAcc] || 0) + 1;
+    }
+  }
+
+  const sortedAccords = Object.entries(accordCounts).sort((a, b) => b[1] - a[1]);
+  const mostCommonAccord = sortedAccords[0]?.[0] || null;
+  const [fill, ink] = getColorPair(mostCommonAccord);
+
+  const heroStyle = {
+    "--c": fill,
+    "--i": ink,
+  } as CSSProperties;
+
+  const validRatings = brandFragrances.filter((f) => f.rating !== null);
   const avgRating =
-    rated.length > 0
-      ? (rated.reduce((sum, f) => sum + (f.rating || 0), 0) / rated.length).toFixed(2)
-      : null;
+    validRatings.length > 0
+      ? (
+          validRatings.reduce((sum, f) => sum + (f.rating || 0), 0) /
+          validRatings.length
+        ).toFixed(2)
+      : "—";
+
+  const years = brandFragrances.map((f) => f.year).filter((y): y is number => y !== null && y > 0);
+  const earliestYear = years.length > 0 ? Math.min(...years) : "—";
 
   return (
     <>
-      <Navbar />
-      <div style={{ padding: "20px 20px 0" }}>
-        <h2>{brand}</h2>
-        <p
-          style={{
-            fontFamily: "var(--fm, monospace)",
-            fontSize: 13,
-            color: "var(--tx2)",
-            marginTop: 4,
-            marginBottom: 20,
-          }}
-        >
-          {fragrances.length} {fragrances.length === 1 ? "fragrance" : "fragrances"}
-          {avgRating && ` · average rating ${avgRating} / 5`}
-        </p>
+      <Nav />
+
+      {/* Brand Hero */}
+      <section className="hero" style={heroStyle}>
+        <div>
+          <Link href="/brands" className="back">
+            ← All brands
+          </Link>
+          <div className="br">Brand</div>
+          <h1>{brandFragrances[0].brand}</h1>
+          <div className="sub">
+            {brandFragrances.length} fragrances in archive
+          </div>
+        </div>
+      </section>
+
+      <div className="wrap">
+        {/* Brand Stats */}
+        <div className="stats" role="region" aria-label="Brand stats">
+          <div className="stat">
+            <div className="l">Fragrances</div>
+            <div className="n">{brandFragrances.length}</div>
+            <div className="s">archived</div>
+          </div>
+          <div className="stat">
+            <div className="l">Average rating</div>
+            <div className="n">{avgRating}</div>
+            <div className="s">across collection</div>
+          </div>
+          <div className="stat">
+            <div className="l">Earliest release</div>
+            <div className="n">{earliestYear}</div>
+            <div className="s">first documented</div>
+          </div>
+          <div className="stat">
+            <div className="l">Primary accord</div>
+            <div className="n" style={{ fontSize: "36px" }}>{mostCommonAccord ?? "—"}</div>
+            <div className="s">signature profile</div>
+          </div>
+        </div>
+
+        <section className="sec" aria-labelledby="brand-catalog-title">
+          <h2 id="brand-catalog-title">Fragrances by {brandFragrances[0].brand}</h2>
+          <div className="grid" style={{ padding: "20px 0 60px" }}>
+            {brandFragrances.map((f, idx) => (
+              <FragranceTile key={f.id} fragrance={f} priority={idx < 4} />
+            ))}
+          </div>
+        </section>
       </div>
 
-      <main id="catalog">
-        <div className="grid">
-          {fragrances.map((f, idx) => (
-            <FragranceCard key={f.id} fragrance={f} priority={idx < 6} />
-          ))}
-        </div>
-      </main>
       <Footer />
     </>
   );

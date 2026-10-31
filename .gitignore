@@ -28,3 +28,6 @@ npm-debug.log*
 # TypeScript
 *.tsbuildinfo
 next-env.d.ts
+
+# Fonts (licensed local fonts)
+assets/fonts/

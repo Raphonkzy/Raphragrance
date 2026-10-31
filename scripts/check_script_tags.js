@@ -1,13 +1,13 @@
 const http = require("http");
 
 http.get("http://localhost:3001/", (res) => {
-  let html = "";
-  res.on("data", (c) => (html += c));
+  let data = "";
+  res.on("data", (c) => (data += c));
   res.on("end", () => {
-    const scripts = html.match(/<script[^>]+src=[^>]+>/g) || [];
-    console.log("Found scripts:");
+    const scripts = [...data.matchAll(/<script[^>]*>.*?<\/script>/gs)].map((m) => m[0]);
+    console.log(`Found ${scripts.length} script elements in HTML:`);
     for (const s of scripts) {
-      console.log(" ", s);
+      console.log(s.slice(0, 150));
     }
   });
 });

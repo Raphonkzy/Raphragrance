@@ -1,59 +1,53 @@
-import Navbar from "@/components/Navbar";
-import Footer from "@/components/Footer";
-import fixtureData from "@/fixtures/fragrances.json";
-import type { Fragrance } from "@/lib/types";
-import type { Metadata } from "next";
 import Link from "next/link";
-
-export const metadata: Metadata = {
-  title: "Accords",
-  description: "Browse perfume accords in the Raphragrance encyclopedia.",
-};
+import { getFragrances } from "../../lib/data";
+import { getColorPair } from "../../lib/palette";
+import { Nav } from "../../components/Nav";
+import { Footer } from "../../components/Footer";
 
 export default function AccordsPage() {
-  const fragrances = fixtureData as Fragrance[];
-  const accordCounts = new Map<string, number>();
-  for (const f of fragrances) {
-    for (const a of f.accords) {
-      accordCounts.set(a.name, (accordCounts.get(a.name) || 0) + 1);
+  const all = getFragrances(false);
+
+  const accordCounts: Record<string, number> = {};
+  for (const f of all) {
+    for (const a of f.accords || []) {
+      if (a.name) {
+        accordCounts[a.name] = (accordCounts[a.name] || 0) + 1;
+      }
     }
   }
-  const accords = Array.from(accordCounts.entries()).sort(
-    (a, b) => b[1] - a[1] || a[0].localeCompare(b[0])
-  );
+
+  const sorted = Object.entries(accordCounts).sort((a, b) => b[1] - a[1]);
 
   return (
     <>
-      <Navbar />
-      <main style={{ padding: "20px" }}>
-        <Link href="/" className="back" style={{ marginBottom: 16 }}>
-          ← Catalog
-        </Link>
-        <h2 style={{ marginBottom: 16 }}>Accords ({accords.length})</h2>
-        <table>
-          <thead>
-            <tr>
-              <th>Accord</th>
-              <th className="n">Fragrances</th>
-            </tr>
-          </thead>
-          <tbody>
-            {accords.map(([accord, count]) => (
-              <tr key={accord}>
-                <td>
-                  <Link
-                    href={`/?q=${encodeURIComponent(accord)}`}
-                    style={{ color: "var(--tx)", textDecoration: "none" }}
-                  >
-                    {accord}
-                  </Link>
-                </td>
-                <td className="n">{count}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </main>
+      <Nav />
+      <div className="wrap" style={{ paddingTop: "24px" }}>
+        <h1 style={{ fontSize: "clamp(34px, 6vw, 64px)", fontWeight: 700, letterSpacing: "-0.04em" }}>
+          Accords ({sorted.length})
+        </h1>
+        <div className="list-rows">
+          {sorted.map(([accord, count]) => {
+            const [fill] = getColorPair(accord);
+            return (
+              <Link
+                key={accord}
+                href={`/?accord=${encodeURIComponent(accord)}`}
+                className="list-row"
+              >
+                <span className="list-row-title">
+                  <span
+                    className="list-row-swatch"
+                    style={{ background: fill }}
+                    aria-hidden="true"
+                  />
+                  {accord}
+                </span>
+                <span className="list-row-count">{count} fragrances</span>
+              </Link>
+            );
+          })}
+        </div>
+      </div>
       <Footer />
     </>
   );

@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Raphragrance — Swatch x Gilroy preview</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<!-- Urbanist = free fallback that looks close to Gilroy -->
+<link href="https://fonts.googleapis.com/css2?family=Urbanist:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* Gilroy is a commercial font, so it is not bundled here.
+   Put licensed files in a "fonts" folder next to this HTML:
+   fonts/Gilroy-Regular.woff2, Gilroy-Medium.woff2, Gilroy-SemiBold.woff2, Gilroy-Bold.woff2
+   (or install Gilroy on your computer; local() picks it up). */
+@font-face{font-family:'Gilroy';font-weight:400;font-style:normal;font-display:swap;
+  src:url('../assets/fonts/Gilroy-Regular.woff2') format('woff2'),url('../assets/fonts/Gilroy-Regular.ttf') format('truetype')}
+@font-face{font-family:'Gilroy';font-weight:500;font-style:normal;font-display:swap;
+  src:url('../assets/fonts/Gilroy-Medium.woff2') format('woff2'),url('../assets/fonts/Gilroy-Medium.ttf') format('truetype')}
+@font-face{font-family:'Gilroy';font-weight:600;font-style:normal;font-display:swap;
+  src:url('../assets/fonts/Gilroy-Bold.woff2') format('woff2'),url('../assets/fonts/Gilroy-Bold.ttf') format('truetype')}
+@font-face{font-family:'Gilroy';font-weight:700;font-style:normal;font-display:swap;
+  src:url('../assets/fonts/Gilroy-Bold.woff2') format('woff2'),url('../assets/fonts/Gilroy-Bold.ttf') format('truetype')}
+
+*{box-sizing:border-box;margin:0}
+body{background:#000;font:14px system-ui,sans-serif}
+a{color:inherit;text-decoration:none}
+
+/* control bar (not part of the design) */
+.ctl{position:sticky;top:0;z-index:50;display:flex;gap:6px;flex-wrap:wrap;align-items:center;padding:8px 12px;background:#111;color:#ddd;font:12px system-ui;height:44px;overflow:hidden}
+.ctl button{background:#222;color:#ddd;border:1px solid #444;padding:5px 10px;border-radius:4px;cursor:pointer;font:inherit}
+.ctl button.on{background:#eee;color:#111;border-color:#eee}
+.ctl .sep{width:1px;height:18px;background:#444;margin:0 6px}
+.ctl small{margin-left:auto;opacity:.8}
+
+/* ============ SWATCH x GILROY ============ */
+.stage{
+  --fg:'Gilroy','Urbanist',system-ui,sans-serif;
+  --bg:#FFFFFF;--tx:#0E0E0E;--mu:#5F5F5A;--line:#E4E4DF;--ph:#8A8A85;
+  background:var(--bg);color:var(--tx);font-family:var(--fg);font-weight:500;min-height:calc(100vh - 44px);font-size:16px;line-height:1.45}
+.stage[data-theme=dark]{--bg:#0C0C0C;--tx:#F2F2EF;--mu:#9A9A95;--line:#242422;--ph:#6A6A66}
+.stage input,.stage button{font-family:inherit}
+
+/* nav */
+.nav{display:flex;align-items:center;gap:36px;padding:22px 32px}
+.logo{font:700 22px/1 var(--fg);letter-spacing:-.04em;cursor:pointer}
+.nav nav{display:flex;gap:24px;font-size:15px;font-weight:500;color:var(--mu)}
+.nav nav a:hover{color:var(--tx)}
+.chip{border:2px solid var(--tx);border-radius:999px;padding:7px 16px;font:600 14px/1 var(--fg);background:transparent;color:var(--tx);cursor:pointer;white-space:nowrap}
+.chip.on{background:var(--tx);color:var(--bg)}
+.nav .chip{margin-left:auto;padding:6px 14px;font-size:13px}
+
+/* catalog top */
+.top{padding:24px 32px 0}
+.q{display:block;width:100%;border:0;border-bottom:3px solid var(--tx);background:transparent;color:var(--tx);outline:none;
+  font:700 clamp(34px,6vw,76px)/1 var(--fg);letter-spacing:-.045em;padding:6px 0 16px}
+.q::placeholder{color:var(--ph);opacity:1}
+.q:focus-visible{border-bottom-color:var(--tx);box-shadow:0 3px 0 0 var(--tx)}
+.opts{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:22px}
+.opts .lab{font-size:13px;font-weight:600;color:var(--mu);margin:0 4px 0 10px}
+.opts .lab:first-child{margin-left:0}
+.opts .cnt{margin-left:auto;font-size:14px;color:var(--mu)}
+
+/* tiles */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:18px;padding:28px 32px 80px}
+.tile{border-radius:28px;overflow:hidden;cursor:pointer;display:flex;flex-direction:column;background:var(--c);color:var(--i)}
+.im{aspect-ratio:1/1;display:grid;place-items:center;background:color-mix(in srgb,var(--c) 16%,#ffffff);overflow:hidden}
+.im svg{height:68%;fill:var(--c);transition:transform .35s ease}
+.tile:hover .im svg{transform:scale(1.05)}
+@media(prefers-reduced-motion:reduce){.im svg{transition:none}.tile:hover .im svg{transform:none}}
+.lb{padding:18px 20px 20px;display:flex;flex-direction:column;flex:1}
+.r1{display:flex;justify-content:space-between;font-size:12px;font-weight:600;letter-spacing:.06em;text-transform:uppercase}
+.tn{font:700 32px/.98 var(--fg);letter-spacing:-.04em;margin:30px 0 18px}
+.r3{display:flex;justify-content:space-between;gap:12px;align-items:baseline;margin-top:auto;font-size:13px;font-weight:500}
+.r3 b{font-size:18px;font-weight:700;letter-spacing:-.02em}
+.empty{padding:60px 32px;font:700 28px/1.2 var(--fg);letter-spacing:-.03em;grid-column:1/-1}
+.empty span{display:block;margin-top:10px;font-size:15px;font-weight:500;color:var(--mu);letter-spacing:0}
+
+/* detail */
+.hero{margin:0 16px;border-radius:36px;background:var(--c);color:var(--i);padding:36px 40px 44px;display:grid;grid-template-columns:1fr auto;gap:32px;align-items:end;min-height:420px}
+.hero .back{font-size:14px;font-weight:600;cursor:pointer;display:inline-block;margin-bottom:48px}
+.hero .br{font-size:14px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;margin-bottom:12px}
+.hero h1{font:700 clamp(52px,10vw,148px)/.88 var(--fg);letter-spacing:-.05em}
+.hero .sub{margin-top:20px;font-size:16px;font-weight:600}
+.hero .im{width:280px;aspect-ratio:3/4;border-radius:24px}
+.wrap{max-width:1200px;margin:0 auto;padding:0 32px}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:24px;padding:44px 0;border-bottom:1px solid var(--line)}
+.stat .l{font-size:13px;font-weight:600;color:var(--mu)}
+.stat .n{font:700 clamp(44px,6vw,72px)/1 var(--fg);letter-spacing:-.05em;margin:6px 0 4px}
+.stat .s{font-size:14px;font-weight:500;color:var(--mu)}
+.sec{padding:44px 0 0}
+.sec h2{font:700 24px/1.1 var(--fg);letter-spacing:-.03em;margin-bottom:20px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:56px}
+.ar{display:grid;grid-template-columns:44px 1fr auto;column-gap:14px;align-items:center;margin-bottom:18px}
+.ar .sw{width:44px;height:44px;border-radius:14px;background:var(--c);box-shadow:inset 0 0 0 1px var(--line)}
+.ar .an{font-size:18px;font-weight:600}
+.ar .ap{font-size:18px;font-weight:700;letter-spacing:-.02em}
+.ar .tr{grid-column:1/-1;height:2px;background:var(--line);margin-top:10px}
+.ar .tr s{display:block;height:100%;background:var(--tx)}
+.band{display:grid;grid-template-columns:110px 1fr;gap:16px;align-items:center;border-radius:28px;padding:22px 28px;margin-bottom:10px;color:var(--tx)}
+.band .bl{font-size:14px;font-weight:600}
+.band .bn{font:600 26px/1.2 var(--fg);letter-spacing:-.02em}
+.band .bn em{font-style:normal;color:var(--mu);font-weight:500}
+.band.t{background:color-mix(in srgb,var(--c) 18%,var(--bg))}
+.band.h{background:color-mix(in srgb,var(--c) 36%,var(--bg))}
+.band.b{background:var(--c);color:var(--i)}
+.band.b .bn em{color:var(--i)}
+.seas{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.seas .l{font-size:13px;font-weight:600;color:var(--mu);margin-bottom:8px}
+.seas .bx{position:relative;height:130px;border:2px solid var(--tx);border-radius:24px;overflow:hidden}
+.seas .bx i{position:absolute;left:0;right:0;bottom:0;background:var(--c)}
+.seas .v{font:700 30px/1 var(--fg);letter-spacing:-.04em;margin-top:10px}
+.sim{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.foot{padding:56px 32px 40px;font-size:13px;color:var(--mu)}
+
+@media(max-width:820px){
+  .nav{padding:18px 20px;gap:20px}.nav nav{display:none}
+  .top{padding:16px 20px 0}.grid{padding:20px 20px 60px;grid-template-columns:1fr}
+  .opts .cnt{margin-left:0;width:100%}
+  .hero{grid-template-columns:1fr;padding:24px 22px 28px;min-height:0;margin:0 10px}
+  .hero .back{margin-bottom:28px}
+  .hero .im{width:200px}
+  .wrap{padding:0 20px}
+  .stats{grid-template-columns:1fr 1fr}
+  .two{grid-template-columns:1fr;gap:0}
+  .band{grid-template-columns:1fr;gap:6px;padding:18px 20px}
+  .sim{grid-template-columns:1fr}
+  .seas{gap:8px}
+}
+</style>
+</head>
+<body>
+<div class="ctl">
+  <button data-t="light">Light</button><button data-t="dark">Dark</button>
+  <span class="sep"></span>
+  <button data-v="catalog">Catalog</button><button data-v="detail">Detail</button>
+  <small id="fs">checking font…</small>
+</div>
+<div id="stage" class="stage"></div>
+
+<script>
+const F=[
+ {name:'Sauvage',brand:'Dior',year:2015,g:'Men',r:4.22,v:28431,lon:3.6,sil:3.8,s:[2.4,3.0,4.0,3.1],
+  acc:[['fresh spicy',100],['amber',86],['citrus',72],['aromatic',64],['woody',55]],
+  top:['Bergamot','Pepper'],heart:['Sichuan Pepper','Lavender','Elemi'],base:['Ambroxan','Cedar','Labdanum']},
+ {name:'Santal 33',brand:'Le Labo',year:2011,g:'Unisex',r:4.05,v:12980,lon:3.9,sil:3.2,s:[3.8,2.6,1.5,3.4],
+  acc:[['woody',100],['warm spicy',82],['leather',70],['powdery',58],['aromatic',45]],
+  top:['Cardamom','Iris','Violet'],heart:['Sandalwood','Papyrus','Cedar'],base:['Leather','Amber','Musk']},
+ {name:'Baccarat Rouge 540',brand:'Maison Francis Kurkdjian',year:2015,g:'Unisex',r:4.31,v:9120,lon:4.4,sil:4.0,s:[3.6,2.8,2.2,3.7],
+  acc:[['amber',100],['woody',88],['sweet',74],['floral',60],['musky',52]],
+  top:['Saffron','Jasmine'],heart:['Amberwood','Ambergris'],base:['Fir Resin','Cedar']},
+ {name:'Black Opium',brand:'Yves Saint Laurent',year:2014,g:'Women',r:3.98,v:17644,lon:3.4,sil:3.6,s:[3.9,2.2,1.4,3.6],
+  acc:[['vanilla',100],['sweet',90],['coffee',74],['warm spicy',66],['white floral',60]],
+  top:['Pear','Pink Pepper','Orange Blossom'],heart:['Coffee','Jasmine','Bitter Almond'],base:['Vanilla','Patchouli','Cedar']},
+ {name:'Aventus',brand:'Creed',year:2010,g:'Men',r:4.28,v:21300,lon:3.8,sil:3.5,s:[1.8,3.2,4.0,3.0],
+  acc:[['fruity',100],['citrus',76],['woody',70],['smoky',60],['musky',48]],
+  top:['Pineapple','Bergamot','Apple','Blackcurrant'],heart:['Birch','Patchouli','Jasmine','Rose'],base:['Musk','Oakmoss','Ambergris','Vanilla']},
+ {name:'No. 5',brand:'Chanel',year:1921,g:'Women',r:4.05,v:15870,lon:3.3,sil:2.9,s:[3.0,3.4,2.3,3.2],
+  acc:[['aldehydic',100],['powdery',84],['white floral',78],['woody',55],['musky',44]],
+  top:['Aldehydes','Bergamot','Lemon','Neroli'],heart:['Jasmine','Rose','Ylang-Ylang','Iris'],base:['Vetiver','Sandalwood','Vanilla','Amber']}
+];
+/* every accord owns one color [fill, ink-on-fill] */
+const PAL={
+ 'fresh spicy':['#1F5D50','#F2EFE6'],'woody':['#7B4B2A','#F7EFE6'],'amber':['#E0A030','#1C1406'],
+ 'vanilla':['#EFE0BC','#2A2012'],'fruity':['#E4572E','#140A05'],'aldehydic':['#CFDBE0','#14232B'],
+ 'citrus':['#F0C419','#1E1800'],'aromatic':['#3F6F4A','#F4F7F2'],'warm spicy':['#A8401F','#FBF0E8'],
+ 'leather':['#4A2E22','#F3E8DF'],'powdery':['#D5C8E0','#221A2C'],'sweet':['#D9577A','#1A0710'],
+ 'floral':['#E58FA8','#2A0F18'],'musky':['#B8A9A0','#1F1915'],'coffee':['#3A2418','#F3E6DA'],
+ 'white floral':['#F0DDE4','#2B1A21'],'smoky':['#4A4A52','#F0F0F2']
+};
+const DEF=['#D9D9D4','#161614'];
+const pal=n=>PAL[n]||DEF;
+const S={t:'light',v:'catalog',i:0,q:'',g:'All',s:'Popular'};
+const $=s=>document.querySelector(s);
+const fmt=n=>n.toLocaleString('en-US');
+const lonL=v=>v>=4?'Eternal':v>=3?'Long Lasting':v>=2?'Moderate':'Weak';
+const silL=v=>v>=3.5?'Enormous':v>=2.5?'Strong':v>=1.8?'Moderate':'Intimate';
+const cv=f=>{const p=pal(f.acc[0][0]);return `--c:${p[0]};--i:${p[1]}`};
+const accStr=(f,n)=>f.acc.slice(0,n).map(a=>a[0]).join(' · ');
+
+const bottle=`<svg viewBox="0 0 60 90" aria-hidden="true"><rect x="22" y="4" width="16" height="10" rx="2"/><rect x="26" y="14" width="8" height="8"/><rect x="10" y="22" width="40" height="62" rx="12"/></svg>`;
+
+function nav(){
+  return `<header class="nav"><span class="logo" onclick="setV('catalog')">raphragrance</span>
+   <nav><a>Catalog</a><a>Brands</a><a>Notes</a><a>Accords</a></nav>
+   <button class="chip" onclick="flip()">${S.t==='dark'?'Light':'Dark'}</button></header>`;
+}
+function tile(f,i){
+  return `<article class="tile" style="${cv(f)}" onclick="pick(${i})">
+    <div class="im">${bottle}</div>
+    <div class="lb"><div class="r1"><span>${f.brand}</span><span>${f.year}</span></div>
+    <h3 class="tn">${f.name}</h3>
+    <div class="r3"><b>${f.r.toFixed(2)}</b><span>${accStr(f,3)}</span></div></div></article>`;
+}
+function list(){
+  const q=S.q.trim().toLowerCase();
+  let a=F.map((f,i)=>({f,i})).filter(({f})=>
+    (S.g==='All'||f.g===S.g)&&(!q||(f.name+' '+f.brand+' '+f.acc.map(x=>x[0]).join(' ')).toLowerCase().includes(q)));
+  const by={Popular:(x,y)=>y.f.v-x.f.v,Rating:(x,y)=>y.f.r-x.f.r,Year:(x,y)=>y.f.year-x.f.year,Name:(x,y)=>x.f.name.localeCompare(y.f.name)}[S.s];
+  return a.sort(by);
+}
+function gridHTML(){
+  const a=list();
+  if(!a.length)return `<div class="empty">No fragrances match “${S.q.replace(/</g,'&lt;')}”.<span>Clear the search or change the filters.</span></div>`;
+  return a.map(({f,i})=>tile(f,i)).join('');
+}
+function paintGrid(){
+  $('#grid').innerHTML=gridHTML();
+  $('#cnt').textContent=`showing ${list().length} of 131,930`;
+}
+function catalog(){
+  const chips=(k,l)=>l.map(x=>`<button class="chip${S[k]===x?' on':''}" onclick="setF('${k}','${x}')">${x}</button>`).join('');
+  return nav()+`<section class="top">
+    <input id="q" class="q" type="search" placeholder="Search 131,930 fragrances" value="${S.q.replace(/"/g,'&quot;')}" aria-label="Search fragrances" oninput="S.q=this.value;paintGrid()">
+    <div class="opts"><span class="lab">Gender</span>${chips('g',['All','Men','Women','Unisex'])}
+      <span class="lab">Sort</span>${chips('s',['Popular','Rating','Year','Name'])}
+      <span class="cnt" id="cnt"></span></div></section>
+    <div class="grid" id="grid"></div>`;
+}
+function detail(){
+  const f=F[S.i],p=pal(f.acc[0][0]);
+  const join=a=>a.map(x=>`<span>${x}</span>`).join(' <em>/</em> ');
+  const others=F.map((x,i)=>({x,i})).filter(o=>o.i!==S.i).slice(0,3);
+  const ss=['Winter','Spring','Summer','Fall'];
+  return nav()+`<section class="hero" style="${cv(f)}">
+    <div><a class="back" onclick="setV('catalog')">← All fragrances</a>
+      <div class="br">${f.brand}</div><h1>${f.name}</h1>
+      <p class="sub">${f.g} · ${f.year}</p></div>
+    <div class="im">${bottle}</div></section>
+  <div class="wrap">
+    <div class="stats">
+      <div class="stat"><div class="l">Rating</div><div class="n">${f.r.toFixed(2)}</div><div class="s">${fmt(f.v)} votes</div></div>
+      <div class="stat"><div class="l">Longevity</div><div class="n">${f.lon.toFixed(1)}</div><div class="s">${lonL(f.lon)}</div></div>
+      <div class="stat"><div class="l">Sillage</div><div class="n">${f.sil.toFixed(1)}</div><div class="s">${silL(f.sil)}</div></div>
+      <div class="stat"><div class="l">Released</div><div class="n">${f.year}</div><div class="s">${f.g}</div></div>
+    </div>
+    <div class="sec two">
+      <div><h2>Main accords</h2>${f.acc.map(a=>`<div class="ar" style="--c:${pal(a[0])[0]}"><i class="sw"></i><span class="an">${a[0]}</span><b class="ap">${a[1]}%</b><u class="tr"><s style="width:${a[1]}%"></s></u></div>`).join('')}</div>
+      <div><h2>Note pyramid</h2><div style="${cv(f)}">
+        <div class="band t"><span class="bl">Top</span><span class="bn">${join(f.top)}</span></div>
+        <div class="band h"><span class="bl">Heart</span><span class="bn">${join(f.heart)}</span></div>
+        <div class="band b"><span class="bl">Base</span><span class="bn">${join(f.base)}</span></div></div></div>
+    </div>
+    <div class="sec"><h2>Season</h2><div class="seas" style="--c:${p[0]}">${ss.map((n,k)=>`<div><div class="l">${n}</div><div class="bx"><i style="height:${f.s[k]/4*100}%"></i></div><div class="v">${f.s[k].toFixed(1)}</div></div>`).join('')}</div></div>
+    <div class="sec"><h2>Similar</h2><div class="sim">${others.map(o=>tile(o.x,o.i)).join('')}</div></div>
+  </div>`;
+}
+const foot=`<footer class="foot">Raphragrance, an independent fragrance archive. Preview with sample data.</footer>`;
+
+function render(){
+  const st=$('#stage');
+  st.setAttribute('data-theme',S.t);
+  st.innerHTML=(S.v==='detail'?detail():catalog())+foot;
+  if(S.v==='catalog')paintGrid();
+  document.querySelectorAll('.ctl button').forEach(b=>{
+    const on=(b.dataset.t&&b.dataset.t===S.t)||(b.dataset.v&&b.dataset.v===S.v);
+    b.classList.toggle('on',!!on);
+  });
+}
+function pick(i){S.i=i;S.v='detail';render();scrollTo(0,0)}
+function setV(v){S.v=v;render();scrollTo(0,0)}
+function flip(){S.t=S.t==='dark'?'light':'dark';render()}
+function setF(k,x){S[k]=x;render()}
+document.querySelectorAll('.ctl button').forEach(b=>b.addEventListener('click',()=>{
+  if(b.dataset.t)S.t=b.dataset.t;
+  if(b.dataset.v)S.v=b.dataset.v;
+  render();scrollTo(0,0);
+}));
+render();
+
+/* tell which font is really in use */
+(async()=>{
+  const el=$('#fs');
+  const msg='Gilroy not found, showing fallback (Urbanist). Add files to ./fonts or install Gilroy.';
+  try{
+    const faces=await document.fonts.load('700 16px Gilroy');
+    el.textContent=faces.some(x=>x.status==='loaded')?'Font: Gilroy loaded':msg;
+  }catch(e){el.textContent=msg}
+})();
+</script>
+</body>
+</html>

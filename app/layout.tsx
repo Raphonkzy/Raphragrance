@@ -1,36 +1,39 @@
-import type { Metadata, Viewport } from "next";
-import { Instrument_Serif, IBM_Plex_Mono, IBM_Plex_Sans } from "next/font/google";
+import type { Metadata } from "next";
+import localFont from "next/font/local";
 import "./globals.css";
 
-const instrumentSerif = Instrument_Serif({
-  subsets: ["latin"],
-  weight: "400",
-  variable: "--fd",
+const gilroy = localFont({
+  src: [
+    {
+      path: "../assets/fonts/Gilroy-Regular.woff2",
+      weight: "400",
+      style: "normal",
+    },
+    {
+      path: "../assets/fonts/Gilroy-Medium.woff2",
+      weight: "500",
+      style: "normal",
+    },
+    {
+      // Temporarily map weight 600 (SemiBold) to Gilroy-Bold.woff2
+      // Swapping to Gilroy-SemiBold.woff2 will be a 1-line change here
+      path: "../assets/fonts/Gilroy-Bold.woff2",
+      weight: "600",
+      style: "normal",
+    },
+    {
+      path: "../assets/fonts/Gilroy-Bold.woff2",
+      weight: "700",
+      style: "normal",
+    },
+  ],
+  variable: "--font-gilroy",
   display: "swap",
 });
-
-const ibmPlexMono = IBM_Plex_Mono({
-  subsets: ["latin"],
-  weight: ["400", "500"],
-  variable: "--fm",
-  display: "swap",
-});
-
-const ibmPlexSans = IBM_Plex_Sans({
-  subsets: ["latin"],
-  weight: ["400", "500"],
-  variable: "--fb",
-  display: "swap",
-});
-
-export const viewport: Viewport = {
-  width: "device-width",
-  initialScale: 1,
-};
 
 export const metadata: Metadata = {
-  title: { default: "Raphragrance", template: "%s · Raphragrance" },
-  description: "Fragrance encyclopedia. 131,930 perfumes with accord analysis, note pyramids, season radar, and performance gauges.",
+  title: "Raphragrance — Fragrance Archive",
+  description: "An independent fragrance archive and database.",
 };
 
 export default function RootLayout({
@@ -39,26 +42,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html
-      lang="en"
-      suppressHydrationWarning
-      className={`${instrumentSerif.variable} ${ibmPlexMono.variable} ${ibmPlexSans.variable}`}
-    >
+    <html lang="en" className={gilroy.variable} suppressHydrationWarning>
       <head>
-        <link rel="preconnect" href="https://fimgs.net" />
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){
-              try {
-                var s=localStorage.getItem('rph-theme');
-                if(s==='light'||s==='dark'){document.documentElement.setAttribute('data-theme',s);}
-                else if(window.matchMedia('(prefers-color-scheme: dark)').matches){document.documentElement.setAttribute('data-theme','dark');}
-                else{document.documentElement.setAttribute('data-theme','light');}
-              } catch(e){}
-              window.addEventListener('error', function(e){
-                if(e.target && e.target.tagName === 'IMG'){ e.target.style.display = 'none'; }
-              }, true);
-            })();`,
+            __html: `(function(){try{var t=localStorage.getItem('rph-theme');if(!t){t=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}document.documentElement.setAttribute('data-theme',t);}catch(e){}})();window.addEventListener('error',function(e){if(e.target&&e.target.tagName==='IMG')e.target.style.display='none';},true);`,
           }}
         />
       </head>

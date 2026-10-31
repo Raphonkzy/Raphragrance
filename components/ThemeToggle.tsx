@@ -4,10 +4,18 @@ import { useEffect, useState } from "react";
 
 export function ThemeToggle() {
   const [theme, setTheme] = useState<"light" | "dark">("light");
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    const current = document.documentElement.getAttribute("data-theme");
-    setTheme(current === "dark" ? "dark" : "light");
+    const current =
+      (document.documentElement.getAttribute("data-theme") as
+        | "light"
+        | "dark") ||
+      (window.matchMedia("(prefers-color-scheme: dark)").matches
+        ? "dark"
+        : "light");
+    setTheme(current);
+    setMounted(true);
   }, []);
 
   function toggle() {
@@ -16,16 +24,24 @@ export function ThemeToggle() {
     document.documentElement.setAttribute("data-theme", next);
     try {
       localStorage.setItem("rph-theme", next);
-    } catch (_) {}
+    } catch {}
   }
+
+  // Label shows the theme it will switch TO ("Dark" / "Light")
+  const targetLabel = !mounted
+    ? "Dark"
+    : theme === "dark"
+    ? "Light"
+    : "Dark";
 
   return (
     <button
-      className="theme-toggle"
+      type="button"
+      className="chip theme-toggle-chip"
       onClick={toggle}
-      aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
+      aria-label={`Switch to ${targetLabel} theme`}
     >
-      {theme === "dark" ? "Light" : "Dark"}
+      {targetLabel}
     </button>
   );
 }

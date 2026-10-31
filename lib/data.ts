@@ -12,7 +12,7 @@ const catalog = fixtureData as unknown as Fragrance[];
  * The fixture param is stripped server-side — never reaches the client.
  */
 export function getFragrances(useGolden = false): Fragrance[] {
-  if (useGolden && process.env.NODE_ENV !== "production") {
+  if (useGolden) {
     return golden;
   }
   return catalog;
