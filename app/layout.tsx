@@ -1,33 +1,60 @@
 import type { Metadata, Viewport } from "next";
+import { Fraunces, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
-import { ThemeProvider } from "@/components/ThemeProvider";
+
+const fraunces = Fraunces({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-fraunces",
+  weight: "variable",
+  axes: ["opsz"],
+});
+
+const plusJakartaSans = Plus_Jakarta_Sans({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-plus-jakarta-sans",
+  weight: ["400", "500", "600"],
+});
 
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
+  // no maximum-scale — required by R-39
 };
 
 export const metadata: Metadata = {
   title: { default: "Raphragrance", template: "%s · Raphragrance" },
   description:
     "Fragrance encyclopedia. 131,930 perfumes with note pyramids, accord analysis, longevity, sillage, and seasonal data.",
-  keywords: ["fragrance", "perfume", "parfum", "notes", "accords", "encyclopedia"],
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html
+      lang="en"
+      suppressHydrationWarning
+      className={`${fraunces.variable} ${plusJakartaSans.variable}`}
+    >
       <head>
-        <link rel="preconnect" href="https://fonts.googleapis.com" />
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
-        <link
-          rel="stylesheet"
-          href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;1,400&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&family=Instrument+Serif:ital@0;1&display=swap"
+        {/* Preconnect to image CDN for faster LCP */}
+        <link rel="preconnect" href="https://fimgs.net" />
+        {/*
+          Inline theme script — runs before first paint, prevents flash of wrong theme.
+          Reads localStorage, falls back to prefers-color-scheme.
+          No external dependencies, minimal byte count.
+        */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{var s=localStorage.getItem('rph-theme');if(s==='light'||s==='dark'){document.documentElement.setAttribute('data-theme',s);return;}if(window.matchMedia('(prefers-color-scheme: dark)').matches){document.documentElement.setAttribute('data-theme','dark');}else{document.documentElement.setAttribute('data-theme','light');}}catch(e){}})();`,
+          }}
         />
       </head>
-      <body>
-        <ThemeProvider>{children}</ThemeProvider>
-      </body>
+      <body>{children}</body>
     </html>
   );
 }

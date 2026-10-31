@@ -11,6 +11,7 @@
     "voteCount": 35695,
     "longevity": 2.82,
     "sillage": 1.97,
+    "hue": 205,
     "accords": [
       {
         "name": "citrus",
@@ -92,6 +93,7 @@
     "voteCount": 35169,
     "longevity": 4.01,
     "sillage": 2.95,
+    "hue": 19,
     "accords": [
       {
         "name": "white floral",
@@ -167,6 +169,7 @@
     "voteCount": 34794,
     "longevity": 3.92,
     "sillage": 2.85,
+    "hue": 174,
     "accords": [
       {
         "name": "sweet",
@@ -249,6 +252,7 @@
     "voteCount": 34436,
     "longevity": 4.23,
     "sillage": 3.17,
+    "hue": 328,
     "accords": [
       {
         "name": "sweet",
@@ -349,6 +353,7 @@
     "voteCount": 33864,
     "longevity": 3.32,
     "sillage": 2.33,
+    "hue": 68,
     "accords": [
       {
         "name": "vanilla",
@@ -434,6 +439,7 @@
     "voteCount": 32839,
     "longevity": 3.85,
     "sillage": 2.71,
+    "hue": 187,
     "accords": [
       {
         "name": "citrus",
@@ -519,6 +525,7 @@
     "voteCount": 32551,
     "longevity": 3.59,
     "sillage": 2.55,
+    "hue": 317,
     "accords": [
       {
         "name": "fresh spicy",
@@ -602,6 +609,7 @@
     "voteCount": 31742,
     "longevity": 4.08,
     "sillage": 2.94,
+    "hue": 146,
     "accords": [
       {
         "name": "warm spicy",
@@ -697,6 +705,7 @@
     "voteCount": 30312,
     "longevity": 4.04,
     "sillage": 2.81,
+    "hue": 185,
     "accords": [
       {
         "name": "vanilla",
@@ -776,6 +785,7 @@
     "voteCount": 29831,
     "longevity": 3.73,
     "sillage": 2.62,
+    "hue": 123,
     "accords": [
       {
         "name": "vanilla",
@@ -860,6 +870,7 @@
     "voteCount": 29499,
     "longevity": 3.48,
     "sillage": 2.46,
+    "hue": 329,
     "accords": [
       {
         "name": "vanilla",
@@ -942,6 +953,7 @@
     "voteCount": 29090,
     "longevity": 3.41,
     "sillage": 2.37,
+    "hue": 330,
     "accords": [
       {
         "name": "white floral",
@@ -1031,6 +1043,7 @@
     "voteCount": 28512,
     "longevity": 3.96,
     "sillage": 2.79,
+    "hue": 303,
     "accords": [
       {
         "name": "woody",
@@ -1112,6 +1125,7 @@
     "voteCount": 28015,
     "longevity": 3.89,
     "sillage": 2.74,
+    "hue": 5,
     "accords": [
       {
         "name": "sweet",
@@ -1194,6 +1208,7 @@
     "voteCount": 27711,
     "longevity": 3.45,
     "sillage": 2.28,
+    "hue": 169,
     "accords": [
       {
         "name": "citrus",
@@ -1274,6 +1289,7 @@
     "voteCount": 27223,
     "longevity": 3.78,
     "sillage": 2.71,
+    "hue": 272,
     "accords": [
       {
         "name": "citrus",
@@ -1355,6 +1371,7 @@
     "voteCount": 26957,
     "longevity": 3.37,
     "sillage": 2.32,
+    "hue": 36,
     "accords": [
       {
         "name": "fruity",
@@ -1440,6 +1457,7 @@
     "voteCount": 26734,
     "longevity": 3.65,
     "sillage": 2.48,
+    "hue": 309,
     "accords": [
       {
         "name": "aromatic",
@@ -1523,6 +1541,7 @@
     "voteCount": 26470,
     "longevity": 3.75,
     "sillage": 2.33,
+    "hue": 232,
     "accords": [
       {
         "name": "warm spicy",
@@ -1601,6 +1620,7 @@
     "voteCount": 25322,
     "longevity": 3.4,
     "sillage": 2.21,
+    "hue": 111,
     "accords": [
       {
         "name": "woody",
@@ -1681,6 +1701,7 @@
     "voteCount": 24694,
     "longevity": 3.49,
     "sillage": 2.43,
+    "hue": 297,
     "accords": [
       {
         "name": "sweet",
@@ -1773,6 +1794,7 @@
     "voteCount": 24626,
     "longevity": 2.9,
     "sillage": 1.99,
+    "hue": 10,
     "accords": [
       {
         "name": "citrus",
@@ -1871,6 +1893,7 @@
     "voteCount": 24574,
     "longevity": 3.68,
     "sillage": 2.62,
+    "hue": 47,
     "accords": [
       {
         "name": "fresh spicy",
@@ -1952,6 +1975,7 @@
     "voteCount": 24545,
     "longevity": 3.56,
     "sillage": 2.39,
+    "hue": 230,
     "accords": [
       {
         "name": "aromatic",
@@ -2036,6 +2060,7 @@
     "voteCount": 24523,
     "longevity": 3.41,
     "sillage": 2.2,
+    "hue": 338,
     "accords": [
       {
         "name": "woody",
@@ -2111,6 +2136,7 @@
     "voteCount": 24403,
     "longevity": 3.35,
     "sillage": 2.18,
+    "hue": 7,
     "accords": [
       {
         "name": "amber",
@@ -2195,6 +2221,7 @@
     "voteCount": 24365,
     "longevity": 3.83,
     "sillage": 2.57,
+    "hue": 112,
     "accords": [
       {
         "name": "iris",
@@ -2272,6 +2299,7 @@
     "voteCount": 24280,
     "longevity": 4.02,
     "sillage": 2.82,
+    "hue": 114,
     "accords": [
       {
         "name": "vanilla",
@@ -2350,6 +2378,7 @@
     "voteCount": 24211,
     "longevity": 3.0,
     "sillage": 1.98,
+    "hue": 17,
     "accords": [
       {
         "name": "aromatic",
@@ -2429,6 +2458,7 @@
     "voteCount": 23927,
     "longevity": 2.88,
     "sillage": 2.0,
+    "hue": 184,
     "accords": [
       {
         "name": "floral",
@@ -2509,6 +2539,7 @@
     "voteCount": 23874,
     "longevity": 3.85,
     "sillage": 2.71,
+    "hue": 34,
     "accords": [
       {
         "name": "vanilla",
@@ -2589,6 +2620,7 @@
     "voteCount": 23717,
     "longevity": 3.72,
     "sillage": 2.76,
+    "hue": 339,
     "accords": [
       {
         "name": "warm spicy",
@@ -2672,6 +2704,7 @@
     "voteCount": 23487,
     "longevity": 3.46,
     "sillage": 2.34,
+    "hue": 181,
     "accords": [
       {
         "name": "floral",
@@ -2752,6 +2785,7 @@
     "voteCount": 23359,
     "longevity": 3.49,
     "sillage": 2.51,
+    "hue": 101,
     "accords": [
       {
         "name": "woody",
@@ -2835,6 +2869,7 @@
     "voteCount": 22328,
     "longevity": 3.66,
     "sillage": 2.65,
+    "hue": 276,
     "accords": [
       {
         "name": "leather",
@@ -2930,6 +2965,7 @@
     "voteCount": 22194,
     "longevity": 3.78,
     "sillage": 2.56,
+    "hue": 175,
     "accords": [
       {
         "name": "woody",
@@ -3010,6 +3046,7 @@
     "voteCount": 22074,
     "longevity": 2.59,
     "sillage": 1.76,
+    "hue": 12,
     "accords": [
       {
         "name": "citrus",
@@ -3103,6 +3140,7 @@
     "voteCount": 21534,
     "longevity": 3.01,
     "sillage": 2.03,
+    "hue": 46,
     "accords": [
       {
         "name": "citrus",
@@ -3185,6 +3223,7 @@
     "voteCount": 21510,
     "longevity": 3.39,
     "sillage": 2.17,
+    "hue": 319,
     "accords": [
       {
         "name": "citrus",
@@ -3274,6 +3313,7 @@
     "voteCount": 21442,
     "longevity": 3.51,
     "sillage": 2.45,
+    "hue": 149,
     "accords": [
       {
         "name": "white floral",
@@ -3357,6 +3397,7 @@
     "voteCount": 20790,
     "longevity": 3.4,
     "sillage": 2.42,
+    "hue": 220,
     "accords": [
       {
         "name": "floral",
@@ -3442,6 +3483,7 @@
     "voteCount": 20650,
     "longevity": 3.35,
     "sillage": 2.22,
+    "hue": 243,
     "accords": [
       {
         "name": "citrus",
@@ -3528,6 +3570,7 @@
     "voteCount": 20293,
     "longevity": 3.47,
     "sillage": 2.38,
+    "hue": 193,
     "accords": [
       {
         "name": "musky",
@@ -3608,6 +3651,7 @@
     "voteCount": 20240,
     "longevity": 3.24,
     "sillage": 2.12,
+    "hue": 357,
     "accords": [
       {
         "name": "tobacco",
@@ -3688,6 +3732,7 @@
     "voteCount": 19806,
     "longevity": 2.86,
     "sillage": 1.95,
+    "hue": 339,
     "accords": [
       {
         "name": "aromatic",
@@ -3775,6 +3820,7 @@
     "voteCount": 19695,
     "longevity": 3.06,
     "sillage": 2.17,
+    "hue": 253,
     "accords": [
       {
         "name": "floral",
@@ -3854,6 +3900,7 @@
     "voteCount": 19632,
     "longevity": 3.49,
     "sillage": 2.43,
+    "hue": 141,
     "accords": [
       {
         "name": "woody",
@@ -3932,6 +3979,7 @@
     "voteCount": 19266,
     "longevity": 3.98,
     "sillage": 2.78,
+    "hue": 353,
     "accords": [
       {
         "name": "sweet",
@@ -4011,6 +4059,7 @@
     "voteCount": 19175,
     "longevity": 2.8,
     "sillage": 2.07,
+    "hue": 22,
     "accords": [
       {
         "name": "fruity",
@@ -4089,6 +4138,7 @@
     "voteCount": 19127,
     "longevity": 3.27,
     "sillage": 2.18,
+    "hue": 137,
     "accords": [
       {
         "name": "citrus",
@@ -4183,6 +4233,7 @@
     "voteCount": 19047,
     "longevity": 2.84,
     "sillage": 1.87,
+    "hue": 161,
     "accords": [
       {
         "name": "green",
@@ -4262,6 +4313,7 @@
     "voteCount": 18379,
     "longevity": 3.81,
     "sillage": 2.65,
+    "hue": 61,
     "accords": [
       {
         "name": "citrus",
@@ -4351,6 +4403,7 @@
     "voteCount": 18181,
     "longevity": 4.48,
     "sillage": 3.16,
+    "hue": 255,
     "accords": [
       {
         "name": "warm spicy",
@@ -4432,6 +4485,7 @@
     "voteCount": 18148,
     "longevity": 3.68,
     "sillage": 2.5,
+    "hue": 140,
     "accords": [
       {
         "name": "citrus",
@@ -4517,6 +4571,7 @@
     "voteCount": 17763,
     "longevity": 3.77,
     "sillage": 2.6,
+    "hue": 58,
     "accords": [
       {
         "name": "warm spicy",
@@ -4603,6 +4658,7 @@
     "voteCount": 17579,
     "longevity": 2.77,
     "sillage": 1.94,
+    "hue": 356,
     "accords": [
       {
         "name": "floral",
@@ -4682,6 +4738,7 @@
     "voteCount": 17577,
     "longevity": 2.88,
     "sillage": 2.01,
+    "hue": 226,
     "accords": [
       {
         "name": "woody",
@@ -4760,6 +4817,7 @@
     "voteCount": 17567,
     "longevity": 3.86,
     "sillage": 2.56,
+    "hue": 263,
     "accords": [
       {
         "name": "leather",
@@ -4837,6 +4895,7 @@
     "voteCount": 17372,
     "longevity": 3.58,
     "sillage": 2.53,
+    "hue": 158,
     "accords": [
       {
         "name": "white floral",
@@ -4920,6 +4979,7 @@
     "voteCount": 17350,
     "longevity": 3.14,
     "sillage": 2.24,
+    "hue": 267,
     "accords": [
       {
         "name": "cherry",
@@ -5008,6 +5068,7 @@
     "voteCount": 17189,
     "longevity": 3.8,
     "sillage": 2.57,
+    "hue": 46,
     "accords": [
       {
         "name": "sweet",
@@ -5089,6 +5150,7 @@
     "voteCount": 17157,
     "longevity": 3.0,
     "sillage": 2.13,
+    "hue": 186,
     "accords": [
       {
         "name": "green",
@@ -5171,6 +5233,7 @@
     "voteCount": 17147,
     "longevity": 3.05,
     "sillage": 2.12,
+    "hue": 328,
     "accords": [
       {
         "name": "sweet",
@@ -5251,6 +5314,7 @@
     "voteCount": 17070,
     "longevity": 3.45,
     "sillage": 2.38,
+    "hue": 226,
     "accords": [
       {
         "name": "fruity",
@@ -5334,6 +5398,7 @@
     "voteCount": 16988,
     "longevity": 3.83,
     "sillage": 2.76,
+    "hue": 19,
     "accords": [
       {
         "name": "vanilla",
@@ -5417,6 +5482,7 @@
     "voteCount": 16963,
     "longevity": 3.77,
     "sillage": 2.65,
+    "hue": 238,
     "accords": [
       {
         "name": "vanilla",
@@ -5496,6 +5562,7 @@
     "voteCount": 16942,
     "longevity": 3.21,
     "sillage": 2.12,
+    "hue": 322,
     "accords": [
       {
         "name": "woody",
@@ -5574,6 +5641,7 @@
     "voteCount": 16931,
     "longevity": 3.07,
     "sillage": 2.11,
+    "hue": 234,
     "accords": [
       {
         "name": "citrus",
@@ -5653,6 +5721,7 @@
     "voteCount": 16737,
     "longevity": 3.14,
     "sillage": 2.08,
+    "hue": 234,
     "accords": [
       {
         "name": "woody",
@@ -5735,6 +5804,7 @@
     "voteCount": 16656,
     "longevity": 3.81,
     "sillage": 2.7,
+    "hue": 203,
     "accords": [
       {
         "name": "vanilla",
@@ -5811,6 +5881,7 @@
     "voteCount": 16567,
     "longevity": 2.9,
     "sillage": 1.94,
+    "hue": 282,
     "accords": [
       {
         "name": "caramel",
@@ -5887,6 +5958,7 @@
     "voteCount": 16528,
     "longevity": 2.85,
     "sillage": 1.96,
+    "hue": 28,
     "accords": [
       {
         "name": "citrus",
@@ -5972,6 +6044,7 @@
     "voteCount": 16404,
     "longevity": 3.34,
     "sillage": 2.39,
+    "hue": 120,
     "accords": [
       {
         "name": "sweet",
@@ -6053,6 +6126,7 @@
     "voteCount": 16270,
     "longevity": 3.59,
     "sillage": 2.32,
+    "hue": 279,
     "accords": [
       {
         "name": "aromatic",
@@ -6131,6 +6205,7 @@
     "voteCount": 16238,
     "longevity": 3.54,
     "sillage": 2.47,
+    "hue": 192,
     "accords": [
       {
         "name": "soft spicy",
@@ -6216,6 +6291,7 @@
     "voteCount": 16155,
     "longevity": 3.31,
     "sillage": 2.28,
+    "hue": 329,
     "accords": [
       {
         "name": "vanilla",
@@ -6299,6 +6375,7 @@
     "voteCount": 16079,
     "longevity": 4.16,
     "sillage": 3.1,
+    "hue": 346,
     "accords": [
       {
         "name": "fruity",
@@ -6392,6 +6469,7 @@
     "voteCount": 15995,
     "longevity": 3.42,
     "sillage": 2.34,
+    "hue": 144,
     "accords": [
       {
         "name": "powdery",
@@ -6475,6 +6553,7 @@
     "voteCount": 15952,
     "longevity": 2.07,
     "sillage": 1.5,
+    "hue": 211,
     "accords": [
       {
         "name": "citrus",
@@ -6565,6 +6644,7 @@
     "voteCount": 15882,
     "longevity": 3.38,
     "sillage": 2.08,
+    "hue": 253,
     "accords": [
       {
         "name": "powdery",
@@ -6648,6 +6728,7 @@
     "voteCount": 135,
     "longevity": 4.79,
     "sillage": 3.82,
+    "hue": 203,
     "accords": [
       {
         "name": "fruity",
@@ -6725,6 +6806,7 @@
     "voteCount": 141,
     "longevity": 3.39,
     "sillage": 2.38,
+    "hue": 298,
     "accords": [
       {
         "name": "powdery",
@@ -6805,6 +6887,7 @@
     "voteCount": 4272,
     "longevity": 4.9,
     "sillage": 3.9,
+    "hue": 142,
     "accords": [
       {
         "name": "aromatic",
@@ -6881,6 +6964,7 @@
     "voteCount": 148,
     "longevity": 4.38,
     "sillage": 3.43,
+    "hue": 75,
     "accords": [
       {
         "name": "powdery",
@@ -6961,6 +7045,7 @@
     "voteCount": 255,
     "longevity": 4.68,
     "sillage": 3.67,
+    "hue": 38,
     "accords": [
       {
         "name": "citrus",
@@ -7037,6 +7122,7 @@
     "voteCount": 176,
     "longevity": 4.28,
     "sillage": 3.34,
+    "hue": 77,
     "accords": [
       {
         "name": "sweet",
@@ -7117,6 +7203,7 @@
     "voteCount": 616,
     "longevity": 4.46,
     "sillage": 3.42,
+    "hue": 298,
     "accords": [
       {
         "name": "sweet",
@@ -7199,6 +7286,7 @@
     "voteCount": 128,
     "longevity": 3.84,
     "sillage": 2.99,
+    "hue": 112,
     "accords": [
       {
         "name": "rose",
@@ -7256,6 +7344,7 @@
     "voteCount": 370,
     "longevity": 4.11,
     "sillage": 2.79,
+    "hue": 32,
     "accords": [
       {
         "name": "woody",
@@ -7333,6 +7422,7 @@
     "voteCount": 303,
     "longevity": 4.28,
     "sillage": 3.28,
+    "hue": 290,
     "accords": [
       {
         "name": "sweet",
@@ -7415,6 +7505,7 @@
     "voteCount": 154,
     "longevity": 4.63,
     "sillage": 3.65,
+    "hue": 56,
     "accords": [
       {
         "name": "citrus",
@@ -7492,6 +7583,7 @@
     "voteCount": 103,
     "longevity": 3.93,
     "sillage": 2.59,
+    "hue": 66,
     "accords": [
       {
         "name": "woody",
@@ -7564,6 +7656,7 @@
     "voteCount": 120,
     "longevity": 3.69,
     "sillage": 3.07,
+    "hue": 4,
     "accords": [
       {
         "name": "rose",
@@ -7621,6 +7714,7 @@
     "voteCount": 237,
     "longevity": 4.29,
     "sillage": 3.0,
+    "hue": 205,
     "accords": [
       {
         "name": "woody",
@@ -7707,6 +7801,7 @@
     "voteCount": 238,
     "longevity": 4.05,
     "sillage": 2.74,
+    "hue": 255,
     "accords": [
       {
         "name": "citrus",
@@ -7786,6 +7881,7 @@
     "voteCount": 363,
     "longevity": 4.27,
     "sillage": 3.17,
+    "hue": 128,
     "accords": [
       {
         "name": "sweet",
@@ -7862,6 +7958,7 @@
     "voteCount": 241,
     "longevity": 4.1,
     "sillage": 2.74,
+    "hue": 118,
     "accords": [
       {
         "name": "floral",
@@ -7941,6 +8038,7 @@
     "voteCount": 354,
     "longevity": 4.52,
     "sillage": 3.25,
+    "hue": 291,
     "accords": [
       {
         "name": "leather",
@@ -8023,6 +8121,7 @@
     "voteCount": 237,
     "longevity": 4.0,
     "sillage": 2.73,
+    "hue": 33,
     "accords": [
       {
         "name": "aromatic",
@@ -8103,6 +8202,7 @@
     "voteCount": 261,
     "longevity": 4.8,
     "sillage": 3.88,
+    "hue": 75,
     "accords": [
       {
         "name": "sweet",
@@ -8182,6 +8282,7 @@
     "voteCount": 235,
     "longevity": 4.07,
     "sillage": 2.36,
+    "hue": 256,
     "accords": [
       {
         "name": "white floral",
@@ -8261,6 +8362,7 @@
     "voteCount": 755,
     "longevity": 4.68,
     "sillage": 3.67,
+    "hue": 107,
     "accords": [
       {
         "name": "coconut",
@@ -8338,6 +8440,7 @@
     "voteCount": 241,
     "longevity": 4.11,
     "sillage": 2.5,
+    "hue": 342,
     "accords": [
       {
         "name": "floral",
@@ -8416,6 +8519,7 @@
     "voteCount": 233,
     "longevity": 4.02,
     "sillage": 2.98,
+    "hue": 212,
     "accords": [
       {
         "name": "citrus",
@@ -8495,6 +8599,7 @@
     "voteCount": 517,
     "longevity": 4.15,
     "sillage": 3.15,
+    "hue": 162,
     "accords": [
       {
         "name": "citrus",
@@ -8572,6 +8677,7 @@
     "voteCount": 238,
     "longevity": 4.0,
     "sillage": 2.5,
+    "hue": 291,
     "accords": [
       {
         "name": "white floral",
@@ -8653,6 +8759,7 @@
     "voteCount": 239,
     "longevity": 4.55,
     "sillage": 3.37,
+    "hue": 68,
     "accords": [
       {
         "name": "fresh spicy",
@@ -8738,6 +8845,7 @@
     "voteCount": 234,
     "longevity": 4.0,
     "sillage": 2.64,
+    "hue": 119,
     "accords": [
       {
         "name": "fruity",
@@ -8817,6 +8925,7 @@
     "voteCount": 234,
     "longevity": 4.36,
     "sillage": 2.91,
+    "hue": 181,
     "accords": [
       {
         "name": "musky",
@@ -8897,6 +9006,7 @@
     "voteCount": 233,
     "longevity": 4.0,
     "sillage": 2.85,
+    "hue": 318,
     "accords": [
       {
         "name": "fruity",
@@ -8977,6 +9087,7 @@
     "voteCount": 373,
     "longevity": 4.11,
     "sillage": 2.74,
+    "hue": 154,
     "accords": [
       {
         "name": "citrus",
@@ -9056,6 +9167,7 @@
     "voteCount": 107,
     "longevity": 3.56,
     "sillage": 2.43,
+    "hue": 191,
     "accords": [
       {
         "name": "warm spicy",
@@ -9136,6 +9248,7 @@
     "voteCount": 177,
     "longevity": 4.3,
     "sillage": 3.21,
+    "hue": 102,
     "accords": [
       {
         "name": "rose",
@@ -9210,6 +9323,7 @@
     "voteCount": 322,
     "longevity": 4.11,
     "sillage": 2.67,
+    "hue": 170,
     "accords": [
       {
         "name": "aromatic",
@@ -9293,6 +9407,7 @@
     "voteCount": 193,
     "longevity": 4.53,
     "sillage": 3.44,
+    "hue": 330,
     "accords": [
       {
         "name": "sweet",
@@ -9372,6 +9487,7 @@
     "voteCount": 145,
     "longevity": 4.3,
     "sillage": 3.05,
+    "hue": 345,
     "accords": [
       {
         "name": "warm spicy",
@@ -9447,6 +9563,7 @@
     "voteCount": 166,
     "longevity": 4.06,
     "sillage": 3.0,
+    "hue": 10,
     "accords": [
       {
         "name": "amber",
@@ -9521,6 +9638,7 @@
     "voteCount": 369,
     "longevity": 4.35,
     "sillage": 3.18,
+    "hue": 44,
     "accords": [
       {
         "name": "leather",
@@ -9598,6 +9716,7 @@
     "voteCount": 125,
     "longevity": 3.04,
     "sillage": 2.06,
+    "hue": 39,
     "accords": [
       {
         "name": "fresh spicy",
@@ -9682,6 +9801,7 @@
     "voteCount": 288,
     "longevity": 4.52,
     "sillage": 3.51,
+    "hue": 176,
     "accords": [
       {
         "name": "aromatic",
@@ -9759,6 +9879,7 @@
     "voteCount": 384,
     "longevity": 3.63,
     "sillage": 2.57,
+    "hue": 167,
     "accords": [
       {
         "name": "green",
@@ -9834,6 +9955,7 @@
     "voteCount": 105,
     "longevity": 3.84,
     "sillage": 2.68,
+    "hue": 264,
     "accords": [
       {
         "name": "aromatic",
@@ -9912,6 +10034,7 @@
     "voteCount": 150,
     "longevity": 4.36,
     "sillage": 3.29,
+    "hue": 309,
     "accords": [
       {
         "name": "citrus",
@@ -9990,6 +10113,7 @@
     "voteCount": 102,
     "longevity": 4.15,
     "sillage": 3.29,
+    "hue": 358,
     "accords": [
       {
         "name": "white floral",
@@ -10081,6 +10205,7 @@
     "voteCount": 117,
     "longevity": 4.44,
     "sillage": 3.06,
+    "hue": 314,
     "accords": [
       {
         "name": "citrus",
@@ -10172,6 +10297,7 @@
     "voteCount": 234,
     "longevity": 3.93,
     "sillage": 2.77,
+    "hue": 294,
     "accords": [
       {
         "name": "woody",
@@ -10250,6 +10376,7 @@
     "voteCount": 104,
     "longevity": 3.75,
     "sillage": 2.12,
+    "hue": 141,
     "accords": [
       {
         "name": "sweet",
@@ -10329,6 +10456,7 @@
     "voteCount": 128,
     "longevity": 4.51,
     "sillage": 3.09,
+    "hue": 193,
     "accords": [
       {
         "name": "oud",
@@ -10375,6 +10503,7 @@
     "voteCount": 152,
     "longevity": 3.73,
     "sillage": 2.78,
+    "hue": 298,
     "accords": [
       {
         "name": "citrus",
@@ -10454,6 +10583,7 @@
     "voteCount": 103,
     "longevity": 2.37,
     "sillage": 1.68,
+    "hue": 132,
     "accords": [
       {
         "name": "vanilla",
@@ -10525,6 +10655,7 @@
     "voteCount": 15156,
     "longevity": 2.28,
     "sillage": 1.54,
+    "hue": 73,
     "accords": [
       {
         "name": "aromatic",
@@ -10599,6 +10730,7 @@
     "voteCount": 14275,
     "longevity": 2.87,
     "sillage": 1.62,
+    "hue": 72,
     "accords": [
       {
         "name": "amber",
@@ -10657,6 +10789,7 @@
     "voteCount": 14161,
     "longevity": 3.96,
     "sillage": 2.78,
+    "hue": 66,
     "accords": [
       {
         "name": "woody",
@@ -10733,6 +10866,7 @@
     "voteCount": 12773,
     "longevity": 3.69,
     "sillage": 2.55,
+    "hue": 57,
     "accords": [
       {
         "name": "woody",
@@ -10810,6 +10944,7 @@
     "voteCount": 12552,
     "longevity": 3.55,
     "sillage": 2.35,
+    "hue": 34,
     "accords": [
       {
         "name": "amber",
@@ -10888,6 +11023,7 @@
     "voteCount": 11246,
     "longevity": 4.02,
     "sillage": 2.85,
+    "hue": 342,
     "accords": [
       {
         "name": "woody",
@@ -10963,6 +11099,7 @@
     "voteCount": 10036,
     "longevity": 3.25,
     "sillage": 2.05,
+    "hue": 205,
     "accords": [
       {
         "name": "woody",
@@ -11021,6 +11158,7 @@
     "voteCount": 2592,
     "longevity": 4.23,
     "sillage": 2.82,
+    "hue": 221,
     "accords": [],
     "notes": {
       "top": [],
@@ -11056,6 +11194,7 @@
     "voteCount": 1236,
     "longevity": 2.27,
     "sillage": 1.6,
+    "hue": 142,
     "accords": [],
     "notes": {
       "top": [],
@@ -11089,6 +11228,7 @@
     "voteCount": 1000,
     "longevity": 2.45,
     "sillage": 1.97,
+    "hue": 88,
     "accords": [],
     "notes": {
       "top": [],
@@ -11122,6 +11262,7 @@
     "voteCount": 729,
     "longevity": 2.28,
     "sillage": 1.69,
+    "hue": 311,
     "accords": [],
     "notes": {
       "top": [],
@@ -11155,6 +11296,7 @@
     "voteCount": 681,
     "longevity": 3.9,
     "sillage": 2.64,
+    "hue": 37,
     "accords": [],
     "notes": {
       "top": [],
@@ -11190,6 +11332,7 @@
     "voteCount": 674,
     "longevity": 3.84,
     "sillage": 2.81,
+    "hue": 186,
     "accords": [],
     "notes": {
       "top": [],
@@ -11225,6 +11368,7 @@
     "voteCount": 608,
     "longevity": 2.65,
     "sillage": 1.85,
+    "hue": 222,
     "accords": [],
     "notes": {
       "top": [],
@@ -11258,6 +11402,7 @@
     "voteCount": 557,
     "longevity": 2.04,
     "sillage": 1.82,
+    "hue": 5,
     "accords": [],
     "notes": {
       "top": [],
@@ -11291,6 +11436,7 @@
     "voteCount": 494,
     "longevity": 2.84,
     "sillage": 1.89,
+    "hue": 270,
     "accords": [],
     "notes": {
       "top": [],
@@ -11324,6 +11470,7 @@
     "voteCount": 455,
     "longevity": 2.77,
     "sillage": 1.67,
+    "hue": 210,
     "accords": [],
     "notes": {
       "top": [],
@@ -11357,6 +11504,7 @@
     "voteCount": 416,
     "longevity": 2.63,
     "sillage": 1.88,
+    "hue": 245,
     "accords": [
       {
         "name": "white floral",
@@ -11439,6 +11587,7 @@
     "voteCount": 201,
     "longevity": 2.68,
     "sillage": 1.91,
+    "hue": 22,
     "accords": [
       {
         "name": "floral",
@@ -11522,6 +11671,7 @@
     "voteCount": 375,
     "longevity": 3.34,
     "sillage": 2.32,
+    "hue": 140,
     "accords": [
       {
         "name": "aromatic",
@@ -11609,6 +11759,7 @@
     "voteCount": 610,
     "longevity": 3.4,
     "sillage": 2.54,
+    "hue": 153,
     "accords": [
       {
         "name": "amber",
@@ -11690,6 +11841,7 @@
     "voteCount": 367,
     "longevity": 2.83,
     "sillage": 2.26,
+    "hue": 176,
     "accords": [
       {
         "name": "citrus",
@@ -11771,6 +11923,7 @@
     "voteCount": 286,
     "longevity": 2.58,
     "sillage": 2.02,
+    "hue": 227,
     "accords": [
       {
         "name": "citrus",
@@ -11845,6 +11998,7 @@
     "voteCount": 119,
     "longevity": 3.47,
     "sillage": 2.57,
+    "hue": 243,
     "accords": [
       {
         "name": "powdery",
@@ -11925,6 +12079,7 @@
     "voteCount": 199,
     "longevity": 2.75,
     "sillage": 2.23,
+    "hue": 84,
     "accords": [
       {
         "name": "woody",
@@ -12011,6 +12166,7 @@
     "voteCount": 234,
     "longevity": 3.12,
     "sillage": 2.38,
+    "hue": 167,
     "accords": [
       {
         "name": "woody",
@@ -12095,6 +12251,7 @@
     "voteCount": 781,
     "longevity": 3.16,
     "sillage": 2.28,
+    "hue": 266,
     "accords": [
       {
         "name": "fruity",
@@ -12181,6 +12338,7 @@
     "voteCount": 9483,
     "longevity": 3.87,
     "sillage": 2.66,
+    "hue": 77,
     "accords": [
       {
         "name": "vanilla",
@@ -12261,6 +12419,7 @@
     "voteCount": 8770,
     "longevity": 3.5,
     "sillage": 2.25,
+    "hue": 17,
     "accords": [
       {
         "name": "aromatic",
@@ -12342,6 +12501,7 @@
     "voteCount": 8641,
     "longevity": 2.65,
     "sillage": 1.83,
+    "hue": 359,
     "accords": [
       {
         "name": "citrus",
@@ -12421,6 +12581,7 @@
     "voteCount": 4931,
     "longevity": 3.01,
     "sillage": 2.04,
+    "hue": 136,
     "accords": [
       {
         "name": "vanilla",
@@ -12501,6 +12662,7 @@
     "voteCount": 4688,
     "longevity": 3.04,
     "sillage": 2.06,
+    "hue": 329,
     "accords": [
       {
         "name": "sweet",
@@ -12580,6 +12742,7 @@
     "voteCount": 4556,
     "longevity": 3.14,
     "sillage": 2.04,
+    "hue": 14,
     "accords": [
       {
         "name": "citrus",
@@ -12655,6 +12818,7 @@
     "voteCount": 4094,
     "longevity": 4.11,
     "sillage": 2.85,
+    "hue": 10,
     "accords": [
       {
         "name": "warm spicy",
@@ -12737,6 +12901,7 @@
     "voteCount": 4091,
     "longevity": 3.44,
     "sillage": 2.25,
+    "hue": 250,
     "accords": [
       {
         "name": "amber",
@@ -12818,6 +12983,7 @@
     "voteCount": 3936,
     "longevity": 2.94,
     "sillage": 2.16,
+    "hue": 78,
     "accords": [
       {
         "name": "floral",
@@ -12890,6 +13056,7 @@
     "voteCount": 15495,
     "longevity": 3.2,
     "sillage": 2.19,
+    "hue": 158,
     "accords": [
       {
         "name": "fruity",
@@ -12977,6 +13144,7 @@
     "voteCount": 14804,
     "longevity": 3.07,
     "sillage": 2.2,
+    "hue": 206,
     "accords": [
       {
         "name": "citrus",
@@ -13065,6 +13233,7 @@
     "voteCount": 14978,
     "longevity": 2.87,
     "sillage": 1.97,
+    "hue": 306,
     "accords": [
       {
         "name": "citrus",
@@ -13150,6 +13319,7 @@
     "voteCount": 14221,
     "longevity": 4.0,
     "sillage": 2.84,
+    "hue": 175,
     "accords": [
       {
         "name": "warm spicy",
@@ -13230,6 +13400,7 @@
     "voteCount": 14049,
     "longevity": 4.0,
     "sillage": 2.64,
+    "hue": 272,
     "accords": [
       {
         "name": "amber",
@@ -13310,6 +13481,7 @@
     "voteCount": 13718,
     "longevity": 3.6,
     "sillage": 2.45,
+    "hue": 227,
     "accords": [
       {
         "name": "woody",
@@ -13394,6 +13566,7 @@
     "voteCount": 12746,
     "longevity": 4.47,
     "sillage": 3.3,
+    "hue": 311,
     "accords": [
       {
         "name": "warm spicy",

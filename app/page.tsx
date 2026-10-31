@@ -1,77 +1,38 @@
+import { Suspense } from "react";
 import Navbar from "@/components/Navbar";
-import FragranceGrid from "@/components/FragranceGrid";
+import Featured from "@/components/Featured";
+import CatalogGrid from "@/components/CatalogGrid";
 import Footer from "@/components/Footer";
+import { getFeatured, getFragrances } from "@/lib/data";
+import type { Metadata } from "next";
 
-export default function HomePage() {
+export const metadata: Metadata = {
+  title: "Raphragrance",
+  description: "131,930 fragrances. Note pyramids, accord analysis, longevity, sillage, and seasonal data.",
+};
+
+interface PageProps {
+  searchParams: Promise<{ fixture?: string }>;
+}
+
+export default async function HomePage({ searchParams }: PageProps) {
+  const params = await searchParams;
+  const useGolden =
+    process.env.NODE_ENV !== "production" && params.fixture === "golden";
+
+  const fragrances = getFragrances(useGolden);
+  const featured = getFeatured(useGolden);
+
+  // Catalog grid excludes the featured fragrance
+  const gridFragrances = fragrances.filter((f) => f.id !== featured.id);
+
   return (
     <>
       <Navbar />
-      <main style={{ paddingTop: 52 }}>
-        {/* Above-fold identifier */}
-        <div
-          style={{
-            background: "var(--bg-surface)",
-            borderBottom: "1px solid var(--bg-border)",
-          }}
-        >
-          <div className="container" style={{ paddingBlock: "2rem 1.5rem" }}>
-            <div
-              style={{
-                display: "flex",
-                alignItems: "flex-end",
-                justifyContent: "space-between",
-                gap: "2rem",
-                flexWrap: "wrap",
-              }}
-            >
-              <div>
-                <div
-                  style={{
-                    fontFamily: "var(--font-mono)",
-                    fontSize: "0.6rem",
-                    fontWeight: 500,
-                    letterSpacing: "0.14em",
-                    textTransform: "uppercase",
-                    color: "var(--text-muted)",
-                    marginBottom: "0.6rem",
-                  }}
-                >
-                  Fragrance Reference Database · v2026
-                </div>
-                <h1
-                  style={{
-                    fontFamily: "var(--font-serif)",
-                    fontSize: "clamp(2rem, 5vw, 3.5rem)",
-                    fontWeight: 400,
-                    fontStyle: "italic",
-                    lineHeight: 1.05,
-                    color: "var(--text-primary)",
-                    letterSpacing: "-0.02em",
-                  }}
-                >
-                  Raphragrance
-                </h1>
-              </div>
-
-              <p
-                style={{
-                  fontFamily: "var(--font-sans)",
-                  fontSize: "0.82rem",
-                  color: "var(--text-secondary)",
-                  lineHeight: 1.65,
-                  maxWidth: 340,
-                }}
-              >
-                Structured data on 131,930 perfumes. Note pyramids, accord
-                analysis with strengths, longevity and sillage ratings,
-                seasonal suitability. Search by name, brand, note, or accord.
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <FragranceGrid />
-      </main>
+      <Featured fragrance={featured} />
+      <Suspense fallback={null}>
+        <CatalogGrid fragrances={gridFragrances} />
+      </Suspense>
       <Footer />
     </>
   );

@@ -42,6 +42,9 @@ for r in results:
 
 print('Total unique:', len(unique))
 
+def parse_notes(field):
+    return [n.strip() for n in (field or '').split('|') if n.strip()]
+
 def fmt(r):
     accords = []
     for item in (r['accords'] or '').split('|'):
@@ -54,10 +57,17 @@ def fmt(r):
         elif item.strip():
             accords.append({'name': item.strip(), 'strength': 50})
 
-    def parse_notes(field):
-        return [n.strip() for n in (field or '').split('|') if n.strip()]
-
     rid = r['id']
+    hue = (rid * 137) % 360
+
+    # Normalize season votes to 0-4 scale (highest = 4.0)
+    season_raw = {
+        'winter': r['winter_votes'] or 0,
+        'spring': r['spring_votes'] or 0,
+        'summer': r['summer_votes'] or 0,
+        'autumn': r['autumn_votes'] or 0,
+    }
+
     return {
         'id': rid,
         'slug': r['slug'] or str(rid),
@@ -70,6 +80,7 @@ def fmt(r):
         'voteCount': r['vote_count'] or 0,
         'longevity': round(float(r['longevity_avg']), 2) if r['longevity_avg'] else None,
         'sillage': round(float(r['sillage_avg']), 2) if r['sillage_avg'] else None,
+        'hue': hue,
         'accords': accords,
         'notes': {
             'top': parse_notes(r['notes_top']),
@@ -77,12 +88,7 @@ def fmt(r):
             'base': parse_notes(r['notes_base']),
             'flat': parse_notes(r['notes_flat']),
         },
-        'seasons': {
-            'winter': r['winter_votes'] or 0,
-            'spring': r['spring_votes'] or 0,
-            'summer': r['summer_votes'] or 0,
-            'autumn': r['autumn_votes'] or 0,
-        },
+        'seasons': season_raw,
         'timeOfDay': {
             'day': r['day_votes'] or 0,
             'night': r['night_votes'] or 0,
