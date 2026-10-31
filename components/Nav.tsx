@@ -10,14 +10,14 @@ export function Nav() {
   return (
     <>
       <header className="nav">
-        <Link href="/" className="logo">
+        <Link href="/" className="logo" prefetch={false}>
           raphragrance
         </Link>
         <nav aria-label="Main Navigation">
-          <Link href="/">Catalog</Link>
-          <Link href="/brands">Brands</Link>
-          <Link href="/notes">Notes</Link>
-          <Link href="/accords">Accords</Link>
+          <Link href="/" prefetch={false}>Catalog</Link>
+          <Link href="/brands" prefetch={false}>Brands</Link>
+          <Link href="/notes" prefetch={false}>Notes</Link>
+          <Link href="/accords" prefetch={false}>Accords</Link>
         </nav>
         <button
           type="button"

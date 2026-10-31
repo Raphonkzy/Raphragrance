@@ -76,7 +76,6 @@ const PAL = {
   // Browns / Resins
   woody: ["#7B4B2A", "#F7EFE6"],
   leather: ["#4A2E22", "#F3E8DF"],
-  coffee: ["#3A2418", "#F3E6DA"],
   oud: ["#412635", "#F7EDF3"],
   patchouli: ["#5F572E", "#F9F6EA"],
 
@@ -109,7 +108,7 @@ const PAL = {
   smoky: ["#4A4A52", "#F0F0F2"],
 };
 
-const DEF = ["#D9D9D4", "#161614"];
+const DEF = ["#7E8284", "#0E0E0E"];
 
 function runVerification() {
   console.log("=================================================");

@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { CSSProperties } from "react";
-import type { Fragrance } from "../lib/types";
+import type { Fragrance, CatalogFragrance } from "../lib/types";
 import { getColorPair } from "../lib/palette";
 
 export function BottleSvg() {
@@ -14,7 +14,7 @@ export function BottleSvg() {
 }
 
 interface FragranceTileProps {
-  fragrance: Fragrance;
+  fragrance: CatalogFragrance | Fragrance;
   priority?: boolean;
 }
 
@@ -40,6 +40,7 @@ export function FragranceTile({ fragrance, priority = false }: FragranceTileProp
       className="tile"
       style={style}
       aria-label={`${fragrance.name} by ${fragrance.brand}`}
+      prefetch={false}
     >
       <div className="im">
         {fragrance.imageUrl ? (
@@ -48,8 +49,8 @@ export function FragranceTile({ fragrance, priority = false }: FragranceTileProp
               src={fragrance.imageUrl}
               alt={`${fragrance.brand} ${fragrance.name} bottle`}
               loading={priority ? "eager" : "lazy"}
-              // @ts-expect-error fetchPriority supported in modern browsers
-              fetchpriority={priority ? "high" : "auto"}
+              fetchPriority={priority ? "high" : "low"}
+              decoding={priority ? "sync" : "async"}
               width={250}
               height={333}
             />

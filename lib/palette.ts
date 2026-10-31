@@ -15,7 +15,6 @@ export const PAL: Record<string, [string, string]> = {
   // Browns / Resins
   woody: ["#7B4B2A", "#F7EFE6"],
   leather: ["#4A2E22", "#F3E8DF"],
-  coffee: ["#3A2418", "#F3E6DA"],
   oud: ["#412635", "#F7EDF3"],
   patchouli: ["#5F572E", "#F9F6EA"],
 
@@ -43,12 +42,17 @@ export const PAL: Record<string, [string, string]> = {
   marine: ["#1D5F7C", "#EDF6F9"],
   fresh: ["#62C0D0", "#081F26"],
 
-  // Neutrals & Fallback
+  // Neutrals
   musky: ["#B8A9A0", "#1F1915"],
   smoky: ["#4A4A52", "#F0F0F2"],
 };
 
-export const DEF: [string, string] = ["#D9D9D4", "#161614"];
+// Aliases for rare / merged accords
+export const ACCORD_ALIASES: Record<string, string> = {
+  coffee: "leather",
+};
+
+export const DEF: [string, string] = ["#7E8284", "#0E0E0E"];
 
 /**
  * Returns [fill, ink] for a given accord name.
@@ -57,5 +61,6 @@ export const DEF: [string, string] = ["#D9D9D4", "#161614"];
 export function getColorPair(name?: string | null): [string, string] {
   if (!name) return DEF;
   const key = name.trim().toLowerCase();
-  return PAL[key] || DEF;
+  const resolved = ACCORD_ALIASES[key] || key;
+  return PAL[resolved] || DEF;
 }

@@ -32,3 +32,9 @@ export interface Fragrance {
   description: string;
   sourceUrl: string;
 }
+
+export type CatalogFragrance = Pick<
+  Fragrance,
+  "id" | "slug" | "name" | "brand" | "year" | "gender" | "imageUrl" | "rating" | "voteCount" | "accords"
+>;
+

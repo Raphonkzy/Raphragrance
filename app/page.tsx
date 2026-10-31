@@ -1,28 +1,45 @@
-import { Suspense } from "react";
 import { getFragrances } from "../lib/data";
 import { Nav } from "../components/Nav";
 import { Footer } from "../components/Footer";
 import { CatalogView } from "../components/CatalogView";
 
-interface PageProps {
-  searchParams: Promise<{ fixture?: string; q?: string; gender?: string; sort?: string; accord?: string }>;
-}
-
-export default async function CatalogPage({ searchParams }: PageProps) {
-  const sp = await searchParams;
-  const useGolden = sp.fixture === "golden";
-  const fragrances = getFragrances(useGolden);
+export default function CatalogPage() {
+  const fragrances = getFragrances(false);
   const totalCount = 131930;
+
+  // Lightweight projection for catalog grid & typeahead to minimize RSC transfer size
+  const catalogFragrances = fragrances.map((f) => ({
+    id: f.id,
+    slug: f.slug,
+    name: f.name,
+    brand: f.brand,
+    year: f.year,
+    gender: f.gender,
+    imageUrl: f.imageUrl,
+    rating: f.rating,
+    voteCount: f.voteCount,
+    accords: f.accords?.slice(0, 4) || [],
+  }));
+
+  const firstImageUrl = catalogFragrances[0]?.imageUrl;
 
   return (
     <>
-      <Nav />
-      <Suspense fallback={<div style={{ padding: "40px 32px" }}>Loading catalog…</div>}>
-        <CatalogView
-          initialFragrances={fragrances}
-          totalDatabaseCount={totalCount}
+      <link rel="preconnect" href="https://fimgs.net" />
+      <link rel="dns-prefetch" href="https://fimgs.net" />
+      {firstImageUrl && (
+        <link
+          rel="preload"
+          as="image"
+          href={firstImageUrl}
+          fetchPriority="high"
         />
-      </Suspense>
+      )}
+      <Nav />
+      <CatalogView
+        initialFragrances={catalogFragrances}
+        totalDatabaseCount={totalCount}
+      />
       <Footer />
     </>
   );

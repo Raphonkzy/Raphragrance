@@ -1,15 +1,19 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
-import type { Fragrance } from "../lib/types";
+import type { CatalogFragrance } from "../lib/types";
 import { FragranceTile } from "./FragranceTile";
 import { PAL, getColorPair } from "../lib/palette";
 
 interface CatalogViewProps {
-  initialFragrances: Fragrance[];
+  initialFragrances: CatalogFragrance[];
   totalDatabaseCount: number;
+  initialQuery?: string;
+  initialGender?: string;
+  initialSort?: string;
+  initialAccords?: string[];
 }
 
 const COMMON_ACCORDS = Object.keys(PAL);
@@ -17,23 +21,41 @@ const COMMON_ACCORDS = Object.keys(PAL);
 export function CatalogView({
   initialFragrances,
   totalDatabaseCount,
+  initialQuery = "",
+  initialGender = "All",
+  initialSort = "Popular",
+  initialAccords = [],
 }: CatalogViewProps) {
   const router = useRouter();
-  const searchParams = useSearchParams();
 
-  const [query, setQuery] = useState(searchParams.get("q") || "");
-  const [gender, setGender] = useState<string>(searchParams.get("gender") || "All");
-  const [sort, setSort] = useState<string>(searchParams.get("sort") || "Popular");
-  const [selectedAccords, setSelectedAccords] = useState<string[]>(
-    searchParams.get("accord") ? searchParams.get("accord")!.split(",").filter(Boolean) : []
-  );
-  const [moreFiltersOpen, setMoreFiltersOpen] = useState(false);
-  const [visibleCount, setVisibleCount] = useState(24);
+  const [query, setQuery] = useState(initialQuery);
+  const [gender, setGender] = useState<string>(initialGender);
+  const [sort, setSort] = useState<string>(initialSort);
+  const [selectedAccords, setSelectedAccords] = useState<string[]>(initialAccords);
+  const [moreFiltersOpen, setMoreFiltersOpen] = useState(initialAccords.length > 0);
+  const [visibleCount, setVisibleCount] = useState(16);
 
   // Typeahead state
   const [typeaheadOpen, setTypeaheadOpen] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(-1);
   const searchInputRef = useRef<HTMLInputElement>(null);
+
+  // Hydrate query params on client mount
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const currentParams = new URLSearchParams(window.location.search);
+    const q = currentParams.get("q");
+    const g = currentParams.get("gender");
+    const s = currentParams.get("sort");
+    const acc = currentParams.get("accord");
+    if (q) setQuery(q);
+    if (g) setGender(g);
+    if (s) setSort(s);
+    if (acc) {
+      setSelectedAccords(acc.split(",").filter(Boolean));
+      setMoreFiltersOpen(true);
+    }
+  }, []);
 
   // Keyboard shortcut: '/' and 'Ctrl+K' / 'Cmd+K' to focus search
   useEffect(() => {
@@ -50,20 +72,24 @@ export function CatalogView({
 
   // Sync to URL state (shallow update via history.replaceState so scroll is preserved)
   useEffect(() => {
+    if (typeof window === "undefined") return;
+    const currentParams = new URLSearchParams(window.location.search);
     const params = new URLSearchParams();
     if (query.trim()) params.set("q", query.trim());
     if (gender !== "All") params.set("gender", gender);
     if (sort !== "Popular") params.set("sort", sort);
     if (selectedAccords.length > 0) params.set("accord", selectedAccords.join(","));
 
-    // If fixture parameter was present, preserve it in dev
-    const fix = searchParams.get("fixture");
+    const fix = currentParams.get("fixture");
     if (fix) params.set("fixture", fix);
 
     const qs = params.toString();
     const targetUrl = qs ? `/?${qs}` : "/";
-    window.history.replaceState(null, "", targetUrl);
-  }, [query, gender, sort, selectedAccords, searchParams]);
+    const currentUrl = window.location.pathname + (window.location.search || "");
+    if (targetUrl !== currentUrl) {
+      window.history.replaceState(null, "", targetUrl);
+    }
+  }, [query, gender, sort, selectedAccords]);
 
   // Filtering & Sorting
   const filtered = useMemo(() => {
@@ -198,6 +224,7 @@ export function CatalogView({
                     href={`/fragrance/${item.slug}`}
                     className={`typeahead-item ${isSelected ? "selected" : ""}`}
                     onClick={() => setTypeaheadOpen(false)}
+                    prefetch={false}
                   >
                     <span
                       className="typeahead-dot"
@@ -305,7 +332,7 @@ export function CatalogView({
               <FragranceTile
                 key={f.id}
                 fragrance={f}
-                priority={idx < 6}
+                priority={idx === 0}
               />
             ))}
 
@@ -314,7 +341,7 @@ export function CatalogView({
                 <button
                   type="button"
                   className="chip"
-                  onClick={() => setVisibleCount((prev) => prev + 24)}
+                  onClick={() => setVisibleCount((prev) => prev + 16)}
                 >
                   Load more · {filtered.length - visibleCount} remaining
                 </button>

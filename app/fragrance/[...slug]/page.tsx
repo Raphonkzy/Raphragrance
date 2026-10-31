@@ -10,7 +10,14 @@ import { BottleSvg, FragranceTile } from "../../../components/FragranceTile";
 
 interface PageProps {
   params: Promise<{ slug: string[] }>;
-  searchParams: Promise<{ fixture?: string }>;
+  searchParams?: Promise<{ fixture?: string }>;
+}
+
+export function generateStaticParams() {
+  const all = getFragrances(false);
+  return all.map((f) => ({
+    slug: f.slug.split("/"),
+  }));
 }
 
 export default async function FragranceDetailPage({
@@ -18,8 +25,8 @@ export default async function FragranceDetailPage({
   searchParams,
 }: PageProps) {
   const { slug } = await params;
-  const { fixture } = await searchParams;
-  const useGolden = fixture === "golden";
+  const sp = searchParams ? await searchParams : {};
+  const useGolden = sp.fixture === "golden";
 
   const rawSlug = slug.join("/");
   const fragrance = getFragranceBySlug(rawSlug, useGolden);
@@ -59,16 +66,26 @@ export default async function FragranceDetailPage({
 
   return (
     <>
+      <link rel="preconnect" href="https://fimgs.net" />
+      <link rel="dns-prefetch" href="https://fimgs.net" />
+      {fragrance.imageUrl && (
+        <link
+          rel="preload"
+          as="image"
+          href={fragrance.imageUrl}
+          fetchPriority="high"
+        />
+      )}
       <Nav />
 
       {/* Hero */}
       <section className="hero" style={style}>
         <div>
-          <Link href="/" className="back">
+          <Link href="/" className="back" prefetch={false}>
             ← All fragrances
           </Link>
           <div className="br">
-            <Link href={`/brand/${encodeURIComponent(fragrance.brand)}`}>
+            <Link href={`/brand/${encodeURIComponent(fragrance.brand)}`} prefetch={false}>
               {fragrance.brand}
             </Link>
           </div>
@@ -86,9 +103,9 @@ export default async function FragranceDetailPage({
                 alt={`${fragrance.brand} ${fragrance.name} bottle`}
                 width={280}
                 height={373}
-                // @ts-expect-error fetchPriority
-                fetchpriority="high"
+                fetchPriority="high"
                 loading="eager"
+                decoding="sync"
               />
               <BottleSvg />
             </>
