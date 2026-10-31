@@ -8,9 +8,8 @@ node_modules/
 out/
 
 # Data (large files, local only)
-data/*.db
-data/*.csv
-data/*.jsonl
+data/*
+!data/.gitkeep
 
 # Environment
 .env

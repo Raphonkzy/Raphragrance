@@ -1,28 +1,10 @@
 import Link from "next/link";
-import { getFragrances } from "../../lib/data";
+import { getNotesSummary } from "../../lib/data";
 import { Nav } from "../../components/Nav";
 import { Footer } from "../../components/Footer";
 
 export default function NotesPage() {
-  const all = getFragrances(false);
-
-  const noteCounts: Record<string, number> = {};
-  for (const f of all) {
-    const notes = [
-      ...(f.notes.top || []),
-      ...(f.notes.heart || []),
-      ...(f.notes.base || []),
-      ...(f.notes.flat || []),
-    ];
-    const unique = new Set(notes);
-    for (const n of unique) {
-      if (n) {
-        noteCounts[n] = (noteCounts[n] || 0) + 1;
-      }
-    }
-  }
-
-  const sorted = Object.entries(noteCounts).sort((a, b) => b[1] - a[1]);
+  const sorted = getNotesSummary(undefined, 200);
 
   return (
     <>
@@ -32,7 +14,7 @@ export default function NotesPage() {
           Notes ({sorted.length})
         </h1>
         <div className="list-rows">
-          {sorted.slice(0, 100).map(([note, count]) => (
+          {sorted.map(({ name: note, count }) => (
             <Link
               key={note}
               href={`/?q=${encodeURIComponent(note)}`}

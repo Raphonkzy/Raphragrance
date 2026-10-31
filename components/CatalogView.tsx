@@ -35,6 +35,13 @@ export function CatalogView({
   const [moreFiltersOpen, setMoreFiltersOpen] = useState(initialAccords.length > 0);
   const [visibleCount, setVisibleCount] = useState(16);
 
+  // Live API search results & pagination across 131,930 database
+  const [apiResults, setApiResults] = useState<CatalogFragrance[] | null>(null);
+  const [apiTotal, setApiTotal] = useState<number | null>(null);
+  const [apiSuggestions, setApiSuggestions] = useState<CatalogFragrance[] | null>(null);
+  const searchAbortRef = useRef<AbortController | null>(null);
+  const typeaheadAbortRef = useRef<AbortController | null>(null);
+
   // Typeahead state
   const [typeaheadOpen, setTypeaheadOpen] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(-1);
@@ -60,8 +67,10 @@ export function CatalogView({
   // Keyboard shortcut: '/' and 'Ctrl+K' / 'Cmd+K' to focus search
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
-      if ((e.key === "/" && document.activeElement !== searchInputRef.current) ||
-          ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k")) {
+      if (
+        (e.key === "/" && document.activeElement !== searchInputRef.current) ||
+        ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k")
+      ) {
         e.preventDefault();
         searchInputRef.current?.focus();
       }
@@ -91,8 +100,99 @@ export function CatalogView({
     }
   }, [query, gender, sort, selectedAccords]);
 
-  // Filtering & Sorting
-  const filtered = useMemo(() => {
+  // Debounced API search when query or filters are active
+  useEffect(() => {
+    const trimmed = query.trim();
+    const hasFilters =
+      trimmed.length > 0 ||
+      gender !== "All" ||
+      sort !== "Popular" ||
+      selectedAccords.length > 0;
+
+    if (!hasFilters) {
+      setApiResults(null);
+      setApiTotal(null);
+      return;
+    }
+
+    const handler = setTimeout(async () => {
+      if (searchAbortRef.current) {
+        searchAbortRef.current.abort();
+      }
+      const ac = new AbortController();
+      searchAbortRef.current = ac;
+
+      try {
+        const params = new URLSearchParams();
+        if (trimmed) params.set("q", trimmed);
+        if (gender !== "All") params.set("gender", gender);
+        if (sort !== "Popular") params.set("sort", sort.toLowerCase());
+        if (selectedAccords.length > 0) params.set("accord", selectedAccords.join(","));
+        params.set("limit", "48");
+
+        const res = await fetch(`/api/fragrances?${params.toString()}`, {
+          signal: ac.signal,
+        });
+        if (!res.ok) return;
+        const json = await res.json();
+        setApiResults(json.data);
+        setApiTotal(json.total);
+        setVisibleCount(24);
+      } catch (e: unknown) {
+        if ((e as Error)?.name !== "AbortError") {
+          console.error("Search fetch error:", e);
+        }
+      }
+    }, 180);
+
+    return () => {
+      clearTimeout(handler);
+      if (searchAbortRef.current) {
+        searchAbortRef.current.abort();
+      }
+    };
+  }, [query, gender, sort, selectedAccords]);
+
+  // Debounced Typeahead suggestions from API
+  useEffect(() => {
+    const trimmed = query.trim();
+    if (trimmed.length < 2) {
+      setApiSuggestions(null);
+      return;
+    }
+
+    const handler = setTimeout(async () => {
+      if (typeaheadAbortRef.current) {
+        typeaheadAbortRef.current.abort();
+      }
+      const ac = new AbortController();
+      typeaheadAbortRef.current = ac;
+
+      try {
+        const res = await fetch(
+          `/api/fragrances?q=${encodeURIComponent(trimmed)}&limit=6`,
+          { signal: ac.signal }
+        );
+        if (!res.ok) return;
+        const json = await res.json();
+        setApiSuggestions(json.data);
+      } catch (e: unknown) {
+        if ((e as Error)?.name !== "AbortError") {
+          // silent
+        }
+      }
+    }, 120);
+
+    return () => {
+      clearTimeout(handler);
+      if (typeaheadAbortRef.current) {
+        typeaheadAbortRef.current.abort();
+      }
+    };
+  }, [query]);
+
+  // Fallback local filtering & sorting for zero-network initial view
+  const localFiltered = useMemo(() => {
     let list = initialFragrances;
 
     if (gender !== "All") {
@@ -124,7 +224,6 @@ export function CatalogView({
       );
     }
 
-    // Sort
     const sorted = [...list].sort((a, b) => {
       switch (sort) {
         case "Rating":
@@ -142,14 +241,17 @@ export function CatalogView({
     return sorted;
   }, [initialFragrances, gender, selectedAccords, query, sort]);
 
-  // Typeahead suggestions (top 6 matches)
+  // Typeahead suggestions (API results preferred, local fallback)
   const suggestions = useMemo(() => {
     if (!query.trim() || query.length < 2) return [];
+    if (apiSuggestions && apiSuggestions.length > 0) {
+      return apiSuggestions;
+    }
     const q = query.toLowerCase();
     return initialFragrances
       .filter((f) => f.name.toLowerCase().includes(q) || f.brand.toLowerCase().includes(q))
       .slice(0, 6);
-  }, [initialFragrances, query]);
+  }, [initialFragrances, query, apiSuggestions]);
 
   function handleTypeaheadKeyDown(e: React.KeyboardEvent) {
     if (!typeaheadOpen || suggestions.length === 0) return;
@@ -180,11 +282,46 @@ export function CatalogView({
     setGender("All");
     setSort("Popular");
     setSelectedAccords([]);
+    setApiResults(null);
+    setApiTotal(null);
     setVisibleCount(24);
   }
 
-  const displayed = filtered.slice(0, visibleCount);
-  const hasMore = visibleCount < filtered.length;
+  async function handleLoadMore() {
+    if (apiResults && apiTotal !== null && apiResults.length < apiTotal) {
+      try {
+        const params = new URLSearchParams();
+        if (query.trim()) params.set("q", query.trim());
+        if (gender !== "All") params.set("gender", gender);
+        if (sort !== "Popular") params.set("sort", sort.toLowerCase());
+        if (selectedAccords.length > 0) params.set("accord", selectedAccords.join(","));
+        params.set("offset", String(apiResults.length));
+        params.set("limit", "24");
+
+        const res = await fetch(`/api/fragrances?${params.toString()}`);
+        if (res.ok) {
+          const json = await res.json();
+          setApiResults((prev) => (prev ? [...prev, ...json.data] : json.data));
+          setVisibleCount((prev) => prev + json.data.length);
+        }
+      } catch (e) {
+        console.error("Load more fetch error:", e);
+      }
+    } else {
+      setVisibleCount((prev) => prev + 16);
+    }
+  }
+
+  const activeList = apiResults !== null ? apiResults : localFiltered;
+  const totalCount =
+    apiTotal !== null
+      ? apiTotal
+      : query.trim() || selectedAccords.length > 0 || gender !== "All" || sort !== "Popular"
+      ? localFiltered.length
+      : totalDatabaseCount;
+
+  const displayed = activeList.slice(0, visibleCount);
+  const hasMore = visibleCount < activeList.length || (apiTotal !== null && visibleCount < apiTotal);
 
   return (
     <>
@@ -205,7 +342,6 @@ export function CatalogView({
               if (query.length >= 2) setTypeaheadOpen(true);
             }}
             onBlur={() => {
-              // Delay slightly so clicks register
               setTimeout(() => setTypeaheadOpen(false), 200);
             }}
             onKeyDown={handleTypeaheadKeyDown}
@@ -283,7 +419,7 @@ export function CatalogView({
           </button>
 
           <span className="cnt">
-            showing {displayed.length} of {filtered.length}
+            showing {displayed.length} of {totalCount.toLocaleString("en-US")}
           </span>
         </div>
 
@@ -314,7 +450,7 @@ export function CatalogView({
       </div>
 
       <main className="grid" id="catalog-grid" aria-label="Catalog results">
-        {filtered.length === 0 ? (
+        {displayed.length === 0 ? (
           <div className="empty">
             No fragrances match &ldquo;{query}&rdquo;.
             <span>Clear the search or change the filters.</span>
@@ -341,9 +477,9 @@ export function CatalogView({
                 <button
                   type="button"
                   className="chip"
-                  onClick={() => setVisibleCount((prev) => prev + 16)}
+                  onClick={handleLoadMore}
                 >
-                  Load more · {filtered.length - visibleCount} remaining
+                  Load more · {Math.max(0, totalCount - displayed.length).toLocaleString("en-US")} remaining
                 </button>
               </div>
             )}

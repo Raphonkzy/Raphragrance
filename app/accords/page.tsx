@@ -1,22 +1,11 @@
 import Link from "next/link";
-import { getFragrances } from "../../lib/data";
+import { getAccordsSummary } from "../../lib/data";
 import { getColorPair } from "../../lib/palette";
 import { Nav } from "../../components/Nav";
 import { Footer } from "../../components/Footer";
 
 export default function AccordsPage() {
-  const all = getFragrances(false);
-
-  const accordCounts: Record<string, number> = {};
-  for (const f of all) {
-    for (const a of f.accords || []) {
-      if (a.name) {
-        accordCounts[a.name] = (accordCounts[a.name] || 0) + 1;
-      }
-    }
-  }
-
-  const sorted = Object.entries(accordCounts).sort((a, b) => b[1] - a[1]);
+  const sorted = getAccordsSummary();
 
   return (
     <>
@@ -26,7 +15,7 @@ export default function AccordsPage() {
           Accords ({sorted.length})
         </h1>
         <div className="list-rows">
-          {sorted.map(([accord, count]) => {
+          {sorted.map(({ name: accord, count }) => {
             const [fill] = getColorPair(accord);
             return (
               <Link

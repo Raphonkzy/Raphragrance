@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import type { CSSProperties } from "react";
-import { getFragrances } from "../../../lib/data";
+import { getFragrancesByBrand } from "../../../lib/data";
 import { getColorPair } from "../../../lib/palette";
 import { Nav } from "../../../components/Nav";
 import { Footer } from "../../../components/Footer";
@@ -18,11 +18,7 @@ export default async function BrandPage({ params, searchParams }: PageProps) {
   const useGolden = fixture === "golden";
 
   const brandName = decodeURIComponent(slug.join("/"));
-  const all = getFragrances(useGolden);
-
-  const brandFragrances = all.filter(
-    (f) => f.brand.toLowerCase() === brandName.toLowerCase()
-  );
+  const brandFragrances = getFragrancesByBrand(brandName);
 
   if (brandFragrances.length === 0) {
     notFound();

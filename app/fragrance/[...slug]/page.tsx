@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import type { CSSProperties } from "react";
-import { getFragranceBySlug, getFragrances } from "../../../lib/data";
+import { getFragranceBySlug, getFragrances, getSimilarFragrances } from "../../../lib/data";
 import { getColorPair } from "../../../lib/palette";
 import { formatVotes, lonL, silL, normalizeSeasons } from "../../../lib/format";
 import { Nav } from "../../../components/Nav";
@@ -50,10 +50,7 @@ export default async function FragranceDetailPage({
       ? "Women"
       : "Unisex";
 
-  const allFragrances = getFragrances(useGolden);
-  const similar = allFragrances
-    .filter((f) => f.id !== fragrance.id)
-    .slice(0, 3);
+  const similar = getSimilarFragrances(fragrance, 3);
 
   const [wScore, spScore, suScore, faScore] = normalizeSeasons(fragrance.seasons);
 

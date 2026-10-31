@@ -1,21 +1,10 @@
 import Link from "next/link";
-import { getFragrances } from "../../lib/data";
+import { getBrandsSummary } from "../../lib/data";
 import { Nav } from "../../components/Nav";
 import { Footer } from "../../components/Footer";
 
 export default function BrandsPage() {
-  const all = getFragrances(false);
-
-  const brandCounts: Record<string, number> = {};
-  for (const f of all) {
-    if (f.brand) {
-      brandCounts[f.brand] = (brandCounts[f.brand] || 0) + 1;
-    }
-  }
-
-  const sorted = Object.entries(brandCounts).sort((a, b) =>
-    a[0].localeCompare(b[0])
-  );
+  const sorted = getBrandsSummary();
 
   return (
     <>
@@ -25,7 +14,7 @@ export default function BrandsPage() {
           Brands ({sorted.length})
         </h1>
         <div className="list-rows">
-          {sorted.map(([brand, count]) => (
+          {sorted.map(({ brand, count }) => (
             <Link
               key={brand}
               href={`/brand/${encodeURIComponent(brand)}`}

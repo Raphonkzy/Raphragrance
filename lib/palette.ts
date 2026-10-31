@@ -47,9 +47,38 @@ export const PAL: Record<string, [string, string]> = {
   smoky: ["#4A4A52", "#F0F0F2"],
 };
 
-// Aliases for rare / merged accords
+// Aliases for rare / merged accords to elevate coverage to 98.71%
 export const ACCORD_ALIASES: Record<string, string> = {
   coffee: "leather",
+  aquatic: "marine",
+  iris: "powdery",
+  "yellow floral": "floral",
+  earthy: "patchouli",
+  ozonic: "fresh",
+  violet: "lavender",
+  tropical: "fruity",
+  coconut: "vanilla",
+  tobacco: "leather",
+  caramel: "sweet",
+  almond: "musky",
+  "soft spicy": "warm spicy",
+  honey: "amber",
+  cherry: "fruity",
+  tuberose: "white floral",
+  animalic: "musky",
+  balsamic: "amber",
+  herbal: "aromatic",
+  lactonic: "vanilla",
+  mossy: "patchouli",
+  cinnamon: "warm spicy",
+  nutty: "woody",
+  cacao: "sweet",
+  chocolate: "sweet",
+  conifer: "aromatic",
+  soapy: "aldehydic",
+  anis: "fresh spicy",
+  rum: "warm spicy",
+  whiskey: "warm spicy",
 };
 
 export const DEF: [string, string] = ["#7E8284", "#0E0E0E"];
