@@ -17,7 +17,7 @@ export interface Fragrance {
   brand: string;
   year: number | null;
   gender: "male" | "female" | "unisex";
-  imageUrl: string;
+  imageUrl: string | null;
   rating: number | null;
   voteCount: number;
   longevity: number | null;

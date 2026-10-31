@@ -1,13 +1,11 @@
-"use client";
-
-import { useState } from "react";
+// Server Component — zero client-side React hydration overhead
+import React from "react";
 
 interface ImagePanelProps {
-  src: string;
+  src?: string | null;
   alt: string;
   hue: number;
   priority?: boolean;
-  fill?: boolean;
 }
 
 export default function ImagePanel({
@@ -15,35 +13,27 @@ export default function ImagePanel({
   alt,
   hue,
   priority = false,
-  fill = false,
 }: ImagePanelProps) {
-  const [imgError, setImgError] = useState(false);
+  const hasValidSrc = Boolean(src && src.trim().length > 0 && !src.includes("null") && !src.includes("undefined"));
 
   return (
-    <div
-      className="d3-ph"
-      style={{ "--ph-hue": hue } as React.CSSProperties}
-    >
-      {/* Bottle SVG — always in background; hidden by image when image loads */}
-      <svg
-        viewBox="0 0 60 90"
-        aria-hidden="true"
-        className="bottle"
-        style={{ display: "block" }}
-      >
-        <rect x="22" y="4" width="16" height="10" />
+    <div className="ph" style={{ "--h": hue } as React.CSSProperties}>
+      {/* Bottle SVG placeholder — preview viewBox 0 0 60 90 */}
+      <svg viewBox="0 0 60 90" aria-hidden="true" className="bottle">
+        <rect x="22" y="4" width="16" height="10" rx="2" />
         <rect x="26" y="14" width="8" height="8" />
-        <rect x="10" y="22" width="40" height="62" />
+        <rect x="10" y="22" width="40" height="62" rx="8" />
       </svg>
-      {/* Image on top — hides the bottle when it loads */}
-      {!imgError && (
+      {hasValidSrc && (
         // eslint-disable-next-line @next/next/no-img-element
         <img
-          src={src}
+          src={src!}
           alt={alt}
+          width={375}
+          height={500}
           loading={priority ? "eager" : "lazy"}
           fetchPriority={priority ? "high" : "auto"}
-          onError={() => setImgError(true)}
+          decoding="async"
         />
       )}
     </div>

@@ -6,33 +6,55 @@ cur = conn.cursor()
 
 results = []
 
-cur.execute('SELECT * FROM perfumes WHERE vote_count > 5000 ORDER BY vote_count DESC LIMIT 80')
+# 1. Top voted perfumes (high popularity) - 130
+cur.execute('SELECT * FROM perfumes WHERE vote_count > 2500 ORDER BY vote_count DESC LIMIT 130')
 results += [dict(r) for r in cur.fetchall()]
 
-cur.execute('SELECT * FROM perfumes WHERE vote_count BETWEEN 100 AND 5000 AND rating_avg > 4.2 ORDER BY rating_avg DESC LIMIT 50')
+# 2. High rating classics - 80
+cur.execute('SELECT * FROM perfumes WHERE vote_count BETWEEN 300 AND 2500 AND rating_avg > 4.2 ORDER BY rating_avg DESC LIMIT 80')
 results += [dict(r) for r in cur.fetchall()]
 
+# 3. Male top voted - 30
 cur.execute("SELECT * FROM perfumes WHERE gender='male' AND vote_count > 1000 ORDER BY vote_count DESC LIMIT 30")
 results += [dict(r) for r in cur.fetchall()]
 
-cur.execute("SELECT * FROM perfumes WHERE notes_top='' AND notes_middle='' AND notes_base='' AND vote_count > 10 LIMIT 10")
+# 4. Female top voted - 30
+cur.execute("SELECT * FROM perfumes WHERE gender='female' AND vote_count > 1000 ORDER BY vote_count DESC LIMIT 30")
 results += [dict(r) for r in cur.fetchall()]
 
-cur.execute("SELECT * FROM perfumes WHERE accords='' AND vote_count > 10 LIMIT 10")
+# 5. Unisex top voted - 30
+cur.execute("SELECT * FROM perfumes WHERE gender='unisex' AND vote_count > 1000 ORDER BY vote_count DESC LIMIT 30")
 results += [dict(r) for r in cur.fetchall()]
 
-cur.execute('SELECT * FROM perfumes WHERE year IS NULL AND vote_count > 100 LIMIT 10')
+# 6. Edge case: Flat notes only (no top, heart, base) - 15
+cur.execute("SELECT * FROM perfumes WHERE notes_top='' AND notes_middle='' AND notes_base='' AND notes_flat != '' AND vote_count > 10 LIMIT 15")
 results += [dict(r) for r in cur.fetchall()]
 
-cur.execute('SELECT * FROM perfumes WHERE length(name) > 40 AND vote_count > 5 LIMIT 10')
+# 7. Edge case: No notes at all - 10
+cur.execute("SELECT * FROM perfumes WHERE notes_top='' AND notes_middle='' AND notes_base='' AND (notes_flat='' OR notes_flat IS NULL) AND vote_count > 5 LIMIT 10")
 results += [dict(r) for r in cur.fetchall()]
 
-cur.execute("SELECT * FROM perfumes WHERE length(notes_top) > 60 AND vote_count > 100 LIMIT 10")
+# 8. Edge case: Missing year (year is NULL or 0) - 20
+cur.execute("SELECT * FROM perfumes WHERE (year IS NULL OR year = 0) AND vote_count > 50 ORDER BY vote_count DESC LIMIT 20")
 results += [dict(r) for r in cur.fetchall()]
 
-cur.execute("SELECT * FROM perfumes WHERE gender='unisex' AND vote_count > 2000 ORDER BY vote_count DESC LIMIT 20")
+# 9. Edge case: Very long perfume names (>40 chars) - 20
+cur.execute("SELECT * FROM perfumes WHERE length(name) > 40 AND vote_count > 5 ORDER BY length(name) DESC LIMIT 20")
 results += [dict(r) for r in cur.fetchall()]
 
+# 10. Edge case: Many accords (>5 accords) - 30
+cur.execute("SELECT * FROM perfumes WHERE accords LIKE '%|%|%|%|%|%' AND vote_count > 100 ORDER BY vote_count DESC LIMIT 30")
+results += [dict(r) for r in cur.fetchall()]
+
+# 11. Edge case: No accords at all - 15
+cur.execute("SELECT * FROM perfumes WHERE (accords = '' OR accords IS NULL) AND vote_count > 10 LIMIT 15")
+results += [dict(r) for r in cur.fetchall()]
+
+# 12. Edge case: Brands with slashes - include all 9 brands with slash!
+cur.execute("SELECT * FROM perfumes WHERE brand LIKE '%/%' LIMIT 20")
+results += [dict(r) for r in cur.fetchall()]
+
+# Deduplicate
 seen = set()
 unique = []
 for r in results:
@@ -40,7 +62,7 @@ for r in results:
         seen.add(r['id'])
         unique.append(r)
 
-print('Total unique:', len(unique))
+print('Total unique fragrances collected:', len(unique))
 
 def parse_notes(field):
     return [n.strip() for n in (field or '').split('|') if n.strip()]
@@ -60,7 +82,6 @@ def fmt(r):
     rid = r['id']
     hue = (rid * 137) % 360
 
-    # Normalize season votes to 0-4 scale (highest = 4.0)
     season_raw = {
         'winter': r['winter_votes'] or 0,
         'spring': r['spring_votes'] or 0,
@@ -75,7 +96,7 @@ def fmt(r):
         'brand': r['brand'],
         'year': r['year'] if r['year'] and r['year'] > 1700 else None,
         'gender': r['gender'] or 'unisex',
-        'imageUrl': 'https://fimgs.net/mdimg/perfume/375x500.' + str(rid) + '.jpg',
+        'imageUrl': f'https://fimgs.net/mdimg/perfume/375x500.{rid}.jpg',
         'rating': round(float(r['rating_avg']), 2) if r['rating_avg'] else None,
         'voteCount': r['vote_count'] or 0,
         'longevity': round(float(r['longevity_avg']), 2) if r['longevity_avg'] else None,

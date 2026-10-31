@@ -1,21 +1,27 @@
-// Server component — no "use client"
 import Link from "next/link";
 import { ThemeToggle } from "./ThemeToggle";
 
-export default function Navbar() {
+interface NavbarProps {
+  children?: React.ReactNode;
+}
+
+export default function Navbar({ children }: NavbarProps) {
   return (
-    <header className="d3-nav" role="banner">
-      <Link href="/" className="d3-logo" aria-label="Raphragrance home">
+    <header className="nav" role="banner">
+      <Link href="/" className="logo" aria-label="Raphragrance home">
         Raphragrance
       </Link>
-      <nav aria-label="Primary navigation">
-        <ul className="d3-nav-links">
-          <li><Link href="/">Catalog</Link></li>
-          <li><Link href="/notes">Notes</Link></li>
-          <li><Link href="/accords">Accords</Link></li>
-          <li><Link href="/brands">Brands</Link></li>
-        </ul>
-      </nav>
+      {children || (
+        <form action="/" method="GET" className="search-wrap">
+          <input
+            type="search"
+            name="q"
+            className="search"
+            placeholder="Search brand, note, accord…"
+            aria-label="Search brand, note, accord"
+          />
+        </form>
+      )}
       <ThemeToggle />
     </header>
   );

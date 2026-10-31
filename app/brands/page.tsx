@@ -5,38 +5,52 @@ import type { Fragrance } from "@/lib/types";
 import type { Metadata } from "next";
 import Link from "next/link";
 
-export const metadata: Metadata = { title: "Brands" };
+export const metadata: Metadata = {
+  title: "Brands",
+  description: "Browse perfume brands in the Raphragrance encyclopedia.",
+};
 
 export default function BrandsPage() {
   const fragrances = fixtureData as Fragrance[];
-  const brands = Array.from(new Set(fragrances.map((f) => f.brand))).sort((a, b) =>
-    a.localeCompare(b)
+  const brandCounts = new Map<string, number>();
+  for (const f of fragrances) {
+    brandCounts.set(f.brand, (brandCounts.get(f.brand) || 0) + 1);
+  }
+  const brands = Array.from(brandCounts.entries()).sort(
+    (a, b) => b[1] - a[1] || a[0].localeCompare(b[0])
   );
 
   return (
     <>
       <Navbar />
-      <main style={{ padding: "48px 48px 90px" }}>
-        <h1 className="d3-section-heading" style={{ marginTop: 0 }}>
-          Brands ({brands.length})
-        </h1>
-        <ul style={{ listStyle: "none" }}>
-          {brands.map((brand) => (
-            <li key={brand} style={{ borderBottom: "1px solid var(--bd)" }}>
-              <Link
-                href={`/brand/${encodeURIComponent(brand)}`}
-                style={{
-                  display: "block",
-                  fontSize: 14,
-                  color: "var(--tx2)",
-                  padding: "10px 0",
-                }}
-              >
-                {brand}
-              </Link>
-            </li>
-          ))}
-        </ul>
+      <main style={{ padding: "20px" }}>
+        <Link href="/" className="back" style={{ marginBottom: 16 }}>
+          ← Catalog
+        </Link>
+        <h2 style={{ marginBottom: 16 }}>Brands ({brands.length})</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Brand</th>
+              <th className="n">Fragrances</th>
+            </tr>
+          </thead>
+          <tbody>
+            {brands.map(([brand, count]) => (
+              <tr key={brand}>
+                <td>
+                  <Link
+                    href={`/brand/${brand}`}
+                    style={{ color: "var(--tx)", textDecoration: "none" }}
+                  >
+                    {brand}
+                  </Link>
+                </td>
+                <td className="n">{count}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </main>
       <Footer />
     </>

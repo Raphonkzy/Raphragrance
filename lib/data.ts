@@ -2,8 +2,8 @@ import type { Fragrance } from "./types";
 import goldenData from "../fixtures/golden.json";
 import fixtureData from "../fixtures/fragrances.json";
 
-const golden = goldenData as Fragrance[];
-const catalog = fixtureData as Fragrance[];
+const golden = goldenData as unknown as Fragrance[];
+const catalog = fixtureData as unknown as Fragrance[];
 
 /**
  * Load fragrances for a page.
@@ -23,8 +23,12 @@ export function getFragranceBySlug(
   useGolden = false
 ): Fragrance | undefined {
   const list = getFragrances(useGolden);
+  const decoded = decodeURIComponent(slug);
   return list.find(
-    (f) => String(f.slug) === slug || String(f.id) === slug
+    (f) =>
+      String(f.slug) === slug ||
+      String(f.slug) === decoded ||
+      String(f.id) === slug
   );
 }
 

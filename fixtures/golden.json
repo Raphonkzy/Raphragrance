@@ -6,27 +6,61 @@
     "brand": "Dior",
     "year": 2015,
     "gender": "male",
-    "imageUrl": "https://fimgs.net/mdimg/perfume/375x500.34561.jpg",
+    "imageUrl": null,
     "rating": 4.22,
     "voteCount": 28431,
     "longevity": 3.6,
     "sillage": 3.8,
     "hue": 215,
     "accords": [
-      { "name": "fresh spicy", "strength": 100 },
-      { "name": "amber", "strength": 86 },
-      { "name": "citrus", "strength": 72 },
-      { "name": "aromatic", "strength": 64 },
-      { "name": "woody", "strength": 55 }
+      {
+        "name": "fresh spicy",
+        "strength": 100
+      },
+      {
+        "name": "amber",
+        "strength": 86
+      },
+      {
+        "name": "citrus",
+        "strength": 72
+      },
+      {
+        "name": "aromatic",
+        "strength": 64
+      },
+      {
+        "name": "woody",
+        "strength": 55
+      }
     ],
     "notes": {
-      "top": ["Bergamot", "Pepper"],
-      "heart": ["Sichuan Pepper", "Lavender", "Elemi"],
-      "base": ["Ambroxan", "Cedar", "Labdanum"],
+      "top": [
+        "Bergamot",
+        "Pepper"
+      ],
+      "heart": [
+        "Sichuan Pepper",
+        "Lavender",
+        "Elemi"
+      ],
+      "base": [
+        "Ambroxan",
+        "Cedar",
+        "Labdanum"
+      ],
       "flat": []
     },
-    "seasons": { "winter": 24, "spring": 30, "summer": 40, "autumn": 31 },
-    "timeOfDay": { "day": 40, "night": 60 },
+    "seasons": {
+      "winter": 2.4,
+      "spring": 3.0,
+      "summer": 4.0,
+      "autumn": 3.1
+    },
+    "timeOfDay": {
+      "day": 40,
+      "night": 60
+    },
     "perfumers": [],
     "description": "",
     "sourceUrl": ""
@@ -38,27 +72,62 @@
     "brand": "Le Labo",
     "year": 2011,
     "gender": "unisex",
-    "imageUrl": "https://fimgs.net/mdimg/perfume/375x500.12914.jpg",
+    "imageUrl": null,
     "rating": 4.05,
     "voteCount": 12980,
     "longevity": 3.9,
     "sillage": 3.2,
     "hue": 30,
     "accords": [
-      { "name": "woody", "strength": 100 },
-      { "name": "warm spicy", "strength": 82 },
-      { "name": "leather", "strength": 70 },
-      { "name": "powdery", "strength": 58 },
-      { "name": "aromatic", "strength": 45 }
+      {
+        "name": "woody",
+        "strength": 100
+      },
+      {
+        "name": "warm spicy",
+        "strength": 82
+      },
+      {
+        "name": "leather",
+        "strength": 70
+      },
+      {
+        "name": "powdery",
+        "strength": 58
+      },
+      {
+        "name": "aromatic",
+        "strength": 45
+      }
     ],
     "notes": {
-      "top": ["Cardamom", "Iris", "Violet"],
-      "heart": ["Sandalwood", "Papyrus", "Cedar"],
-      "base": ["Leather", "Amber", "Musk"],
+      "top": [
+        "Cardamom",
+        "Iris",
+        "Violet"
+      ],
+      "heart": [
+        "Sandalwood",
+        "Papyrus",
+        "Cedar"
+      ],
+      "base": [
+        "Leather",
+        "Amber",
+        "Musk"
+      ],
       "flat": []
     },
-    "seasons": { "winter": 38, "spring": 26, "summer": 15, "autumn": 34 },
-    "timeOfDay": { "day": 50, "night": 50 },
+    "seasons": {
+      "winter": 3.8,
+      "spring": 2.6,
+      "summer": 1.5,
+      "autumn": 3.4
+    },
+    "timeOfDay": {
+      "day": 50,
+      "night": 50
+    },
     "perfumers": [],
     "description": "",
     "sourceUrl": ""
@@ -70,27 +139,59 @@
     "brand": "Maison Francis Kurkdjian",
     "year": 2015,
     "gender": "unisex",
-    "imageUrl": "https://fimgs.net/mdimg/perfume/375x500.44256.jpg",
+    "imageUrl": null,
     "rating": 4.31,
     "voteCount": 9120,
     "longevity": 4.4,
     "sillage": 4.0,
     "hue": 350,
     "accords": [
-      { "name": "amber", "strength": 100 },
-      { "name": "woody", "strength": 88 },
-      { "name": "sweet", "strength": 74 },
-      { "name": "floral", "strength": 60 },
-      { "name": "musky", "strength": 52 }
+      {
+        "name": "amber",
+        "strength": 100
+      },
+      {
+        "name": "woody",
+        "strength": 88
+      },
+      {
+        "name": "sweet",
+        "strength": 74
+      },
+      {
+        "name": "floral",
+        "strength": 60
+      },
+      {
+        "name": "musky",
+        "strength": 52
+      }
     ],
     "notes": {
-      "top": ["Saffron", "Jasmine"],
-      "heart": ["Amberwood", "Ambergris"],
-      "base": ["Fir Resin", "Cedar"],
+      "top": [
+        "Saffron",
+        "Jasmine"
+      ],
+      "heart": [
+        "Amberwood",
+        "Ambergris"
+      ],
+      "base": [
+        "Fir Resin",
+        "Cedar"
+      ],
       "flat": []
     },
-    "seasons": { "winter": 36, "spring": 28, "summer": 22, "autumn": 37 },
-    "timeOfDay": { "day": 40, "night": 60 },
+    "seasons": {
+      "winter": 3.6,
+      "spring": 2.8,
+      "summer": 2.2,
+      "autumn": 3.7
+    },
+    "timeOfDay": {
+      "day": 40,
+      "night": 60
+    },
     "perfumers": [],
     "description": "",
     "sourceUrl": ""
@@ -102,27 +203,62 @@
     "brand": "Yves Saint Laurent",
     "year": 2014,
     "gender": "female",
-    "imageUrl": "https://fimgs.net/mdimg/perfume/375x500.27539.jpg",
+    "imageUrl": null,
     "rating": 3.98,
     "voteCount": 17644,
     "longevity": 3.4,
     "sillage": 3.6,
     "hue": 280,
     "accords": [
-      { "name": "vanilla", "strength": 100 },
-      { "name": "sweet", "strength": 90 },
-      { "name": "coffee", "strength": 74 },
-      { "name": "warm spicy", "strength": 66 },
-      { "name": "white floral", "strength": 60 }
+      {
+        "name": "vanilla",
+        "strength": 100
+      },
+      {
+        "name": "sweet",
+        "strength": 90
+      },
+      {
+        "name": "coffee",
+        "strength": 74
+      },
+      {
+        "name": "warm spicy",
+        "strength": 66
+      },
+      {
+        "name": "white floral",
+        "strength": 60
+      }
     ],
     "notes": {
-      "top": ["Pear", "Pink Pepper", "Orange Blossom"],
-      "heart": ["Coffee", "Jasmine", "Bitter Almond"],
-      "base": ["Vanilla", "Patchouli", "Cedar"],
+      "top": [
+        "Pear",
+        "Pink Pepper",
+        "Orange Blossom"
+      ],
+      "heart": [
+        "Coffee",
+        "Jasmine",
+        "Bitter Almond"
+      ],
+      "base": [
+        "Vanilla",
+        "Patchouli",
+        "Cedar"
+      ],
       "flat": []
     },
-    "seasons": { "winter": 39, "spring": 22, "summer": 14, "autumn": 36 },
-    "timeOfDay": { "day": 30, "night": 70 },
+    "seasons": {
+      "winter": 3.9,
+      "spring": 2.2,
+      "summer": 1.4,
+      "autumn": 3.6
+    },
+    "timeOfDay": {
+      "day": 30,
+      "night": 70
+    },
     "perfumers": [],
     "description": "",
     "sourceUrl": ""
@@ -134,27 +270,65 @@
     "brand": "Creed",
     "year": 2010,
     "gender": "male",
-    "imageUrl": "https://fimgs.net/mdimg/perfume/375x500.13870.jpg",
+    "imageUrl": null,
     "rating": 4.28,
     "voteCount": 21300,
     "longevity": 3.8,
     "sillage": 3.5,
     "hue": 140,
     "accords": [
-      { "name": "fruity", "strength": 100 },
-      { "name": "citrus", "strength": 76 },
-      { "name": "woody", "strength": 70 },
-      { "name": "smoky", "strength": 60 },
-      { "name": "musky", "strength": 48 }
+      {
+        "name": "fruity",
+        "strength": 100
+      },
+      {
+        "name": "citrus",
+        "strength": 76
+      },
+      {
+        "name": "woody",
+        "strength": 70
+      },
+      {
+        "name": "smoky",
+        "strength": 60
+      },
+      {
+        "name": "musky",
+        "strength": 48
+      }
     ],
     "notes": {
-      "top": ["Pineapple", "Bergamot", "Apple", "Blackcurrant"],
-      "heart": ["Birch", "Patchouli", "Jasmine", "Rose"],
-      "base": ["Musk", "Oakmoss", "Ambergris", "Vanilla"],
+      "top": [
+        "Pineapple",
+        "Bergamot",
+        "Apple",
+        "Blackcurrant"
+      ],
+      "heart": [
+        "Birch",
+        "Patchouli",
+        "Jasmine",
+        "Rose"
+      ],
+      "base": [
+        "Musk",
+        "Oakmoss",
+        "Ambergris",
+        "Vanilla"
+      ],
       "flat": []
     },
-    "seasons": { "winter": 18, "spring": 32, "summer": 40, "autumn": 30 },
-    "timeOfDay": { "day": 60, "night": 40 },
+    "seasons": {
+      "winter": 1.8,
+      "spring": 3.2,
+      "summer": 4.0,
+      "autumn": 3.0
+    },
+    "timeOfDay": {
+      "day": 60,
+      "night": 40
+    },
     "perfumers": [],
     "description": "",
     "sourceUrl": ""
@@ -166,27 +340,65 @@
     "brand": "Chanel",
     "year": 1921,
     "gender": "female",
-    "imageUrl": "https://fimgs.net/mdimg/perfume/375x500.1.jpg",
+    "imageUrl": null,
     "rating": 4.05,
     "voteCount": 15870,
     "longevity": 3.3,
     "sillage": 2.9,
     "hue": 55,
     "accords": [
-      { "name": "aldehydic", "strength": 100 },
-      { "name": "powdery", "strength": 84 },
-      { "name": "white floral", "strength": 78 },
-      { "name": "woody", "strength": 55 },
-      { "name": "musky", "strength": 44 }
+      {
+        "name": "aldehydic",
+        "strength": 100
+      },
+      {
+        "name": "powdery",
+        "strength": 84
+      },
+      {
+        "name": "white floral",
+        "strength": 78
+      },
+      {
+        "name": "woody",
+        "strength": 55
+      },
+      {
+        "name": "musky",
+        "strength": 44
+      }
     ],
     "notes": {
-      "top": ["Aldehydes", "Bergamot", "Lemon", "Neroli"],
-      "heart": ["Jasmine", "Rose", "Ylang-Ylang", "Iris"],
-      "base": ["Vetiver", "Sandalwood", "Vanilla", "Amber"],
+      "top": [
+        "Aldehydes",
+        "Bergamot",
+        "Lemon",
+        "Neroli"
+      ],
+      "heart": [
+        "Jasmine",
+        "Rose",
+        "Ylang-Ylang",
+        "Iris"
+      ],
+      "base": [
+        "Vetiver",
+        "Sandalwood",
+        "Vanilla",
+        "Amber"
+      ],
       "flat": []
     },
-    "seasons": { "winter": 30, "spring": 34, "summer": 23, "autumn": 32 },
-    "timeOfDay": { "day": 55, "night": 45 },
+    "seasons": {
+      "winter": 3.0,
+      "spring": 3.4,
+      "summer": 2.3,
+      "autumn": 3.2
+    },
+    "timeOfDay": {
+      "day": 55,
+      "night": 45
+    },
     "perfumers": [],
     "description": "",
     "sourceUrl": ""

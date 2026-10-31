@@ -5,40 +5,54 @@ import type { Fragrance } from "@/lib/types";
 import type { Metadata } from "next";
 import Link from "next/link";
 
-export const metadata: Metadata = { title: "Accords" };
+export const metadata: Metadata = {
+  title: "Accords",
+  description: "Browse perfume accords in the Raphragrance encyclopedia.",
+};
 
 export default function AccordsPage() {
   const fragrances = fixtureData as Fragrance[];
-  const accordSet = new Set<string>();
+  const accordCounts = new Map<string, number>();
   for (const f of fragrances) {
-    f.accords.forEach((a) => accordSet.add(a.name));
+    for (const a of f.accords) {
+      accordCounts.set(a.name, (accordCounts.get(a.name) || 0) + 1);
+    }
   }
-  const accords = Array.from(accordSet).sort((a, b) => a.localeCompare(b));
+  const accords = Array.from(accordCounts.entries()).sort(
+    (a, b) => b[1] - a[1] || a[0].localeCompare(b[0])
+  );
 
   return (
     <>
       <Navbar />
-      <main style={{ padding: "48px 48px 90px" }}>
-        <h1 className="d3-section-heading" style={{ marginTop: 0 }}>
-          Accords ({accords.length})
-        </h1>
-        <ul style={{ listStyle: "none" }}>
-          {accords.map((accord) => (
-            <li key={accord} style={{ borderBottom: "1px solid var(--bd)" }}>
-              <Link
-                href={`/accords/${encodeURIComponent(accord)}`}
-                style={{
-                  display: "block",
-                  fontSize: 14,
-                  color: "var(--tx2)",
-                  padding: "10px 0",
-                }}
-              >
-                {accord}
-              </Link>
-            </li>
-          ))}
-        </ul>
+      <main style={{ padding: "20px" }}>
+        <Link href="/" className="back" style={{ marginBottom: 16 }}>
+          ← Catalog
+        </Link>
+        <h2 style={{ marginBottom: 16 }}>Accords ({accords.length})</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Accord</th>
+              <th className="n">Fragrances</th>
+            </tr>
+          </thead>
+          <tbody>
+            {accords.map(([accord, count]) => (
+              <tr key={accord}>
+                <td>
+                  <Link
+                    href={`/?q=${encodeURIComponent(accord)}`}
+                    style={{ color: "var(--tx)", textDecoration: "none" }}
+                  >
+                    {accord}
+                  </Link>
+                </td>
+                <td className="n">{count}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       </main>
       <Footer />
     </>

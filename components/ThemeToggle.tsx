@@ -6,7 +6,6 @@ export function ThemeToggle() {
   const [theme, setTheme] = useState<"light" | "dark">("light");
 
   useEffect(() => {
-    // Read the theme already set by the inline script in layout.tsx
     const current = document.documentElement.getAttribute("data-theme");
     setTheme(current === "dark" ? "dark" : "light");
   }, []);
@@ -22,7 +21,7 @@ export function ThemeToggle() {
 
   return (
     <button
-      className="d3-theme-toggle"
+      className="theme-toggle"
       onClick={toggle}
       aria-label={`Switch to ${theme === "dark" ? "light" : "dark"} mode`}
     >
