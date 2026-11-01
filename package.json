@@ -3,9 +3,10 @@
     "name": "raphragrance-rebuilt",
     "scripts": {
         "lint": "next lint",
-        "build": "node scripts/verify-palette.js && next build",
+        "build": "node scripts/verify-build-safety.js && node scripts/verify-palette.js && next build",
         "dev": "next dev --turbopack",
-        "start": "next start"
+        "start": "next start",
+        "diagnose-similar": "node scripts/diagnose-similar.js"
     },
     "devDependencies": {
         "@playwright/test": "^1.64.1",

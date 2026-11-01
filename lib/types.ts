@@ -31,6 +31,7 @@ export interface Fragrance {
   perfumers: string[];
   description: string;
   sourceUrl: string;
+  similaritySource?: "community" | "content";
 }
 
 export type CatalogFragrance = Pick<

@@ -255,7 +255,16 @@ export default async function FragranceDetailPage({
         {/* Similar */}
         {similar.length > 0 && (
           <section className="sec" aria-labelledby="similar-title">
-            <h2 id="similar-title">Similar</h2>
+            <div className="sec-header">
+              <h2 id="similar-title">Similar</h2>
+              {similar[0]?.similaritySource && (
+                <span className="similarity-source-tag">
+                  {similar.some((s) => s.similaritySource === "community")
+                    ? "Community & Olfactory Match"
+                    : "Olfactory Formula Match"}
+                </span>
+              )}
+            </div>
             <div className="sim">
               {similar.map((f) => (
                 <FragranceTile key={f.id} fragrance={f} />

@@ -18,6 +18,15 @@ interface CatalogViewProps {
 
 const COMMON_ACCORDS = Object.keys(PAL);
 
+const INITIAL_COUNT = 30;
+const STEP_COUNT = 30;
+
+function getInitialCount(cols: number): number {
+  if (cols <= 0) return INITIAL_COUNT;
+  const rem = INITIAL_COUNT % cols;
+  return rem === 0 ? INITIAL_COUNT : INITIAL_COUNT + (cols - rem);
+}
+
 export function CatalogView({
   initialFragrances,
   totalDatabaseCount,
@@ -33,8 +42,10 @@ export function CatalogView({
   const [sort, setSort] = useState<string>(initialSort);
   const [selectedAccords, setSelectedAccords] = useState<string[]>(initialAccords);
   const [moreFiltersOpen, setMoreFiltersOpen] = useState(initialAccords.length > 0);
-  const [visibleCount, setVisibleCount] = useState(20);
+  const [visibleCount, setVisibleCount] = useState(INITIAL_COUNT);
   const [gridCols, setGridCols] = useState(5);
+  const [loadingMore, setLoadingMore] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
 
   // Live API search results & pagination across 131,930 database
   const [apiResults, setApiResults] = useState<CatalogFragrance[] | null>(null);
@@ -133,7 +144,12 @@ export function CatalogView({
     if (!hasFilters) {
       setApiResults(null);
       setApiTotal(null);
+      setIsSearching(false);
       return;
+    }
+
+    if (trimmed.length > 0) {
+      setIsSearching(true);
     }
 
     const handler = setTimeout(async () => {
@@ -149,7 +165,7 @@ export function CatalogView({
         if (gender !== "All") params.set("gender", gender);
         if (sort !== "Popular") params.set("sort", sort.toLowerCase());
         if (selectedAccords.length > 0) params.set("accord", selectedAccords.join(","));
-        params.set("limit", "48");
+        params.set("limit", "60");
 
         const res = await fetch(`/api/fragrances?${params.toString()}`, {
           signal: ac.signal,
@@ -158,11 +174,13 @@ export function CatalogView({
         const json = await res.json();
         setApiResults(json.data);
         setApiTotal(json.total);
-        setVisibleCount(gridCols > 0 ? gridCols * 4 : 20);
+        setVisibleCount(getInitialCount(gridCols));
       } catch (e: unknown) {
         if ((e as Error)?.name !== "AbortError") {
           console.error("Search fetch error:", e);
         }
+      } finally {
+        setIsSearching(false);
       }
     }, 180);
 
@@ -172,7 +190,7 @@ export function CatalogView({
         searchAbortRef.current.abort();
       }
     };
-  }, [query, gender, sort, selectedAccords]);
+  }, [query, gender, sort, selectedAccords, gridCols]);
 
   // Debounced Typeahead suggestions from API
   useEffect(() => {
@@ -275,21 +293,46 @@ export function CatalogView({
   }, [initialFragrances, query, apiSuggestions]);
 
   function handleTypeaheadKeyDown(e: React.KeyboardEvent) {
-    if (!typeaheadOpen || suggestions.length === 0) return;
     if (e.key === "ArrowDown") {
+      if (!typeaheadOpen && suggestions.length > 0) {
+        setTypeaheadOpen(true);
+        return;
+      }
+      if (suggestions.length === 0) return;
       e.preventDefault();
       setSelectedIndex((prev) => (prev < suggestions.length - 1 ? prev + 1 : 0));
     } else if (e.key === "ArrowUp") {
+      if (!typeaheadOpen || suggestions.length === 0) return;
       e.preventDefault();
       setSelectedIndex((prev) => (prev > 0 ? prev - 1 : suggestions.length - 1));
-    } else if (e.key === "Enter" && selectedIndex >= 0) {
+    } else if (e.key === "Enter") {
       e.preventDefault();
-      const chosen = suggestions[selectedIndex];
-      router.push(`/fragrance/${chosen.slug}`);
-      setTypeaheadOpen(false);
+      if (typeaheadOpen && selectedIndex >= 0 && suggestions[selectedIndex]) {
+        const chosen = suggestions[selectedIndex];
+        router.push(`/fragrance/${chosen.slug}`);
+        setTypeaheadOpen(false);
+      } else {
+        // Dismiss suggestion popover so user can explore the catalog grid results freely
+        setTypeaheadOpen(false);
+        searchInputRef.current?.blur();
+      }
     } else if (e.key === "Escape") {
-      setTypeaheadOpen(false);
+      if (typeaheadOpen) {
+        setTypeaheadOpen(false);
+      } else if (query) {
+        clearSearch();
+      }
     }
+  }
+
+  function clearSearch() {
+    setQuery("");
+    setApiResults(null);
+    setApiTotal(null);
+    setTypeaheadOpen(false);
+    setSelectedIndex(-1);
+    setVisibleCount(getInitialCount(gridCols));
+    searchInputRef.current?.focus();
   }
 
   function toggleAccord(acc: string) {
@@ -305,33 +348,60 @@ export function CatalogView({
     setSelectedAccords([]);
     setApiResults(null);
     setApiTotal(null);
-    setVisibleCount(gridCols > 0 ? gridCols * 4 : 20);
+    setTypeaheadOpen(false);
+    setSelectedIndex(-1);
+    setVisibleCount(getInitialCount(gridCols));
   }
 
   async function handleLoadMore() {
-    const step = gridCols > 0 ? gridCols * 2 : 20;
-    if (apiResults && apiTotal !== null && apiResults.length < apiTotal) {
+    if (loadingMore) return;
+    const step = STEP_COUNT;
+
+    // 1. If we already have preloaded/buffered items in activeList beyond visibleCount:
+    if (visibleCount + step <= activeList.length) {
+      setVisibleCount((prev) => prev + step);
+      return;
+    }
+
+    // 2. If we need more items from the database/API:
+    const currentCount = apiResults ? apiResults.length : activeList.length;
+    const canFetchMore =
+      apiTotal !== null
+        ? currentCount < apiTotal
+        : currentCount < totalDatabaseCount;
+
+    if (canFetchMore) {
+      setLoadingMore(true);
       try {
         const params = new URLSearchParams();
         if (query.trim()) params.set("q", query.trim());
         if (gender !== "All") params.set("gender", gender);
         if (sort !== "Popular") params.set("sort", sort.toLowerCase());
         if (selectedAccords.length > 0) params.set("accord", selectedAccords.join(","));
-        params.set("offset", String(apiResults.length));
+        params.set("offset", String(currentCount));
         params.set("limit", String(step));
 
         const res = await fetch(`/api/fragrances?${params.toString()}`);
         if (res.ok) {
           const json = await res.json();
-          setApiResults((prev) => (prev ? [...prev, ...json.data] : json.data));
-          setVisibleCount((prev) => prev + json.data.length);
+          if (json.data && json.data.length > 0) {
+            setApiResults((prev) => (prev ? [...prev, ...json.data] : [...activeList, ...json.data]));
+            if (json.total !== undefined) {
+              setApiTotal(json.total);
+            }
+            setVisibleCount((prev) => prev + json.data.length);
+            return;
+          }
         }
       } catch (e) {
         console.error("Load more fetch error:", e);
+      } finally {
+        setLoadingMore(false);
       }
-    } else {
-      setVisibleCount((prev) => prev + step);
     }
+
+    // Fallback: display whatever items remain in activeList
+    setVisibleCount((prev) => Math.min(activeList.length, prev + step));
   }
 
   const activeList = apiResults !== null ? apiResults : localFiltered;
@@ -343,32 +413,66 @@ export function CatalogView({
       : totalDatabaseCount;
 
   const displayed = activeList.slice(0, visibleCount);
-  const hasMore = visibleCount < activeList.length || (apiTotal !== null && visibleCount < apiTotal);
+  const hasMore =
+    visibleCount < activeList.length ||
+    (apiTotal !== null ? visibleCount < apiTotal : visibleCount < totalDatabaseCount);
 
   return (
     <>
       <div className="top">
         <div className="search-wrap">
-          <input
-            ref={searchInputRef}
-            type="search"
-            className="q"
-            placeholder={`Search ${totalDatabaseCount.toLocaleString("en-US")} fragrances`}
-            value={query}
-            onChange={(e) => {
-              setQuery(e.target.value);
-              setTypeaheadOpen(true);
-              setSelectedIndex(-1);
-            }}
-            onFocus={() => {
-              if (query.length >= 2) setTypeaheadOpen(true);
-            }}
-            onBlur={() => {
-              setTimeout(() => setTypeaheadOpen(false), 200);
-            }}
-            onKeyDown={handleTypeaheadKeyDown}
-            aria-label="Search fragrances"
-          />
+          <div className="search-box">
+            <svg
+              className="search-icon"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+            >
+              <circle cx="11" cy="11" r="8" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
+            <input
+              ref={searchInputRef}
+              type="text"
+              className="q"
+              placeholder={`Search ${totalDatabaseCount.toLocaleString("en-US")} fragrances, brands, or notes...`}
+              value={query}
+              onChange={(e) => {
+                setQuery(e.target.value);
+                setTypeaheadOpen(true);
+                setSelectedIndex(-1);
+              }}
+              onFocus={() => {
+                if (query.trim().length >= 2) setTypeaheadOpen(true);
+              }}
+              onBlur={() => {
+                setTimeout(() => setTypeaheadOpen(false), 200);
+              }}
+              onKeyDown={handleTypeaheadKeyDown}
+              aria-label="Search fragrances"
+            />
+            <div className="search-actions">
+              {isSearching && (
+                <span className="search-spinner" aria-label="Searching perfumes..." />
+              )}
+              {query && (
+                <button
+                  type="button"
+                  className="search-clear-btn"
+                  onClick={clearSearch}
+                  aria-label="Clear search"
+                  title="Clear search"
+                >
+                  ×
+                </button>
+              )}
+              {!query && <kbd className="search-kbd">/</kbd>}
+            </div>
+          </div>
 
           {typeaheadOpen && suggestions.length > 0 && (
             <div className="typeahead" role="listbox">
@@ -394,6 +498,18 @@ export function CatalogView({
                   </Link>
                 );
               })}
+              <button
+                type="button"
+                className="typeahead-footer"
+                onMouseDown={(e) => {
+                  e.preventDefault();
+                  setTypeaheadOpen(false);
+                  searchInputRef.current?.blur();
+                }}
+              >
+                <span>View all results in grid for &ldquo;{query}&rdquo;</span>
+                <span style={{ opacity: 0.7 }}>↵ Enter</span>
+              </button>
             </div>
           )}
         </div>
@@ -407,7 +523,8 @@ export function CatalogView({
               className={`chip ${gender === g ? "on" : ""}`}
               onClick={() => {
                 setGender(g);
-                setVisibleCount(gridCols > 0 ? gridCols * 4 : 20);
+                setTypeaheadOpen(false);
+                setVisibleCount(getInitialCount(gridCols));
               }}
               aria-pressed={gender === g}
             >
@@ -423,7 +540,8 @@ export function CatalogView({
               className={`chip ${sort === s ? "on" : ""}`}
               onClick={() => {
                 setSort(s);
-                setVisibleCount(gridCols > 0 ? gridCols * 4 : 20);
+                setTypeaheadOpen(false);
+                setVisibleCount(getInitialCount(gridCols));
               }}
               aria-pressed={sort === s}
             >
@@ -434,7 +552,10 @@ export function CatalogView({
           <button
             type="button"
             className={`chip ${moreFiltersOpen || selectedAccords.length > 0 ? "on" : ""}`}
-            onClick={() => setMoreFiltersOpen((v) => !v)}
+            onClick={() => {
+              setMoreFiltersOpen((v) => !v);
+              setTypeaheadOpen(false);
+            }}
             aria-expanded={moreFiltersOpen}
           >
             More filters {selectedAccords.length > 0 ? `(${selectedAccords.length})` : ""}
@@ -455,7 +576,10 @@ export function CatalogView({
                   key={acc}
                   type="button"
                   className={`chip ${isSelected ? "on" : ""}`}
-                  onClick={() => toggleAccord(acc)}
+                  onClick={() => {
+                    toggleAccord(acc);
+                    setTypeaheadOpen(false);
+                  }}
                   aria-pressed={isSelected}
                 >
                   <span
@@ -475,13 +599,29 @@ export function CatalogView({
         {displayed.length === 0 ? (
           <div className="empty">
             No fragrances match &ldquo;{query}&rdquo;.
-            <span>Clear the search or change the filters.</span>
+            <span>Try searching for another keyword or select a popular family:</span>
+            <div className="empty-suggestions">
+              {["Chanel", "Dior", "Tom Ford", "Vanilla", "Sauvage", "Aventus", "Citrus", "Woody"].map((sample) => (
+                <button
+                  key={sample}
+                  type="button"
+                  className="chip"
+                  onClick={() => {
+                    setQuery(sample);
+                    searchInputRef.current?.focus();
+                  }}
+                >
+                  {sample}
+                </button>
+              ))}
+            </div>
             <button
               type="button"
               className="chip on"
+              style={{ marginTop: 22 }}
               onClick={clearAllFilters}
             >
-              Clear
+              Clear all filters
             </button>
           </div>
         ) : (
@@ -500,8 +640,12 @@ export function CatalogView({
                   type="button"
                   className="chip"
                   onClick={handleLoadMore}
+                  disabled={loadingMore}
+                  aria-busy={loadingMore}
                 >
-                  Load more · {Math.max(0, totalCount - displayed.length).toLocaleString("en-US")} remaining
+                  {loadingMore
+                    ? "Loading perfumes..."
+                    : `Load more · ${Math.max(0, totalCount - displayed.length).toLocaleString("en-US")} remaining`}
                 </button>
               </div>
             )}

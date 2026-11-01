@@ -32,8 +32,8 @@ export interface Fragrance {
   imageUrl: string;
   rating: number | null;
   voteCount: number;
-  longevity: number | null; // 0-4 raw avg
-  sillage: number | null;   // 0-4 raw avg
+  longevity: number | null; // 1-5 scale
+  sillage: number | null;   // 1-5 scale
   accords: FragranceAccord[];
   notes: FragranceNotes;
   seasons: FragranceSeasons;
@@ -41,6 +41,7 @@ export interface Fragrance {
   perfumers: string[];
   description: string;
   sourceUrl: string;
+  similaritySource?: "community" | "content";
 }
 
 export interface FragranceListResponse {

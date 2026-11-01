@@ -10,6 +10,9 @@ out/
 # Data (large files, local only)
 data/*
 !data/.gitkeep
+*.jsonl
+*.csv
+scripts/eval_split.json
 
 # Environment
 .env

@@ -19,22 +19,31 @@ export function accordColorVar(index: number): string {
   return `var(--ramp-${i})`;
 }
 
-/** Longevity label (matching preview and backend thresholds) */
+/** Longevity label on standard 1–5 scale */
 export function lonL(v: number | null): string {
-  if (v === null) return "Unknown";
-  if (v >= 4) return "Eternal";
-  if (v >= 3) return "Long Lasting";
-  if (v >= 2) return "Moderate";
-  return "Weak";
+  if (v === null || v <= 0) return "Unknown";
+  if (v >= 4.5) return "Eternal";
+  if (v >= 3.5) return "Long Lasting";
+  if (v >= 2.5) return "Moderate";
+  if (v >= 1.5) return "Weak";
+  return "Very Weak";
 }
 
-/** Sillage label (matching preview and backend thresholds) */
+/** Sillage label on standard 1–5 scale */
 export function silL(v: number | null): string {
-  if (v === null) return "Unknown";
-  if (v >= 3.5) return "Enormous";
-  if (v >= 2.5) return "Strong";
-  if (v >= 1.8) return "Moderate";
+  if (v === null || v <= 0) return "Unknown";
+  if (v >= 4.2) return "Enormous";
+  if (v >= 3.0) return "Strong";
+  if (v >= 2.0) return "Moderate";
   return "Intimate";
+}
+
+/** Scale raw Fragrantica sillage (1–4) linearly to standard 1–5 scale */
+export function scaleSillage(v: number | null | undefined): number | null {
+  if (v === null || v === undefined || v <= 0) return null;
+  if (v > 4.0) return Math.min(5, Math.max(1, parseFloat(v.toFixed(1))));
+  const scaled = 1 + ((v - 1) * 4) / 3;
+  return Math.min(5, Math.max(1, parseFloat(scaled.toFixed(1))));
 }
 
 /** Format votes with comma: 28,431 */
