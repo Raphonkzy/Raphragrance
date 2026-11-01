@@ -6,6 +6,7 @@
         "build": "node scripts/verify-build-safety.js && node scripts/verify-palette.js && next build",
         "dev": "next dev --turbopack",
         "start": "next start",
+        "benchmark:latency": "node scripts/measure_http_endpoint_latency.js",
         "diagnose-similar": "node scripts/diagnose-similar.js"
     },
     "devDependencies": {

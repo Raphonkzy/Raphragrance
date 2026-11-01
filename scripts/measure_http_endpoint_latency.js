@@ -66,6 +66,10 @@ async function benchmarkMode(modeName, envVars, port) {
     console.log(`  Max:      ${max.toFixed(2)} ms`);
     console.log(`  Mean:     ${avg.toFixed(2)} ms`);
 
+    if (p95 > 20) {
+      throw new Error(`FAIL: HTTP p95 latency for ${modeName} is ${p95.toFixed(2)}ms (> 20ms threshold)!`);
+    }
+
     return {
       mode: modeName,
       requests: N,

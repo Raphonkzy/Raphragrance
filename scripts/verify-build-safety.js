@@ -71,14 +71,41 @@ if (fs.existsSync(publicDbPath)) {
 
   // 3. Ensure no prohibited raw columns in perfumes
   const columns = db.prepare("PRAGMA table_info(perfumes)").all().map(c => c.name);
-  const prohibitedCols = columns.filter(c => /also_liked|edges|raw/i.test(c));
+  const prohibitedCols = columns.filter(c => /also_liked|edges|raw|ai_summary|reminds_me_of/i.test(c));
   if (prohibitedCols.length > 0) {
     console.error(`\n[BUILD SAFETY ERROR] Prohibited columns in perfumes table: ${prohibitedCols.join(', ')}`);
     process.exit(1);
   }
 
+  // 4. Ensure index on perfumes(id) exists to prevent 2.3s JOIN full-table scans
+  const indices = db.prepare("PRAGMA index_list('perfumes')").all().map(idx => idx.name);
+  if (!indices.includes('idx_perfumes_id')) {
+    console.error('\n[BUILD SAFETY ERROR] Missing critical index idx_perfumes_id! HTTP queries will suffer full-table scans.');
+    process.exit(1);
+  }
+
   db.close();
-  console.log('✓ Public database safety verified: 0 community rows, 0 edge tables.');
+  console.log('✓ Public database safety verified: 0 community rows, 0 edge tables, critical indices present.');
+}
+
+// 5. Verify HTTP Latency Benchmark (fail if p95 > 20 ms)
+const latencyReportPath = path.join(rootDir, 'reports', 'http_latency_results.json');
+if (fs.existsSync(latencyReportPath)) {
+  const latencyData = JSON.parse(fs.readFileSync(latencyReportPath, 'utf8'));
+  const contentP95 = latencyData.contentResults?.p95;
+  const hybridP95 = latencyData.hybridResults?.p95;
+
+  if (typeof contentP95 !== 'number' || contentP95 > 20) {
+    console.error(`\n[LATENCY BENCHMARK FAILURE] Content-Only HTTP p95 latency is ${contentP95}ms (> 20ms threshold)!`);
+    process.exit(1);
+  }
+  if (typeof hybridP95 !== 'number' || hybridP95 > 20) {
+    console.error(`\n[LATENCY BENCHMARK FAILURE] Hybrid HTTP p95 latency is ${hybridP95}ms (> 20ms threshold)!`);
+    process.exit(1);
+  }
+  console.log(`✓ HTTP Latency Benchmark verified: Content p95 = ${contentP95}ms, Hybrid p95 = ${hybridP95}ms (both <= 20ms).`);
+} else {
+  console.warn('⚠️ Warning: reports/http_latency_results.json not found during build check.');
 }
 
 console.log('✓ Build safety check passed: No prohibited raw dataset files in build context.');

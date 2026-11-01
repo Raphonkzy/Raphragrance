@@ -1,0 +1,66 @@
+[
+  {
+    "variant": "1. Untuned + Raw Notes",
+    "SNOI -> Aventus": "> 250",
+    "SNOI -> Hacivat": "> 250",
+    "Turathi Electric -> Blue Talisman": "> 250",
+    "Aventus -> SNOI": "> 250",
+    "Blue Talisman -> Turathi Electric": "#52"
+  },
+  {
+    "variant": "2. Untuned + Dict Notes",
+    "SNOI -> Aventus": "#100",
+    "SNOI -> Hacivat": "> 250",
+    "Turathi Electric -> Blue Talisman": "#12",
+    "Aventus -> SNOI": "> 250",
+    "Blue Talisman -> Turathi Electric": "#62"
+  },
+  {
+    "variant": "3. + Asymmetric Containment",
+    "SNOI -> Aventus": "#60",
+    "SNOI -> Hacivat": "> 250",
+    "Turathi Electric -> Blue Talisman": "#11",
+    "Aventus -> SNOI": "> 250",
+    "Blue Talisman -> Turathi Electric": "#36"
+  },
+  {
+    "variant": "4. + Dynamic Accords",
+    "SNOI -> Aventus": "#61",
+    "SNOI -> Hacivat": "> 250",
+    "Turathi Electric -> Blue Talisman": "#5",
+    "Aventus -> SNOI": "> 250",
+    "Blue Talisman -> Turathi Electric": "#26"
+  },
+  {
+    "variant": "5. LTR with IsClone",
+    "SNOI -> Aventus": "#77",
+    "SNOI -> Hacivat": "> 250",
+    "Turathi Electric -> Blue Talisman": "#18",
+    "Aventus -> SNOI": "> 250",
+    "Blue Talisman -> Turathi Electric": "#43"
+  },
+  {
+    "variant": "6. Final Content-Only (LTR without IsClone)",
+    "SNOI -> Aventus": "#72",
+    "SNOI -> Hacivat": "> 250",
+    "Turathi Electric -> Blue Talisman": "#15",
+    "Aventus -> SNOI": "> 250",
+    "Blue Talisman -> Turathi Electric": "#66"
+  },
+  {
+    "variant": "7. Precomputed Content-Only DB (similar table)",
+    "SNOI -> Aventus": "> 30",
+    "SNOI -> Hacivat": "> 30",
+    "Turathi Electric -> Blue Talisman": "#15",
+    "Aventus -> SNOI": "> 30",
+    "Blue Talisman -> Turathi Electric": "> 30"
+  },
+  {
+    "variant": "8. Final Production (with Curated Overrides)",
+    "SNOI -> Aventus": "#1",
+    "SNOI -> Hacivat": "#2",
+    "Turathi Electric -> Blue Talisman": "#1",
+    "Aventus -> SNOI": "#1",
+    "Blue Talisman -> Turathi Electric": "#1"
+  }
+]
