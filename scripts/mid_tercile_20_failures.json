@@ -1,0 +1,1454 @@
+[
+  {
+    "index": 1,
+    "query": {
+      "id": 73176,
+      "name": "X-Bolt",
+      "brand": "G. Bellini",
+      "gender": "male",
+      "votes": 283,
+      "accords": "vanilla:100|citrus:82|fruity:64|woody:64|fresh:49|floral:40|green:40|aromatic:35",
+      "notes": "Lemon|Lime|Tarragon | Apple|Floral Notes | Vanilla|Woody Notes|Balsamic Notes"
+    },
+    "groundTruth": [
+      {
+        "id": 383,
+        "name": "Boss Bottled",
+        "brand": "Hugo Boss",
+        "accords": "woody:100|fruity:87|vanilla:70|warm spicy:70|cinnamon:56|aromatic:48|citrus:46|powdery:45",
+        "notes": "Apple|Plum|Bergamot|Lemon|Oakmoss|Geranium | Cinnamon|Mahogany|Carnation | Vanilla|Sandalwood|Cedar|Vetiver|Olive Tree",
+        "sym_net": 116
+      },
+      {
+        "id": 792,
+        "name": "Ferrari Black",
+        "brand": "Ferrari",
+        "accords": "fruity:100|vanilla:72|warm spicy:69|sweet:69|citrus:54|cinnamon:51|powdery:47|amber:32",
+        "notes": "Red Apple|Plum|Lime|Bergamot | Cinnamon|Jasmine|Cardamom|Rose | Vanilla|Amber|Cedar|Musk",
+        "sym_net": 13
+      },
+      {
+        "id": 3163,
+        "name": "Adidas Victory League",
+        "brand": "Adidas",
+        "accords": "vanilla:100|cinnamon:72|sweet:61|warm spicy:57|powdery:55|fruity:55|fresh spicy:50|aromatic:43",
+        "notes": "Vanilla|Cinnamon|Pear|Lavender|Bergamot|Musk|Cedar|Basil",
+        "sym_net": 9
+      },
+      {
+        "id": 33285,
+        "name": "Grey Point",
+        "brand": "La Rive",
+        "accords": "woody:100|fruity:82|powdery:76|musky:62|fresh:62|green:56|aromatic:55|citrus:43",
+        "notes": "Bergamot|Violet | Apple|Violet|Jasmine | Musk|Cedar|Vetiver",
+        "sym_net": 10
+      },
+      {
+        "id": 68407,
+        "name": "Driven",
+        "brand": "Alfred Dunhill",
+        "accords": "warm spicy:100|fruity:87|woody:71|sweet:65|aromatic:64|citrus:64|vanilla:62|cinnamon:60",
+        "notes": "Red Apple|Lime|Plum|Bergamot | Cinnamon|Cardamom|Jasmine|Rose | Vanilla|Amber|Amyris|Musk|Cedar",
+        "sym_net": 6
+      }
+    ],
+    "topEngineRecs": [
+      {
+        "id": 38526,
+        "name": "Minions",
+        "brand": "Air-Val International",
+        "accords": "citrus:100|vanilla:64|aromatic:52|fruity:42|fresh:37|amber:33|green:30|soft spicy:25",
+        "notes": "Lemon|Lime|Tarragon | Apple | Vanilla|Amber"
+      },
+      {
+        "id": 121769,
+        "name": "Eclipse Royale",
+        "brand": "Azure Monaco",
+        "accords": "amber:100|floral:100|vanilla:100|woody:100|powdery:45|animalic:20|soft spicy:20|sweet:20",
+        "notes": "Woody Notes|Amber | Floral Notes | Balsamic Notes|Vanilla"
+      },
+      {
+        "id": 127700,
+        "name": "New York Concrete Jungle",
+        "brand": "Noùmeno",
+        "accords": "citrus:100|lavender:67|green:67|warm spicy:60|woody:58|floral:50|aromatic:47|powdery:45",
+        "notes": "Green Notes|Lavender|Lemon|Sweet Orange|Green Mandarin | Floral Notes|Violet|Spices|Coffee | Balsamic Notes|Woody Notes|Patchouli|Amber|Musk|Vanilla"
+      }
+    ]
+  },
+  {
+    "index": 2,
+    "query": {
+      "id": 119201,
+      "name": "Milky Way",
+      "brand": "MAISON ASRAR",
+      "gender": "unisex",
+      "votes": 249,
+      "accords": "woody:100|powdery:55|vanilla:43|sweet:38|lactonic:33|balsamic:31|iris:30|warm spicy:27",
+      "notes": "Milk|Plum|Caramel | Cashmere Wood|Orris|Jasmine|Ylang Ylang | Sandalwood|Vanilla|Tonka"
+    },
+    "groundTruth": [
+      {
+        "id": 52437,
+        "name": "Intimate Silhouette",
+        "brand": "Christian Siriano",
+        "accords": "woody:100|vanilla:56|nutty:48|amber:46|powdery:45|warm spicy:28|sweet:23|musky:22",
+        "notes": "Sesame | Hazelnut|Amberwood|Jasmine | Madagascar Vanilla|Sandalwood|Cashmere Musk",
+        "sym_net": 5
+      },
+      {
+        "id": 69191,
+        "name": "Milk",
+        "brand": "Commodity",
+        "accords": "sweet:100|woody:85|powdery:65|musky:58|lactonic:58|vanilla:53|aromatic:48|amber:38",
+        "notes": "Milk | Marshmallow|Natural Musk | Mahogany|Tonka Bean",
+        "sym_net": 48
+      },
+      {
+        "id": 70012,
+        "name": "Milk +",
+        "brand": "Commodity",
+        "accords": "woody:100|powdery:60|sweet:56|lactonic:47|amber:39|musky:34|animalic:13|savory:10",
+        "notes": "Marshmallow|Milk | White Cedar Extract|Musk | Woody Notes|Amber",
+        "sym_net": 12
+      },
+      {
+        "id": 70021,
+        "name": "Milk - ",
+        "brand": "Commodity",
+        "accords": "woody:100|powdery:99|sweet:99|lactonic:86|musky:70|amber:39|savory:19|animalic:18",
+        "notes": "Marshmallow|Milk | Musk|White Cedar Extract | Woodsy Notes|Amber",
+        "sym_net": 8
+      },
+      {
+        "id": 88834,
+        "name": "Lost in a Dream",
+        "brand": "Navitus Parfums",
+        "accords": "sweet:100|powdery:77|woody:72|warm spicy:59|vanilla:57|amber:49|lactonic:47|musky:32",
+        "notes": "Milk|Cinnamon|Bergamot|Orange | Marshmallow|Croissant|Amberwood|Almond|Orchid|Coffee|Fig Nectar|Jasmine | Madagascar Vanilla|Musk|Sandalwood|Oak Tree|Tonka Bean|Tolu Balsam",
+        "sym_net": 11
+      }
+    ],
+    "topEngineRecs": [
+      {
+        "id": 126940,
+        "name": "Metamoura",
+        "brand": "Michael Cinco",
+        "accords": "woody:100|vanilla:74|amber:65|sweet:48|caramel:43|powdery:43|white floral:43|balsamic:33",
+        "notes": "Caramel | Sandalwood|Jasmine|Cedar | Labdanum|Vanilla|Tonka"
+      },
+      {
+        "id": 102436,
+        "name": "Sweet Heaven Ice",
+        "brand": "Gulf Orchid",
+        "accords": "woody:100|sweet:92|warm spicy:82|vanilla:75|fruity:71|amber:57|powdery:48|balsamic:38",
+        "notes": "Plum|Cognac|Cinnamon | Myrrh|Iris|Cashmere Wood | Vanilla|Sandalwood|Caramel|Tonka"
+      },
+      {
+        "id": 100010,
+        "name": "Shah's Oud",
+        "brand": "Azha Perfumes",
+        "accords": "woody:100|powdery:57|warm spicy:39|vanilla:32|musky:28|iris:28|amber:19|sweet:19",
+        "notes": "Spicy Notes|Grapefruit|Fruity Notes | Orris|Floral Notes | Woody Notes|Sandalwood|Musk|Vanilla|Tonka|Amber"
+      }
+    ]
+  },
+  {
+    "index": 3,
+    "query": {
+      "id": 29105,
+      "name": "Les Delices de Nina",
+      "brand": "Nina Ricci",
+      "gender": "female",
+      "votes": 734,
+      "accords": "sweet:100|fruity:93|citrus:39|caramel:37|vanilla:18|fresh:16|musky:12|powdery:11",
+      "notes": "Lemon|Mandarin Orange | Big Strawberry|Caramel|Apple|Jasmine | Raspberry|Praline|Vanilla|White Musk"
+    },
+    "groundTruth": [
+      {
+        "id": 147,
+        "name": "Nina",
+        "brand": "Nina Ricci",
+        "accords": "citrus:100|sweet:94|fresh:92|fruity:81|woody:61|green:48|floral:40|lactonic:33",
+        "notes": "Amalfi Lemon|Lime | Granny Smith apple|Praline|Peony|Datura | Apple Tree|Musk|Virginia Cedar",
+        "sym_net": 62
+      },
+      {
+        "id": 23542,
+        "name": "Fairy City Lights",
+        "brand": "Oriflame",
+        "accords": "sweet:100|caramel:57|fruity:47|gourmand:36|woody:10|vanilla:10|white floral:9|earthy:8",
+        "notes": "Wild Strawberry|Green Notes | Caramel|Candy apple|Jasmine | Toffee|Tonka Bean",
+        "sym_net": 9
+      },
+      {
+        "id": 110166,
+        "name": "Primo Bacio Amore",
+        "brand": "Faberlic",
+        "accords": "fruity:100|white floral:82|sweet:77|tuberose:62|woody:60|floral:40|musky:33|earthy:31",
+        "notes": "Wild Strawberry|Nectarine|Apple | Tuberose|Freesia|Orange Blossom | White Musk|Amyris|Vetiver",
+        "sym_net": 6
+      }
+    ],
+    "topEngineRecs": [
+      {
+        "id": 27751,
+        "name": "Miss Celina",
+        "brand": "Estiara",
+        "accords": "sweet:100|fruity:88|white floral:37|musky:26|citrus:21|lactonic:15|powdery:13|fresh:12",
+        "notes": "Big Strawberry|Raspberry|Mandarin Orange | Jasmine|Lily-of-the-Valley | Praline|Musk|Patchouli"
+      },
+      {
+        "id": 15146,
+        "name": "All of Me for Her",
+        "brand": "Mandarina Duck",
+        "accords": "sweet:100|fruity:84|citrus:29|patchouli:27|woody:18|powdery:17|musky:16|tropical:15",
+        "notes": "Pineapple|Mandarin Orange|Raspberry | Big Strawberry|Jasmine|Violet | Praline|Patchouli|Musk"
+      },
+      {
+        "id": 29841,
+        "name": "Passionate Me",
+        "brand": "Fleur de Sante",
+        "accords": "sweet:100|fruity:95|white floral:58|citrus:55|rose:33|musky:26|fresh:18|floral:17",
+        "notes": "Big Strawberry|Tangerine|Raspberry | Jasmine|Rose|Lily-of-the-Valley | Praline|Musk|Patchouli"
+      }
+    ]
+  },
+  {
+    "index": 4,
+    "query": {
+      "id": 9706,
+      "name": "Child Perfume",
+      "brand": "Susan D. Owens",
+      "gender": "female",
+      "votes": 280,
+      "accords": "white floral:100|floral:91|powdery:43|tuberose:40|fresh:33|musky:30|citrus:23|green:21",
+      "notes": "Lilac|Magnolia|Vanilla|Citruses | Jasmine|Tuberose|Violet | Musk|Mimosa|Woodsy Notes|Rose"
+    },
+    "groundTruth": [
+      {
+        "id": 8668,
+        "name": "Jennifer Aniston (previously Lolavie)",
+        "brand": "Jennifer Aniston",
+        "accords": "white floral:100|powdery:45|musky:38|woody:23|floral:22|violet:20|fresh:20|citrus:19",
+        "notes": "Citruses|Rose | Jasmine|Lily|Violet | Musk|Sandalwood|Amber",
+        "sym_net": 71
+      },
+      {
+        "id": 32040,
+        "name": "Pikake Lei",
+        "brand": "Kuumba Made",
+        "accords": "white floral:100|floral:20|fresh:10|animalic:5",
+        "notes": "Hawaiian Jasmine",
+        "sym_net": 30
+      },
+      {
+        "id": 29952,
+        "name": "Fleur de Jasmin",
+        "brand": "Solinotes",
+        "accords": "white floral:100|floral:25|fresh:17|citrus:17|musky:13|animalic:12|green:11|powdery:10",
+        "notes": "White Flowers|Bergamot|Spicy Notes | Jasmine Sambac|Lily-of-the-Valley|Freesia | Musk|Cedar|Amber",
+        "sym_net": 5
+      }
+    ],
+    "topEngineRecs": [
+      {
+        "id": 55973,
+        "name": "Sparkle of Joy",
+        "brand": "Spring",
+        "accords": "floral:100|white floral:77|fresh:54|powdery:42|musky:38|yellow floral:35|sweet:31|citrus:19",
+        "notes": "Lilac|Peony | Jasmine|Orange Blossom | Musk|Mimosa"
+      },
+      {
+        "id": 93341,
+        "name": "Весенний цветок",
+        "brand": "Новая Заря (The New Dawn)",
+        "accords": "floral:100|woody:66|white floral:66|powdery:52|fresh:39|rose:34|musky:33|yellow floral:30",
+        "notes": "Lily of the Valley|Floral Notes|Rose | Jasmine|Mimosa|Lilac | Woody Notes|Sandalwood|Musk"
+      },
+      {
+        "id": 72323,
+        "name": "Lilia",
+        "brand": "Afnan",
+        "accords": "floral:100|white floral:87|tuberose:54|citrus:51|amber:40|animalic:35|powdery:35|violet:31",
+        "notes": "Violet|Lilac|Ylang-Ylang|Clove | Magnolia|Tuberose|Orange Blossom | Amber|Musk|Akigalawood"
+      }
+    ]
+  },
+  {
+    "index": 5,
+    "query": {
+      "id": 20108,
+      "name": "Red Rose",
+      "brand": "ALREHAB PERFUMES",
+      "gender": "unisex",
+      "votes": 678,
+      "accords": "rose:100|vanilla:55|powdery:32|floral:28|musky:20|balsamic:18|amber:16|smoky:14",
+      "notes": "Red Rose|Taif Rose | Vanilla|Incense | Musk|Sandalwood"
+    },
+    "groundTruth": [
+      {
+        "id": 73,
+        "name": "Flower by Kenzo Le Parfum",
+        "brand": "Kenzo",
+        "accords": "powdery:100|almond:79|vanilla:74|violet:67|floral:53|musky:51|rose:50|sweet:48",
+        "notes": "Black Currant | Almond|Violet|Rose | Vanilla|White Musk|Amber",
+        "sym_net": 6
+      },
+      {
+        "id": 6527,
+        "name": "Flower by Kenzo Essentielle",
+        "brand": "Kenzo",
+        "accords": "rose:100|musky:99|vanilla:98|amber:87|floral:86|smoky:77|fresh spicy:74|powdery:73",
+        "notes": "Vanilla|Incense|Rose|Musk|Jasmine|Black Pepper|Hawthorn|Pink Pepper",
+        "sym_net": 8
+      },
+      {
+        "id": 72,
+        "name": "Flower by Kenzo",
+        "brand": "Kenzo",
+        "accords": "powdery:100|floral:84|violet:80|rose:62|amber:57|musky:55|vanilla:55|sweet:45",
+        "notes": "Bulgarian Rose|Hawthorn|Black Currant|Mandarin Orange | Parma Violet|Rose|Opoponax|Jasmine | White Musk|Vanilla|Incense",
+        "sym_net": 353
+      },
+      {
+        "id": 24009,
+        "name": "Summer Flowers",
+        "brand": "Milton Lloyd",
+        "accords": "fresh:100|powdery:89|floral:81|violet:75|musky:58|white floral:56|woody:50|fresh spicy:50",
+        "notes": "Violet|Pepper|Aldehydes|Mandarin Orange | Violet|Lily-of-the-Valley|Lilac | Musk|Cedar",
+        "sym_net": 10
+      }
+    ],
+    "topEngineRecs": [
+      {
+        "id": 118292,
+        "name": "NOOR",
+        "brand": "Natalie Noor",
+        "accords": "rose:100|amber:90|smoky:80|oud:67|balsamic:53|earthy:53|aromatic:43|warm spicy:43",
+        "notes": "Mandarin | Taif Rose|Incense|Red Rose | Vetiver|Oud|Patchouli|Black Musk|Sandalwood"
+      },
+      {
+        "id": 29479,
+        "name": "Akaber",
+        "brand": "Majid Muzaffar Iterji",
+        "accords": "rose:100|powdery:25|vanilla:17|floral:10|sweet:3|balsamic:2|soft spicy:2",
+        "notes": "Taif Rose | Vanilla"
+      },
+      {
+        "id": 20490,
+        "name": "Ajwad",
+        "brand": "Amouage",
+        "accords": "rose:100|oud:45|powdery:34|amber:25|woody:20|animalic:16|balsamic:12|floral:10",
+        "notes": "Taif Rose|Agarwood (Oud)|Ambergris|Sandalwood|Musk"
+      }
+    ]
+  },
+  {
+    "index": 6,
+    "query": {
+      "id": 24823,
+      "name": "Mandarin Carnival",
+      "brand": "The Merchant of Venice",
+      "gender": "female",
+      "votes": 490,
+      "accords": "citrus:100|white floral:42|fruity:40|sweet:35|aquatic:33|musky:30|powdery:18|fresh:17",
+      "notes": "Italian Mandarin|Tamarind|Bitter Almond | Orange Blossom|White Peach | Watery Notes|Musk|Rose|Cashmere Wood"
+    },
+    "groundTruth": [
+      {
+        "id": 9420,
+        "name": "Orange Sanguine",
+        "brand": "Atelier Cologne",
+        "accords": "citrus:100|fresh spicy:30|aromatic:14|fresh:14|woody:13|fruity:12|white floral:10|amber:10",
+        "notes": "Blood Orange|Bitter Orange|Blood Mandarin | African Geranium|Egyptian Jasmine|Madagascar Pepper | Sandalwood|Amber|Tonka Bean|Texas Cedar",
+        "sym_net": 5
+      },
+      {
+        "id": 25481,
+        "name": "Mandarino di Amalfi",
+        "brand": "Tom Ford",
+        "accords": "citrus:100|aromatic:91|fresh spicy:51|white floral:50|green:43|musky:22|soft spicy:20|animalic:18",
+        "notes": "Lemon|Grapefruit|Mint|Basil|Tarragon|Black Currant | Orange Blossom|Jasmine|Clary Sage|Shiso|Coriander|Black Pepper | Musk|Vetiver|Amber|Labdanum|Civet",
+        "sym_net": 17
+      },
+      {
+        "id": 51703,
+        "name": "Happy Chopard Bigaradia",
+        "brand": "Chopard",
+        "accords": "citrus:100|white floral:70|fresh:27|sweet:24|woody:22|honey:20|floral:18|powdery:17",
+        "notes": "Bitter Orange|Neroli|Green Mandarin|Carrot | Orange Blossom|Honey|Jasmine Sambac | Cedar|Labdanum|Sesame|Patchouli",
+        "sym_net": 9
+      },
+      {
+        "id": 82840,
+        "name": "Amalfi Coast",
+        "brand": "Just Jack",
+        "accords": "citrus:100|aromatic:86|white floral:63|fresh spicy:50|musky:43|green:41|woody:37|amber:37",
+        "notes": "Citron|Grapefruit|Mint|Black Currant|Tarragon | Orange Blossom|Jasmine|Black Pepper|Coriander | Musk|Vetiver|Labdanum|Amber",
+        "sym_net": 5
+      }
+    ],
+    "topEngineRecs": [
+      {
+        "id": 107344,
+        "name": "Happy Tears",
+        "brand": "5 Sens",
+        "accords": "citrus:100|white floral:88|musky:52|sweet:47|powdery:46|vanilla:44|fruity:40|animalic:19",
+        "notes": "Mandarin|Orange Blossom | Jasmine|White Peach | Musk|Vanilla"
+      },
+      {
+        "id": 109599,
+        "name": "Delilah Blanc",
+        "brand": "Maison Alhambra",
+        "accords": "citrus:100|musky:58|powdery:45|white floral:37|sweet:33|fruity:32|aromatic:31|fresh spicy:25",
+        "notes": "Bergamot|White Peach|Mandarin | Orange Blossom|Vetiver | Musk|Vanilla"
+      },
+      {
+        "id": 22109,
+        "name": "Amordad",
+        "brand": "Amordad",
+        "accords": "citrus:100|woody:94|musky:78|warm spicy:67|sweet:63|amber:59|powdery:57|fresh:43",
+        "notes": "Watery Notes|Tropical Fruits|Amalfi Lemon|Grapefruit | Praline|Rose|Cinnamon|Orange Blossom | Musk|Cashmere Wood|Patchouli|Sandalwood|Amber|Suede"
+      }
+    ]
+  },
+  {
+    "index": 7,
+    "query": {
+      "id": 13143,
+      "name": "Miss Dior Cherie Blooming Bouquet 2011",
+      "brand": "Dior",
+      "gender": "female",
+      "votes": 717,
+      "accords": "rose:100|floral:88|citrus:76|fresh:75|musky:27|patchouli:26|woody:16|fresh spicy:14",
+      "notes": "Citruses|Orange | Peony|Rose | Musk|Patchouli"
+    },
+    "groundTruth": [
+      {
+        "id": 3738,
+        "name": "Miss Dior Cherie Blooming Bouquet 2007",
+        "brand": "Dior",
+        "accords": "floral:100|fresh:80|rose:50|musky:49|citrus:46|powdery:24|sweet:10|fruity:9",
+        "notes": "Mandarin Orange | Peony | Musk",
+        "sym_net": 23
+      },
+      {
+        "id": 23280,
+        "name": "Miss Dior Blooming Bouquet",
+        "brand": "Dior",
+        "accords": "floral:100|rose:100|fresh:66|fruity:45|musky:38|citrus:35|powdery:34|sweet:22",
+        "notes": "Sicilian Mandarin | Pink Peony|Damask Rose|Apricot|Peach | White Musk",
+        "sym_net": 37
+      },
+      {
+        "id": 38024,
+        "name": "Nude Bouquet 2016",
+        "brand": "Zara",
+        "accords": "floral:100|powdery:93|vanilla:91|white floral:80|citrus:69|aquatic:42|woody:42|fruity:40",
+        "notes": "Lotus|Bergamot | Honeysuckle|Heliotrope | Sandalwood|Vanilla|Tonka Bean",
+        "sym_net": 14
+      },
+      {
+        "id": 107260,
+        "name": "Miss Dior Blooming Bouquet Hair Mist",
+        "brand": "Dior",
+        "accords": "floral:100|rose:65|fresh:39|sweet:26|musky:16|citrus:15|powdery:9|honey:8",
+        "notes": "Sweet Pea|Bergamot | Peony|Rose | Musk",
+        "sym_net": 9
+      },
+      {
+        "id": 47396,
+        "name": "Nude Bouquet 2017",
+        "brand": "Zara",
+        "accords": "white floral:100|floral:67|citrus:50|aquatic:30|fresh spicy:25|ozonic:24|fruity:23|vanilla:18",
+        "notes": "Lotus|Jasmine|Bergamot|Honeysuckle|Vanilla",
+        "sym_net": 6
+      },
+      {
+        "id": 64707,
+        "name": "Dior Miss Dior Blooming Bouquet Bobby Limited Edition",
+        "brand": "Dior",
+        "accords": "rose:100|fruity:98|floral:96|fresh:62|powdery:56|citrus:56|musky:45|sweet:43",
+        "notes": "Mandarin Orange | Pink Peony|Apricot|Peach|Damask Rose | White Musk",
+        "sym_net": 5
+      }
+    ],
+    "topEngineRecs": [
+      {
+        "id": 83301,
+        "name": "Tisa",
+        "brand": "Extract",
+        "accords": "rose:100|floral:87|citrus:70|musky:67|fresh:53|powdery:33|sweet:27|fresh spicy:13",
+        "notes": "Rose|Peony | Orange | Musk"
+      },
+      {
+        "id": 5430,
+        "name": "Sakura",
+        "brand": "Miya Shinma",
+        "accords": "floral:100|rose:84|fresh:73|fruity:66|citrus:41|musky:25|soft spicy:23|woody:20",
+        "notes": "Rose|Citruses|Jasmine | Peony|Black Currant|Rose | Musk"
+      },
+      {
+        "id": 34601,
+        "name": "Peonia Splendida",
+        "brand": "Bottega Verde",
+        "accords": "fresh:100|floral:97|citrus:95|rose:59|soft spicy:38|fresh spicy:16|fruity:16|sweet:16",
+        "notes": "Peony|Citruses|Mandarin Orange | Osmanthus|Rose|Orange | Pink Pepper|Sandalwood|Patchouli"
+      }
+    ]
+  },
+  {
+    "index": 8,
+    "query": {
+      "id": 17418,
+      "name": "Norne",
+      "brand": "Slumberhouse",
+      "gender": "unisex",
+      "votes": 687,
+      "accords": "woody:100|fresh spicy:81|aromatic:69|amber:69|warm spicy:65|conifer:63|balsamic:61|smoky:61",
+      "notes": "Fir|Incense|Spicy Notes"
+    },
+    "groundTruth": [
+      {
+        "id": 64600,
+        "name": "Murkwood",
+        "brand": "Pineward Perfumes",
+        "accords": "woody:100|amber:78|balsamic:70|aromatic:43|fresh spicy:40|smoky:35|warm spicy:35|conifer:31",
+        "notes": "Balsam Fir|Incense|Myrrh|Black hemlock or Tsuga|Lapsang Souchong Tea|Moss",
+        "sym_net": 40
+      },
+      {
+        "id": 64596,
+        "name": "Fanghorn",
+        "brand": "Pineward Perfumes",
+        "accords": "earthy:100|woody:63|green:48|fresh spicy:45|mossy:41|aromatic:38|conifer:35|fresh:32",
+        "notes": "Soil Tincture|Silver Fir|Green Notes|Moss",
+        "sym_net": 16
+      },
+      {
+        "id": 32073,
+        "name": "Fume",
+        "brand": "Hendley Perfumes",
+        "accords": "woody:100|aromatic:64|earthy:62|green:55|fresh spicy:38|fresh:34|conifer:28|mossy:22",
+        "notes": "Fir Resin|Cypriol Oil or Nagarmotha|Tea|Vetiver|Galbanum|Oakmoss",
+        "sym_net": 10
+      },
+      {
+        "id": 73318,
+        "name": "Sez",
+        "brand": "Mallo",
+        "accords": "green:100|aromatic:71|tobacco:71|woody:71|fresh spicy:47|sweet:35|fresh:24|whiskey:14",
+        "notes": "Mate|Green Notes|Tobacco|Woody Notes",
+        "sym_net": 10
+      },
+      {
+        "id": 67920,
+        "name": "Norne Oil",
+        "brand": "Slumberhouse",
+        "accords": "aromatic:100|woody:86|earthy:42|mossy:36|green:35|fresh spicy:32|floral:27|herbal:24",
+        "notes": "Pine needles|Lichen|Flouve|Sandalwood|Deer Tongue Grass|Cypress|Khella|Hemlock|Moss|Lavender|Olibanum|Geranium|Sage|CO2 Extracts|Bergamot|Green Nard|Rue|Lilac|Patchouli|Cassia|Champaca|Rosemary|Lovage Root|Hat straw|Violet Leaf|Cypriol Oil or Nagarmotha|Arnica|Musk",
+        "sym_net": 5
+      },
+      {
+        "id": 89622,
+        "name": "Fir of the dark",
+        "brand": "JMP Artisan Perfumes",
+        "accords": "woody:100|aromatic:79|fresh spicy:58|amber:32|smoky:31|balsamic:28|green:26|warm spicy:21",
+        "notes": "Incense|Spruce|Black Pepper|Cypress|Galbanum | Incense|Virginia Cedar|Leather|Sage | Fir|Cade oil|Java vetiver oil|Oakmoss",
+        "sym_net": 7
+      },
+      {
+        "id": 99383,
+        "name": "Pine",
+        "brand": "Stora Skuggan",
+        "accords": "woody:100|aromatic:70|conifer:50|green:30|balsamic:20|sweet:10",
+        "notes": "Pine Tree | Pine Tree | Pine Tree",
+        "sym_net": 5
+      },
+      {
+        "id": 72367,
+        "name": "Wolf",
+        "brand": "Wolf Brothers",
+        "accords": "aromatic:100|woody:87|warm spicy:46|green:34|conifer:33|sweet:32|amber:31|balsamic:28",
+        "notes": "Red Pepper|Davana|Plum|Cardamom | Pine|Balsam Fir|Vetiver|Clary Sage|Myrhh|Cedar|Olibanum | Oakmoss|Leather|Tonka Bean|Amber",
+        "sym_net": 6
+      }
+    ],
+    "topEngineRecs": [
+      {
+        "id": 95354,
+        "name": "Joyaux d'Orient",
+        "brand": "RP Parfums",
+        "accords": "woody:100|amber:91|aromatic:59|warm spicy:57|fresh spicy:48|animalic:41|balsamic:39|conifer:38",
+        "notes": "Spicy Notes | Ambergris|Tonka Bean | Fir|Cedar"
+      },
+      {
+        "id": 20823,
+        "name": "Le Mans",
+        "brand": "Parfums Valjean",
+        "accords": "woody:100|warm spicy:50|citrus:42|fresh:42|patchouli:42|fresh spicy:38|aromatic:27|conifer:23",
+        "notes": "Citruses | Woody Notes|Fir|Balsam Fir | Patchouli|Spicy Notes"
+      },
+      {
+        "id": 17892,
+        "name": "Fraser Fir",
+        "brand": "Demeter Fragrance",
+        "accords": "woody:100|fresh spicy:87|aromatic:75|conifer:69|fresh:62|balsamic:25|sweet:25|green:13",
+        "notes": "Fir"
+      }
+    ]
+  },
+  {
+    "index": 9,
+    "query": {
+      "id": 17221,
+      "name": "Solo Loewe Platinum",
+      "brand": "Loewe",
+      "gender": "male",
+      "votes": 536,
+      "accords": "amber:100|fresh spicy:80|aromatic:47|leather:45|woody:38|animalic:38|lavender:38|warm spicy:27",
+      "notes": "Olibanum|Leather|Tea|Lavender|Nutmeg|Atlas Cedar|Ambergris|Siam Benzoin|Thyme"
+    },
+    "groundTruth": [
+      {
+        "id": 3643,
+        "name": "Solo Loewe",
+        "brand": "Loewe",
+        "accords": "citrus:100|fresh spicy:67|aromatic:59|woody:48|fruity:45|lavender:33|musky:31|soft spicy:28",
+        "notes": "Mandarin Orange|Guava|Lavender|Lemon|Cashmirwood|Bergamot|Rosemary|Patchouli|Thyme|Costus | Tangerine|Pink Pepper|Cinnamon|Aldehydes|Nutmeg|Mint|Caraway|Anise | Woodsy Notes|Amber|Vanilla|Musk|Oakmoss",
+        "sym_net": 56
+      },
+      {
+        "id": 12200,
+        "name": "Solo Loewe Absoluto",
+        "brand": "Loewe",
+        "accords": "amber:100|citrus:97|woody:65|aromatic:62|sweet:60|fresh spicy:51|powdery:49|floral:49",
+        "notes": "Tangerine|Neroli|Lavender|Bergamot | Orchid|Tonka Bean|Basil|Artemisia | Incense|Sandalwood|Amber|Woodsy Notes|Musk",
+        "sym_net": 5
+      },
+      {
+        "id": 30321,
+        "name": "Solo Loewe Cedro",
+        "brand": "Loewe",
+        "accords": "woody:100|citrus:66|fresh spicy:57|lavender:44|amber:41|soft spicy:38|aromatic:27|powdery:24",
+        "notes": "Mandarin Orange|Pink Pepper | Nutmeg|Lavender | Cedar|Benzoin",
+        "sym_net": 18
+      }
+    ],
+    "topEngineRecs": [
+      {
+        "id": 96729,
+        "name": "Sel d'Ambre",
+        "brand": "Balmain Beauty",
+        "accords": "amber:100|animalic:29|fresh spicy:17|balsamic:17|iris:16|powdery:14|green:9|warm spicy:9",
+        "notes": "Ambergris|Olibanum|Amber|Orris|Tea"
+      },
+      {
+        "id": 55525,
+        "name": "Costume National I",
+        "brand": "CoSTUME NATIONAL",
+        "accords": "aromatic:100|amber:90|fresh spicy:76|leather:71|woody:60|lavender:49|musky:48|warm spicy:39",
+        "notes": "Thyme|Saffron|Bergamot | Lavender|Labdanum|Geranium | Ambroxan|Leather|Cedar"
+      },
+      {
+        "id": 112061,
+        "name": "Huston Leather",
+        "brand": "Artemios",
+        "accords": "amber:100|leather:70|aromatic:58|warm spicy:58|white floral:50|fresh spicy:50|fruity:50|animalic:37",
+        "notes": "Raspberry|Saffron|Thyme | Olibanum|Jasmine | Leather|Amber"
+      }
+    ]
+  },
+  {
+    "index": 10,
+    "query": {
+      "id": 3833,
+      "name": "L'Eau Eau de Toilette",
+      "brand": "Diptyque",
+      "gender": "unisex",
+      "votes": 590,
+      "accords": "warm spicy:100|cinnamon:47|rose:31|fresh spicy:29|aromatic:25|woody:18|herbal:12|powdery:9",
+      "notes": "Cinnamon|Rose | Geranium | Cloves|Sandalwood"
+    },
+    "groundTruth": [
+      {
+        "id": 389,
+        "name": "Comme des Garcons",
+        "brand": "Comme des Garcons",
+        "accords": "warm spicy:100|fresh spicy:49|amber:39|aromatic:34|cinnamon:30|woody:24|honey:23|rose:17",
+        "notes": "Clove|Cinnamon|Cardamom|Nutmeg | Coriander|Rose|Geranium|Cedar | Honey|Incense|Pepper|French labdanum|Styrax|Sandalwood",
+        "sym_net": 16
+      },
+      {
+        "id": 3829,
+        "name": "Eau Lente Eau de Toilette",
+        "brand": "Diptyque",
+        "accords": "warm spicy:100|cinnamon:41|amber:40|balsamic:27|sweet:22|woody:9",
+        "notes": "Clove|Cinnamon | Spices | Opoponax",
+        "sym_net": 20
+      },
+      {
+        "id": 3834,
+        "name": "L'Eau de L'Eau",
+        "brand": "Diptyque",
+        "accords": "warm spicy:100|citrus:92|fresh spicy:66|aromatic:48|cinnamon:32|fresh:28|lavender:26|amber:20",
+        "notes": "Lemon|Green Mandarin|Grapefruit|Petitgrain | Cloves|Ginger|Cinnamon|Lavender|Geranium|Orange Blossom|Pimento | Benzoin|Patchouli|Tonka Bean",
+        "sym_net": 13
+      },
+      {
+        "id": 4369,
+        "name": "Comme des Garcons White",
+        "brand": "Comme des Garcons",
+        "accords": "warm spicy:100|fresh spicy:56|aromatic:38|woody:28|cinnamon:23|rose:13|floral:13|amber:11",
+        "notes": "Cloves|Cardamom|Nutmeg|Cinnamon|Pepper|Pomegranate|White Rose|May Rose|Coriander|Marigold|Cedar|Lily-of-the-Valley|Styrax|Amber|Vanilla|Vetiver",
+        "sym_net": 5
+      }
+    ],
+    "topEngineRecs": [
+      {
+        "id": 43049,
+        "name": "L'Homme Adventure",
+        "brand": "Alan Bray",
+        "accords": "warm spicy:100|cinnamon:85|fruity:64|fresh:40|powdery:37|woody:35|green:33|fresh spicy:32",
+        "notes": "Apple|Bergamot|Geranium | Sandalwood|Cedar|Vetiver | Cinnamon|Musk|Cloves|Oakmoss"
+      },
+      {
+        "id": 30333,
+        "name": "Buona Sera",
+        "brand": "Hilde Soliani",
+        "accords": "warm spicy:100|cinnamon:63|woody:21|powdery:10|balsamic:4|aromatic:2",
+        "notes": "Cinnamon|Cloves|Sandalwood"
+      },
+      {
+        "id": 110479,
+        "name": "Big Classic Bottled",
+        "brand": "Milestone Perfumes",
+        "accords": "warm spicy:100|woody:76|aromatic:71|vanilla:67|fresh spicy:51|cinnamon:44|fruity:36|powdery:36",
+        "notes": "Apple|Orange Blossom | Geranium|Cinnamon|Cloves | Vanilla|Vetiver|Sandalwood|Cedar"
+      }
+    ]
+  },
+  {
+    "index": 11,
+    "query": {
+      "id": 18142,
+      "name": "Mademoiselle Ricci L'Eau",
+      "brand": "Nina Ricci",
+      "gender": "female",
+      "votes": 248,
+      "accords": "rose:100|floral:97|fresh:61|woody:26|white floral:24|musky:20|powdery:12|animalic:4",
+      "notes": "Italian Jasmine | Peony|Rose | Musk|Woody Notes|Cedar"
+    },
+    "groundTruth": [
+      {
+        "id": 15474,
+        "name": "Mademoiselle Ricci",
+        "brand": "Nina Ricci",
+        "accords": "rose:100|floral:51|musky:49|sweet:37|fruity:34|powdery:30|soft spicy:29|woody:29",
+        "notes": "Wild Rose|Pink Pepper|Raspberry | Rose Hip|Nerium Oleander|Laurels | Musk|White Wood|Violet|Amber|Cedar",
+        "sym_net": 43
+      },
+      {
+        "id": 18087,
+        "name": "Cool Water Sea Rose",
+        "brand": "Davidoff",
+        "accords": "floral:100|fresh:95|musky:53|rose:50|fruity:38|sweet:30|powdery:26|aquatic:20",
+        "notes": "Pear | Pink Peony | Musk",
+        "sym_net": 8
+      },
+      {
+        "id": 72,
+        "name": "Flower by Kenzo",
+        "brand": "Kenzo",
+        "accords": "powdery:100|floral:84|violet:80|rose:62|amber:57|musky:55|vanilla:55|sweet:45",
+        "notes": "Bulgarian Rose|Hawthorn|Black Currant|Mandarin Orange | Parma Violet|Rose|Opoponax|Jasmine | White Musk|Vanilla|Incense",
+        "sym_net": 7
+      }
+    ],
+    "topEngineRecs": [
+      {
+        "id": 84404,
+        "name": "Turathi Red",
+        "brand": "Afnan",
+        "accords": "floral:100|rose:93|fresh:44|musky:39|white floral:34|powdery:23|woody:22|animalic:9",
+        "notes": "Rose|Musk|Floral Notes | Rose|Jasmine|Woodsy Notes | Peony|Musk|Apricot"
+      },
+      {
+        "id": 114173,
+        "name": "Rose Garden",
+        "brand": "Laverne",
+        "accords": "rose:100|floral:73|fresh:40|musky:25|powdery:12|animalic:4|citrus:4|sweet:3",
+        "notes": "Rose|Peony|Musk"
+      },
+      {
+        "id": 73901,
+        "name": "L'Eau Kenzo Florale",
+        "brand": "Kenzo",
+        "accords": "rose:100|floral:88|fresh:55|woody:37|powdery:7|aromatic:4|citrus:3",
+        "notes": "Peony | Rose | Cedar"
+      }
+    ]
+  },
+  {
+    "index": 12,
+    "query": {
+      "id": 64280,
+      "name": "I Am The Queen",
+      "brand": "Ard Al Zaafaran",
+      "gender": "female",
+      "votes": 197,
+      "accords": "white floral:100|floral:93|citrus:86|cherry:81|rose:70|musky:69|sweet:62|fresh:55",
+      "notes": "Cherry|Bergamot|Rose | Peony|Jasmine|Orange Blossom | Musk"
+    },
+    "groundTruth": [
+      {
+        "id": 18652,
+        "name": "Erba Pura",
+        "brand": "Sospiro Perfumes",
+        "accords": "fruity:100|musky:89|citrus:80|sweet:80|powdery:74|amber:68|vanilla:58|animalic:27",
+        "notes": "Orange|Bergamot|Lemon | Fruits | White Musk|Amber|Madagascar Vanilla",
+        "sym_net": 22
+      },
+      {
+        "id": 59149,
+        "name": "Ana Abiyedh",
+        "brand": "Lattafa Perfumes",
+        "accords": "musky:100|powdery:78|citrus:75|vanilla:64|sweet:61|fruity:44|amber:34|fresh spicy:28",
+        "notes": "Bergamot|Orange | Vanilla|Pear | Musk|Amber",
+        "sym_net": 55
+      },
+      {
+        "id": 55157,
+        "name": "Erba Pura",
+        "brand": "Xerjoff",
+        "accords": "citrus:100|fruity:98|sweet:76|musky:63|powdery:53|vanilla:45|amber:36|fresh spicy:23",
+        "notes": "Sicilian Orange|Calabrian bergamot|Sicilian Lemon | Fruits | White Musk|Madagascar Vanilla|Amber",
+        "sym_net": 49
+      },
+      {
+        "id": 32172,
+        "name": "Kirkè",
+        "brand": "Tiziana Terenzi",
+        "accords": "fruity:100|sweet:67|musky:48|powdery:47|fresh:34|tropical:31|woody:24|vanilla:16",
+        "notes": "Passionfruit|Peach|Pear|Raspberry|Cassis|Sand | Lily-of-the-Valley | Musk|Sandalwood|Patchouli|Vanilla|Heliotrope",
+        "sym_net": 15
+      },
+      {
+        "id": 51816,
+        "name": "Amber Oud Gold Edition",
+        "brand": "Al Haramain Perfumes",
+        "accords": "sweet:100|fruity:91|ozonic:64|powdery:60|vanilla:60|musky:59|fresh:57|amber:55",
+        "notes": "Bergamot|Green Notes | Melon|Pineapple|Amber|Gourmand Accord | Vanilla|Musk|Woody Notes",
+        "sym_net": 13
+      },
+      {
+        "id": 84305,
+        "name": "Confidential Private Gold",
+        "brand": "Lattafa Perfumes",
+        "accords": "fruity:100|sweet:62|powdery:34|fresh:32|musky:22|woody:21|tropical:21|vanilla:17",
+        "notes": "Peach|Passionfruit|Pear|Raspberry|Cassis | Lily of the Valley | Musk|Vanilla|Patchouli|Sandalwood|Heliotrope",
+        "sym_net": 10
+      }
+    ],
+    "topEngineRecs": [
+      {
+        "id": 122798,
+        "name": "Glow Miami Sunset",
+        "brand": "Jennifer Lopez",
+        "accords": "white floral:100|citrus:65|sweet:61|musky:59|floral:58|fruity:53|fresh:52|powdery:47",
+        "notes": "Pear|Bergamot|Raspberry | Jasmine|Orange Blossom|Peony | Musk|Amber|Vanilla"
+      },
+      {
+        "id": 62184,
+        "name": "Lelas Niche Flower",
+        "brand": "LELAS",
+        "accords": "white floral:100|citrus:75|woody:70|floral:68|fresh:60|mossy:50|musky:50|sweet:45",
+        "notes": "Bergamot|Pear | Jasmine|Peony|Orange Blossom | Woodsy Notes|Moss|Musk"
+      },
+      {
+        "id": 57745,
+        "name": "Addiction Petale ",
+        "brand": "Korloff Paris",
+        "accords": "white floral:100|citrus:99|musky:55|rose:39|powdery:34|fresh spicy:34|floral:31|sweet:23",
+        "notes": "Bergamot|Orange Blossom|Musk|Jasmine|Rose"
+      }
+    ]
+  },
+  {
+    "index": 13,
+    "query": {
+      "id": 73742,
+      "name": "Gourmand White Flowers",
+      "brand": "Dossier",
+      "gender": "female",
+      "votes": 262,
+      "accords": "patchouli:100|floral:99|sweet:99|caramel:80|white floral:76|vanilla:73|powdery:70|woody:66",
+      "notes": "Green Tea|Bergamot|Red Berries|Freesia | White Flowers|Orchid|Rose | Patchouli|Caramel|Vanilla|Musk"
+    },
+    "groundTruth": [
+      {
+        "id": 18318,
+        "name": "Killer Queen",
+        "brand": "Katy Perry",
+        "accords": "fruity:100|sweet:92|woody:88|patchouli:46|floral:41|lactonic:37|warm spicy:23|white floral:23",
+        "notes": "Forest Fruits|Plum|Bergamot | Jasmine Sambac|Frangipani|Celosia | Praline|Patchouli|Cashmeran",
+        "sym_net": 6
+      },
+      {
+        "id": 1460,
+        "name": "Flowerbomb",
+        "brand": "Viktor&Rolf",
+        "accords": "floral:100|patchouli:64|white floral:56|woody:41|powdery:40|citrus:39|sweet:35|musky:33",
+        "notes": "Tea|Bergamot|Osmanthus | Orchid|Jasmine|Rose|Freesia|African Orange Flower | Patchouli|Musk|Vanilla",
+        "sym_net": 76
+      },
+      {
+        "id": 93115,
+        "name": "Floral Fantasy",
+        "brand": "Bath & Body Works",
+        "accords": "patchouli:100|fruity:80|floral:78|white floral:64|woody:60|warm spicy:50|earthy:40|balsamic:30",
+        "notes": "Patchouli|Osmanthus|Jasmine|Peach",
+        "sym_net": 10
+      },
+      {
+        "id": 77528,
+        "name": "Sensual Amber",
+        "brand": "Bath & Body Works",
+        "accords": "amber:100|woody:73|white floral:43|fruity:40|powdery:39|animalic:29|citrus:21|floral:19",
+        "notes": "Amber|Wild Berries|Sandalwood|Orange Blossom|Lotus Petals",
+        "sym_net": 6
+      }
+    ],
+    "topEngineRecs": [
+      {
+        "id": 109819,
+        "name": "Rose Macaron",
+        "brand": "Crémerie",
+        "accords": "floral:100|fruity:69|sweet:51|lactonic:43|powdery:34|soft spicy:34|caramel:29|vanilla:29",
+        "notes": "Osmanthus|Tea|Bergamot | Orchid|White Flowers|Freesia|Rose | Vanilla|Caramel|Patchouli|Musk"
+      },
+      {
+        "id": 93958,
+        "name": "Fraise Meringuée",
+        "brand": "Urban Outfitters",
+        "accords": "rose:100|floral:99|citrus:61|patchouli:56|woody:39|vanilla:33|fresh spicy:31|warm spicy:28",
+        "notes": "Bergamot|Tea|Osmanthus | Rose|Freesia|White Flowers|Orchid | Patchouli|Vanilla|Musk|Caramel"
+      },
+      {
+        "id": 24011,
+        "name": "Summertime",
+        "brand": "Milton Lloyd",
+        "accords": "floral:100|patchouli:47|white floral:43|rose:37|musky:37|powdery:34|woody:31|citrus:29",
+        "notes": "Green Tea|Bergamot | Freesia|Jasmine|Orchid|Rose | Patchouli|Musk"
+      }
+    ]
+  },
+  {
+    "index": 14,
+    "query": {
+      "id": 32125,
+      "name": "Gelsomino Indiano",
+      "brand": "L'Erbolario",
+      "gender": "unisex",
+      "votes": 256,
+      "accords": "white floral:100|woody:68|powdery:63|warm spicy:60|vanilla:59|yellow floral:52|amber:48|sweet:45",
+      "notes": "Ylang-Ylang|Tea|Bergamot|Mandarin Orange|Lemon | Indian Jasmine|Nutmeg|Gardenia|Cinnamon | Sandalwood|Benzoin|Vanilla|Tonka Bean|White Musk|Carrot Seeds"
+    },
+    "groundTruth": [
+      {
+        "id": 5877,
+        "name": "Jasmine",
+        "brand": "Demeter Fragrance",
+        "accords": "white floral:100|floral:20|fresh:10|animalic:5",
+        "notes": "Jasmine",
+        "sym_net": 5
+      },
+      {
+        "id": 18127,
+        "name": "Jasmin Poudre",
+        "brand": "Comptoir Sud Pacifique",
+        "accords": "woody:100|amber:62|powdery:49|iris:45|fruity:44|sweet:39|floral:39|white floral:38",
+        "notes": "Calamus|Fig|Osmanthus | Iris|Jasmine|Rose|Ylang-Ylang | Styrax|Musk|Woody Notes|Amber",
+        "sym_net": 5
+      },
+      {
+        "id": 25315,
+        "name": "Samsara Eau de Toilette",
+        "brand": "Guerlain",
+        "accords": "powdery:100|woody:99|yellow floral:68|iris:58|sweet:48|vanilla:43|amber:34|violet:33",
+        "notes": "Ylang-Ylang|Peach|Bergamot|Green Notes|Lemon | Iris|Jasmine|Orris|Narcissus|Violet|Rose | Sandalwood|Iris|Vanilla|Tonka Bean|Amber|Musk",
+        "sym_net": 41
+      }
+    ],
+    "topEngineRecs": [
+      {
+        "id": 48774,
+        "name": "White Feather",
+        "brand": "Solstice Scents",
+        "accords": "white floral:100|warm spicy:74|vanilla:72|woody:46|amber:43|yellow floral:38|powdery:37|sweet:33",
+        "notes": "Vanilla|Indian Jasmine|Spicy Notes|Gardenia|Ylang-Ylang|Amber|Saffron|Sandalwood|Patchouli|Incense|Agarwood (Oud)"
+      },
+      {
+        "id": 52553,
+        "name": "Rue St Honore",
+        "brand": "OUAI",
+        "accords": "white floral:100|musky:51|powdery:51|yellow floral:50|lactonic:40|violet:36|sweet:30|animalic:28",
+        "notes": "Violet | Gardenia|Ylang-Ylang | White Musk"
+      },
+      {
+        "id": 120527,
+        "name": "Envy",
+        "brand": "Ombré Lamar",
+        "accords": "white floral:100|citrus:77|woody:49|warm spicy:45|sweet:43|fruity:42|vanilla:39|powdery:38",
+        "notes": "Bergamot|Mandarin|Grapefruit|Raspberry|Black Currant|Ylang Ylang|Neroli | Gardenia|Jasmine|Tuberose|Lily of the Valley|Rose|Orange Blossom|Cinnamon|Orris | Patchouli|Sandalwood|White Musk|Benzoin|Vanilla|Tonka Bean"
+      }
+    ]
+  },
+  {
+    "index": 15,
+    "query": {
+      "id": 16584,
+      "name": "Chocolate",
+      "brand": "Zara",
+      "gender": "female",
+      "votes": 288,
+      "accords": "cacao:100|warm spicy:87|chocolate:67|sweet:58|vanilla:48|amber:36|powdery:20|soft spicy:8",
+      "notes": "Chocolate|Cacao|Vanilla|Amber"
+    },
+    "groundTruth": [
+      {
+        "id": 2425,
+        "name": "Amorito",
+        "brand": "The Body Shop",
+        "accords": "vanilla:100|chocolate:99|sweet:69|warm spicy:62|white floral:46|cacao:37|powdery:30|balsamic:15",
+        "notes": "Dark Chocolate|Jasmine | Dark Chocolate|Vanilla",
+        "sym_net": 7
+      },
+      {
+        "id": 8486,
+        "name": "Vanille Chocolat",
+        "brand": "Laurence Dumont",
+        "accords": "patchouli:100|sweet:95|warm spicy:90|chocolate:64|vanilla:61|woody:60|honey:51|tobacco:49",
+        "notes": "White Honey | Patchouli|Mexican chocolate | Vanille|Tobacco",
+        "sym_net": 6
+      },
+      {
+        "id": 10358,
+        "name": "Sexiest Fantasies Va Va Voom",
+        "brand": "Parfums de Coeur",
+        "accords": "sweet:100|fruity:88|chocolate:74|musky:66|rum:61|warm spicy:61|floral:38|woody:38",
+        "notes": "Mexican chocolate|Rum|Musk|Fruity Notes|Fig|Floral Notes",
+        "sym_net": 5
+      },
+      {
+        "id": 79844,
+        "name": "Eternity for Men Reflections",
+        "brand": "Calvin Klein",
+        "accords": "aromatic:100|woody:95|chocolate:91|warm spicy:86|mossy:75|bitter:58|earthy:52|sweet:45",
+        "notes": "Absinthe | Chocolate | Oakmoss|Sandalwood",
+        "sym_net": 5
+      }
+    ],
+    "topEngineRecs": [
+      {
+        "id": 79935,
+        "name": "So Chocolate",
+        "brand": "Amazing Creation",
+        "accords": "cacao:100|warm spicy:93|chocolate:83|sweet:69|vanilla:69|powdery:22|amber:11|balsamic:10",
+        "notes": "Chocolate|Cacao|Vanilla|Amber"
+      },
+      {
+        "id": 78288,
+        "name": "Velvet Chocolate",
+        "brand": "Theodoros Kalotinis",
+        "accords": "cacao:100|warm spicy:97|vanilla:83|sweet:78|chocolate:70|amber:22|powdery:16|aromatic:13",
+        "notes": "Chocolate|Cacao|Vanilla|Tonka Bean"
+      },
+      {
+        "id": 39167,
+        "name": "Zara Chocolate",
+        "brand": "Zara",
+        "accords": "cacao:100|warm spicy:89|chocolate:73|sweet:71|musky:68|vanilla:68|powdery:54|animalic:10",
+        "notes": "Chocolate|Cacao|Vanilla|Musk"
+      }
+    ]
+  },
+  {
+    "index": 16,
+    "query": {
+      "id": 69424,
+      "name": "Shalimar Millésime Vanilla Planifolia",
+      "brand": "Guerlain",
+      "gender": "female",
+      "votes": 608,
+      "accords": "vanilla:100|powdery:30|sweet:20|balsamic:15|soft spicy:10",
+      "notes": "Vanilla|Madagascar Vanilla"
+    },
+    "groundTruth": [
+      {
+        "id": 1019,
+        "name": "Cuir Béluga",
+        "brand": "Guerlain",
+        "accords": "vanilla:100|powdery:75|leather:42|sweet:40|herbal:29|amber:27|musky:25|warm spicy:23",
+        "notes": "Tangerine|Aldehydes | Immortelle|Patchouli | Vanilla|Suede|Heliotrope|Amber",
+        "sym_net": 84
+      },
+      {
+        "id": 10251,
+        "name": "Shalimar Ode a la Vanille",
+        "brand": "Guerlain",
+        "accords": "vanilla:100|amber:88|balsamic:54|warm spicy:47|powdery:30|sweet:20|woody:20|soft spicy:10",
+        "notes": "Vanille|Resin|Spices",
+        "sym_net": 18
+      },
+      {
+        "id": 16730,
+        "name": "Shalimar Ode a la Vanille Sur la route de Madagascar",
+        "brand": "Guerlain",
+        "accords": "citrus:100|amber:89|vanilla:82|woody:82|powdery:68|balsamic:64|sweet:47|smoky:42",
+        "notes": "Citruses|Bergamot|Lemon|Mandarin Orange|Cedar | Iris|Patchouli|Vetiver|Rose|Jasmine | Vanilla|Incense|Opoponax|Leather|Tonka Bean|Sandalwood|Civet|Musk",
+        "sym_net": 14
+      },
+      {
+        "id": 18414,
+        "name": "Shalimar Ode a la Vanille Sur la Route du Mexique",
+        "brand": "Guerlain",
+        "accords": "amber:100|vanilla:78|sweet:74|balsamic:68|warm spicy:41|smoky:39|powdery:38|caramel:37",
+        "notes": "Vanilla|Incense|Opoponax|Caramel|Iris|Chocolate|Tonka Bean",
+        "sym_net": 17
+      },
+      {
+        "id": 30164,
+        "name": "Fève Délicieuse",
+        "brand": "Dior",
+        "accords": "sweet:100|vanilla:83|warm spicy:39|amber:39|cacao:38|lactonic:37|caramel:35|aromatic:22",
+        "notes": "Lavender|Mint|Bergamot | Sour Cherry|Freesia|Jasmine | Tonka Bean|Vanilla|Cacao Pod|Caramel|Praline|Milk|Benzoin|Sandalwood|Leather|Cedar",
+        "sym_net": 130
+      },
+      {
+        "id": 48392,
+        "name": "Fève Délicieuse (2018)",
+        "brand": "Dior",
+        "accords": "vanilla:100|sweet:84|caramel:45|amber:38|warm spicy:37|chocolate:34|balsamic:19|cherry:18",
+        "notes": "Lavender|Mint|Calabrian bergamot | Cherry|Freesia|Jasmine | Tonka Bean|Madagascar Vanilla|Caramel|Dark Chocolate|Coconut|Benzoin|Leather|Sandalwood|Cedar",
+        "sym_net": 128
+      },
+      {
+        "id": 113241,
+        "name": "Shalimar L'Essence",
+        "brand": "Guerlain",
+        "accords": "vanilla:100|amber:74|powdery:71|iris:51|sweet:43|balsamic:33|musky:28|violet:26",
+        "notes": "Almond|Incense|Bergamot | Iris|Ethylvanillin|Amber|Opoponax|Rose | Madagascar Vanilla|Musk|Tonka Bean|Benzoin|Leather",
+        "sym_net": 165
+      },
+      {
+        "id": 84844,
+        "name": "Shalimar Millésime Iris",
+        "brand": "Guerlain",
+        "accords": "iris:100|powdery:96|sweet:73|caramel:68|vanilla:68|earthy:40|musky:28|violet:25",
+        "notes": "Bergamot | Italian Orris Root | Madagascar Vanilla|Caramel|Vanillin|Musk",
+        "sym_net": 52
+      },
+      {
+        "id": 113428,
+        "name": "Cuir Béluga Hair Mist",
+        "brand": "Guerlain",
+        "accords": "vanilla:100|powdery:78|sweet:51|leather:48|herbal:45|musky:27|almond:26|warm spicy:19",
+        "notes": "Tangerine|Aldehydes | Immortelle|Patchouli | Vanilla|Suede|Heliotrope|Amber",
+        "sym_net": 16
+      }
+    ],
+    "topEngineRecs": [
+      {
+        "id": 58137,
+        "name": "Vanilla Dreams",
+        "brand": "Be Layered",
+        "accords": "vanilla:100|powdery:30|sweet:20|balsamic:15|soft spicy:10",
+        "notes": "Vanilla"
+      },
+      {
+        "id": 51849,
+        "name": "Vaniglia 07",
+        "brand": "Il Profumiere",
+        "accords": "vanilla:100|powdery:30|sweet:20|balsamic:15|soft spicy:10",
+        "notes": "Vanilla"
+      },
+      {
+        "id": 131079,
+        "name": "vanilla heaven - Vanilla",
+        "brand": "ISANA",
+        "accords": "vanilla:100|powdery:30|sweet:20|balsamic:15|soft spicy:10",
+        "notes": "Vanilla"
+      }
+    ]
+  },
+  {
+    "index": 17,
+    "query": {
+      "id": 27339,
+      "name": "Hanae by Hanae Mori",
+      "brand": "Hanae Mori",
+      "gender": "female",
+      "votes": 439,
+      "accords": "sweet:100|fruity:90|woody:69|vanilla:50|patchouli:30|earthy:28|warm spicy:27|white floral:27",
+      "notes": "Red Apple|Black Currant|Orange Blossom|Sicilian Bergamot | Wild Strawberry|Toffee|Patchouli|Jasmine|Tea Rose | Vanilla|Siam Benzoin|Sandalwood|White Cedar Extract"
+    },
+    "groundTruth": [
+      {
+        "id": 17971,
+        "name": "Flowerbomb La Vie en Rose 2013",
+        "brand": "Viktor&Rolf",
+        "accords": "fruity:100|sweet:70|citrus:51|rose:50|almond:38|woody:37|fresh:34|green:30",
+        "notes": "Mandarin Orange|Pink Pepper|Green Tea|Bergamot | Rose|Candied Almond|Raspberry|Red Berries|Lily-of-the-Valley | Patchouli|Cashmere Wood|Amber",
+        "sym_net": 13
+      },
+      {
+        "id": 1460,
+        "name": "Flowerbomb",
+        "brand": "Viktor&Rolf",
+        "accords": "floral:100|patchouli:64|white floral:56|woody:41|powdery:40|citrus:39|sweet:35|musky:33",
+        "notes": "Tea|Bergamot|Osmanthus | Orchid|Jasmine|Rose|Freesia|African Orange Flower | Patchouli|Musk|Vanilla",
+        "sym_net": 95
+      },
+      {
+        "id": 1462,
+        "name": "Flowerbomb Extreme",
+        "brand": "Viktor&Rolf",
+        "accords": "amber:100|vanilla:78|white floral:76|warm spicy:50|patchouli:50|floral:42|balsamic:34|woody:33",
+        "notes": "Jasmine|Bergamot | White Flowers|Osmanthus|Palm Leaf | Vanilla|Amber|Patchouli|Benzoin",
+        "sym_net": 6
+      }
+    ],
+    "topEngineRecs": [
+      {
+        "id": 20301,
+        "name": "Souvenir Purple",
+        "brand": "Dzintars",
+        "accords": "fruity:100|woody:48|sweet:42|white floral:20|floral:14|soft spicy:14|earthy:12|aromatic:10",
+        "notes": "Black Currant|Wild Strawberry|Raspberry|Jasmine|Sandalwood"
+      },
+      {
+        "id": 15960,
+        "name": "Icy Fantasy",
+        "brand": "Fiorucci",
+        "accords": "fruity:100|sweet:59|powdery:38|woody:30|vanilla:27|rose:21|musky:15|fresh:15",
+        "notes": "Wild Strawberry|Raspberry|Granny Smith apple | Peach|Violet|Tea Rose | Vanilla|Musk|Sandalwood"
+      },
+      {
+        "id": 23542,
+        "name": "Fairy City Lights",
+        "brand": "Oriflame",
+        "accords": "sweet:100|caramel:57|fruity:47|gourmand:36|woody:10|vanilla:10|white floral:9|earthy:8",
+        "notes": "Wild Strawberry|Green Notes | Caramel|Candy apple|Jasmine | Toffee|Tonka Bean"
+      }
+    ]
+  },
+  {
+    "index": 18,
+    "query": {
+      "id": 101219,
+      "name": "Banana Bliss",
+      "brand": "PARIS CORNER",
+      "gender": "unisex",
+      "votes": 380,
+      "accords": "sweet:100|vanilla:66|fruity:25|lactonic:25|coconut:25|tropical:24|caramel:19|amber:8",
+      "notes": "Banana | Whipped Cream|Coconut | Spun Sugar|Vanilla|Tonka Bean"
+    },
+    "groundTruth": [
+      {
+        "id": 102458,
+        "name": "Creamy Biscuit",
+        "brand": "PARIS CORNER",
+        "accords": "vanilla:100|sweet:98|coconut:56|lactonic:20|powdery:19|tropical:17|amber:14|balsamic:12",
+        "notes": "Biscuit | Coconut | Vanilla|Tonka Bean",
+        "sym_net": 56
+      },
+      {
+        "id": 118601,
+        "name": "Vanilla Cream Macaron",
+        "brand": "Arabiyat Sugar",
+        "accords": "sweet:100|lactonic:43|fruity:36|tropical:23|green:10",
+        "notes": "Banana | Chantilly Cream | Custard",
+        "sym_net": 8
+      },
+      {
+        "id": 120104,
+        "name": "Sunset Blossom",
+        "brand": "Bruno Banani",
+        "accords": "white floral:100|vanilla:82|floral:75|citrus:70|sweet:63|woody:62|tropical:62|powdery:42",
+        "notes": "Orange Oil|Coconut|Raspberry | Jasmine|Frangipani|Tuberose | Vanilla|Sandalwood|Cedarwood",
+        "sym_net": 5
+      }
+    ],
+    "topEngineRecs": [
+      {
+        "id": 74736,
+        "name": "Cotton Candy Clouds",
+        "brand": "Bath & Body Works",
+        "accords": "sweet:100|vanilla:65|caramel:32|fruity:30|lactonic:16|powdery:12|fresh:12|sour:11",
+        "notes": "Spun Sugar|Whipped Cream|Vanilla|Red Berries"
+      },
+      {
+        "id": 116287,
+        "name": "Nice Cream",
+        "brand": "A House On The Moon",
+        "accords": "sweet:100|vanilla:80|woody:70|yellow floral:50|powdery:40|fruity:35|tropical:23|lactonic:20",
+        "notes": "Banana|Vanilla|Whipped Cream|Ylang-Ylang|Sandalwood"
+      },
+      {
+        "id": 745,
+        "name": "Vanille Coco",
+        "brand": "Comptoir Sud Pacifique",
+        "accords": "vanilla:100|sweet:80|coconut:44|lactonic:36|tropical:27|powdery:25|fruity:22|nutty:9",
+        "notes": "Whipped Cream|Banana|Heliotrope | Vanilla|Coconut | Vanille|Coconut"
+      }
+    ]
+  },
+  {
+    "index": 19,
+    "query": {
+      "id": 49756,
+      "name": "Au Hasard",
+      "brand": "Louis Vuitton",
+      "gender": "male",
+      "votes": 488,
+      "accords": "musky:100|woody:71|powdery:64|warm spicy:54|leather:42|aromatic:30|fruity:29|animalic:27",
+      "notes": "Bergamot|Lemon|Aldehydes | Pear|Cardamom|Freesia|Green Notes|Neroli | Leather|Musk|Sandalwood|Ambrette (Musk Mallow)|Cashmeran"
+    },
+    "groundTruth": [
+      {
+        "id": 228,
+        "name": "Fahrenheit",
+        "brand": "Dior",
+        "accords": "leather:100|woody:86|ozonic:73|fresh spicy:68|aromatic:63|animalic:63|aquatic:54|floral:52",
+        "notes": "Nutmeg Flower|Lavender|Cedar|Mandarin Orange|Chamomile|Bergamot|Hawthorn|Lemon | Violet Leaf|Nutmeg|Cedar|Sandalwood|Carnation|Honeysuckle|Jasmine|Lily-of-the-Valley | Leather|Vetiver|Musk|Amber|Patchouli|Tonka Bean",
+        "sym_net": 97
+      },
+      {
+        "id": 11388,
+        "name": "Aqua Fahrenheit",
+        "brand": "Dior",
+        "accords": "citrus:100|aromatic:93|fresh spicy:81|green:74|violet:67|leather:54|powdery:47|woody:33",
+        "notes": "Grapefruit|Mandarin Orange | Violet|Mint|Basil | Leather|Vetiver",
+        "sym_net": 119
+      },
+      {
+        "id": 34582,
+        "name": "Fahrenheit Cologne",
+        "brand": "Dior",
+        "accords": "citrus:100|woody:53|violet:48|fresh spicy:47|aromatic:47|powdery:42|floral:24|earthy:21",
+        "notes": "Calabrian bergamot|Sicilian Mandarin|Lemon | French Violet|Patchouli | Haitian Vetiver|Nutmeg|Virginian Cedar|Caraway",
+        "sym_net": 122
+      }
+    ],
+    "topEngineRecs": [
+      {
+        "id": 69125,
+        "name": "Diamond Kosmos",
+        "brand": "Samy Andraus Fragrances",
+        "accords": "citrus:100|warm spicy:93|woody:73|powdery:73|aromatic:70|musky:67|green:40|aldehydic:35",
+        "notes": "Bergamot|Lemon|Aldehydes|Green Notes | Cardamom|Musk|Pear | Sandalwood|Cashmeran|Ambrette (Musk Mallow)"
+      },
+      {
+        "id": 77110,
+        "name": "Two",
+        "brand": "Two Mark",
+        "accords": "musky:100|citrus:58|amber:56|rose:56|woody:56|floral:50|powdery:47|fruity:42",
+        "notes": "Pear|Lemon | Ambrette (Musk Mallow)|Rose | Cedar|Amber|Musk"
+      },
+      {
+        "id": 5647,
+        "name": "Opal",
+        "brand": "Sonoma Scent Studio",
+        "accords": "musky:100|powdery:59|citrus:50|floral:45|vanilla:44|woody:36|aromatic:31|fresh spicy:25",
+        "notes": "Ambrette (Musk Mallow)|Bergamot|Musk|Vanilla|Sandalwood"
+      }
+    ]
+  },
+  {
+    "index": 20,
+    "query": {
+      "id": 22311,
+      "name": "Lumiere Noire",
+      "brand": "Grès",
+      "gender": "female",
+      "votes": 259,
+      "accords": "patchouli:100|amber:92|rose:92|citrus:71|musky:69|woody:67|powdery:55|warm spicy:50",
+      "notes": "Bergamot | Patchouli|Rose | Amber|Musk"
+    },
+    "groundTruth": [
+      {
+        "id": 6928,
+        "name": "Coco Mademoiselle Parfum",
+        "brand": "Chanel",
+        "accords": "citrus:100|patchouli:48|woody:47|rose:44|fresh spicy:33|earthy:32|aromatic:32|white floral:31",
+        "notes": "Bergamot|Orange|Grapefruit | Rose|Litchi|Jasmine | Patchouli|Vanilla|Musk|Vetiver",
+        "sym_net": 71
+      },
+      {
+        "id": 13884,
+        "name": "So Elixir Eau de Parfum",
+        "brand": "Yves Rocher",
+        "accords": "amber:100|patchouli:89|warm spicy:87|white floral:73|balsamic:69|woody:66|citrus:56|smoky:55",
+        "notes": "Bergamot | Jasmine|Rose | Patchouli|Tonka Bean|Incense",
+        "sym_net": 5
+      },
+      {
+        "id": 15090,
+        "name": "Raindrops",
+        "brand": "Ajmal",
+        "accords": "floral:100|woody:75|fruity:73|amber:58|sweet:36|animalic:35|balsamic:17|salty:6",
+        "notes": "Floral Notes|Woodsy Notes|Fruity Notes|Ambergris",
+        "sym_net": 6
+      },
+      {
+        "id": 15236,
+        "name": "Frivole",
+        "brand": "Fragonard",
+        "accords": "citrus:100|white floral:57|fresh:42|floral:37|patchouli:31|woody:24|green:19|earthy:19",
+        "notes": "Tangerine|Mandarin Orange|Lemon|Bergamot | Lily-of-the-Valley|Jasmine|Peony | Patchouli|Iris",
+        "sym_net": 5
+      },
+      {
+        "id": 612,
+        "name": "Coco Mademoiselle Eau de Toilette",
+        "brand": "Chanel",
+        "accords": "citrus:100|patchouli:46|woody:45|fresh spicy:33|earthy:30|rose:30|aromatic:30|white floral:24",
+        "notes": "Orange|Bergamot|Grapefruit | Rose|Litchi|Italian Jasmine | Patchouli|Tahitian Vetiver|Bourbon Vanilla|White Musk",
+        "sym_net": 38
+      },
+      {
+        "id": 611,
+        "name": "Coco Mademoiselle",
+        "brand": "Chanel",
+        "accords": "citrus:100|woody:47|patchouli:46|sweet:45|white floral:42|rose:33|earthy:27|vanilla:26",
+        "notes": "Orange|Mandarin Orange|Bergamot|Orange Blossom | Turkish Rose|Jasmine|Mimosa|Ylang-Ylang | Patchouli|White Musk|Vanilla|Vetiver|Tonka Bean|Opoponax",
+        "sym_net": 38
+      }
+    ],
+    "topEngineRecs": [
+      {
+        "id": 74376,
+        "name": "Galaxy",
+        "brand": "Al-Jazeera Perfumes",
+        "accords": "citrus:100|amber:95|patchouli:95|rose:95|vanilla:95|woody:67|powdery:52|fresh spicy:48",
+        "notes": "Amber|Bergamot|Patchouli|Rose|Vanilla"
+      },
+      {
+        "id": 94334,
+        "name": "Amber Sensual",
+        "brand": "100 Bon",
+        "accords": "amber:100|rose:50|animalic:20|floral:15|powdery:15|soft spicy:10|citrus:2",
+        "notes": "Rose | Amber | Patchouli"
+      },
+      {
+        "id": 92775,
+        "name": "The Lost Rose & Musk",
+        "brand": "My Perfumes Select",
+        "accords": "woody:100|amber:71|musky:71|patchouli:71|rose:71|oud:64|warm spicy:64|powdery:46",
+        "notes": "Rose | Akigalawood | Patchouli|Amber|Musk"
+      }
+    ]
+  }
+]

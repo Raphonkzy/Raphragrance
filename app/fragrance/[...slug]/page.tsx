@@ -257,18 +257,29 @@ export default async function FragranceDetailPage({
           <section className="sec" aria-labelledby="similar-title">
             <div className="sec-header">
               <h2 id="similar-title">Similar</h2>
-              {similar[0]?.similaritySource && (
-                <span className="similarity-source-tag">
-                  {similar.some((s) => s.similaritySource === "community")
-                    ? "Community & Olfactory Match"
-                    : "Olfactory Formula Match"}
-                </span>
-              )}
             </div>
             <div className="sim">
-              {similar.map((f) => (
-                <FragranceTile key={f.id} fragrance={f} />
-              ))}
+              {similar.map((f) => {
+                let metaLine = "Similar olfactory profile";
+                if (f.similaritySource === "curated") {
+                  metaLine = "Curated pick";
+                } else if (f.similaritySource === "community") {
+                  metaLine = "Community pick";
+                } else if (f.similaritySource === "content") {
+                  if (f.sharedNotes && f.sharedNotes.length > 0) {
+                    metaLine = `Shares: ${f.sharedNotes.slice(0, 3).join(", ")}`;
+                  }
+                }
+
+                return (
+                  <div key={f.id} className="sim-cell">
+                    <FragranceTile fragrance={f} />
+                    <div className="tile-sim-meta" title={metaLine}>
+                      {metaLine}
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </section>
         )}

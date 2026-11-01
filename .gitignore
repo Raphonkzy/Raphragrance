@@ -10,8 +10,10 @@ out/
 # Data (large files, local only)
 data/*
 !data/.gitkeep
+!data/similar_overrides.csv
 *.jsonl
 *.csv
+!data/similar_overrides.csv
 scripts/eval_split.json
 
 # Environment

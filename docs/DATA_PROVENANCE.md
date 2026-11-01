@@ -60,6 +60,8 @@ The source file `perfumes.jsonl` contains raw community and proprietary scraped 
      !data/.gitkeep
      ```
    - An automated build-safety check (`scripts/verify-build-safety.js`) runs on `npm run build` to halt the build if any `*.jsonl` or raw edge dump files are detected in the repository workspace.
-3. **ISOLATION OF COMMUNITY SIGNALS**:
-   - Community similarity signals (`reminds_me_of`) are precomputed into a dedicated table (`similar`) with a build flag `INCLUDE_COMMUNITY_EDGES` (defaulting to off in pure content deployments).
-   - The raw directed edge graph is never exposed via public APIs.
+3. **ISOLATION OF COMMUNITY SIGNALS & DUAL ARTIFACTS**:
+   - Production builds consume `data/perfumes.public.db` by default (strictly containing content rows and curated overrides, with 0 community rows and no edge tables).
+   - Hybrid builds consume `data/perfumes.full.db` when `INCLUDE_COMMUNITY_EDGES=true` is explicitly set.
+   - Note on data boundaries: Because the entire fragrance catalog originates from scraped public profiles, the content-only build (`perfumes.public.db`) excludes the community vote graph (`reminds_me_of`), while preserving olfactory note pyramids, accords, and brand metadata.
+   - Verified at build time by `scripts/verify-build-safety.js`.

@@ -7,8 +7,19 @@ let dbInstance: DatabaseSync | null = null;
 export function getDb(): DatabaseSync | null {
   if (dbInstance) return dbInstance;
 
-  const defaultDbPath = path.join(process.cwd(), "data", "perfumes.db");
-  const dbPath = process.env.DATABASE_PATH || defaultDbPath;
+  let dbPath: string;
+  if (process.env.DATABASE_PATH) {
+    dbPath = process.env.DATABASE_PATH;
+  } else if (process.env.INCLUDE_COMMUNITY_EDGES === "true") {
+    const fullDbPath = path.join(process.cwd(), "data", "perfumes.full.db");
+    const fallbackPath = path.join(process.cwd(), "data", "perfumes.db");
+    dbPath = fs.existsSync(fullDbPath) ? fullDbPath : fallbackPath;
+  } else {
+    const publicDbPath = path.join(process.cwd(), "data", "perfumes.public.db");
+    const fallbackPath = path.join(process.cwd(), "data", "perfumes.db");
+    dbPath = fs.existsSync(publicDbPath) ? publicDbPath : fallbackPath;
+  }
+
   if (!fs.existsSync(/*turbopackIgnore: true*/ dbPath)) {
     return null;
   }

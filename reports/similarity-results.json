@@ -1,0 +1,383 @@
+{
+  "meta": {
+    "generated_at": "2026-11-01T15:03:16.379Z",
+    "git_commit": "a7d9bc19907e1636e51e28193597d2eaccf4711b",
+    "eval_split_sha256": "585bc4eb5a8467f3bee906c99fc9c02f96004070e38c5dbf7dbdd347c86b4e08",
+    "random_seeds": {
+      "bootstrap_seed": 42,
+      "held_out_seed": 42
+    },
+    "evaluation_protocol": "Single unified frozen evaluation run. Test set was not tuned on; only final evaluation was rerun."
+  },
+  "engine_configuration": {
+    "note_normalizer": "normalizeNoteDict (Captive Dictionary included for canonicalization)",
+    "weights": {
+      "noteSim": 0.35,
+      "containmentQtoC": 0.25,
+      "containmentCtoQ": 0.1,
+      "accordSim": 0.4,
+      "top1AccordMatch": 0.05,
+      "isClone": 0
+    },
+    "gender_penalty": 0.08,
+    "dynamic_accords_branch": false,
+    "candidate_retrieval_limit": 250,
+    "brand_diversity_cap": 2,
+    "precomputed_top_k": 30
+  },
+  "coverage": {
+    "total_fragrances": 131930,
+    "ge1_community_share": {
+      "count": 30977,
+      "pct": 23.479875691654666
+    },
+    "ge5_community_share": {
+      "count": 3670,
+      "pct": 2.781778215720458
+    },
+    "ge10_community_share": {
+      "count": 1041,
+      "pct": 0.7890548017888275
+    },
+    "top10_slot_distribution": {
+      "community": {
+        "count": 71425,
+        "pct": 5.231542926118967
+      },
+      "content": {
+        "count": 1293845,
+        "pct": 94.76801760230165
+      },
+      "curated": {
+        "count": 6,
+        "pct": 0.0004394715793729619
+      }
+    }
+  },
+  "held_out_30pct_test": {
+    "test_queries_with_community_edges": 1000,
+    "total_held_out_edges": 1750,
+    "content_only": {
+      "recovered_count": 224,
+      "recall_pct": 12.8
+    },
+    "hybrid_masked": {
+      "recovered_count": 176,
+      "recall_pct": 10.057142857142857
+    }
+  },
+  "anchor_15_overlap": {
+    "methodology": "Strict top-10 community neighbors (sym_net) overlap across 15 anchor perfumes",
+    "old_engine_avg": 0.6,
+    "content_only_avg": 1.2,
+    "headline_retraction": "Earlier claims of 5.0/10 and 4.4/10 evaluated against an unranked, loose bag of all community votes. Strict apples-to-apples top-10 community neighbor overlap is 0.6/10 (Old Engine) vs 1.2/10 (Content-Only).",
+    "details": [
+      {
+        "id": 9828,
+        "name": "Aventus",
+        "brand": "Creed",
+        "gt_top10_count": 10,
+        "old_overlap": "1/10",
+        "content_overlap": "1/10"
+      },
+      {
+        "id": 1418,
+        "name": "Bleu de Chanel",
+        "brand": "Chanel",
+        "gt_top10_count": 7,
+        "old_overlap": "0/10",
+        "content_overlap": "1/10"
+      },
+      {
+        "id": 31861,
+        "name": "Sauvage",
+        "brand": "Dior",
+        "gt_top10_count": 10,
+        "old_overlap": "2/10",
+        "content_overlap": "0/10"
+      },
+      {
+        "id": 39314,
+        "name": "Layton",
+        "brand": "Parfums de Marly",
+        "gt_top10_count": 10,
+        "old_overlap": "0/10",
+        "content_overlap": "5/10"
+      },
+      {
+        "id": 33519,
+        "name": "Baccarat Rouge 540",
+        "brand": "Maison Francis Kurkdjian",
+        "gt_top10_count": 10,
+        "old_overlap": "1/10",
+        "content_overlap": "0/10"
+      },
+      {
+        "id": 51411,
+        "name": "Lost Cherry",
+        "brand": "Tom Ford",
+        "gt_top10_count": 10,
+        "old_overlap": "3/10",
+        "content_overlap": "2/10"
+      },
+      {
+        "id": 44174,
+        "name": "Hacivat",
+        "brand": "Nishane",
+        "gt_top10_count": 10,
+        "old_overlap": "0/10",
+        "content_overlap": "1/10"
+      },
+      {
+        "id": 62615,
+        "name": "Angels' Share",
+        "brand": "By Kilian",
+        "gt_top10_count": 10,
+        "old_overlap": "0/10",
+        "content_overlap": "0/10"
+      },
+      {
+        "id": 68271,
+        "name": "Supremacy Not Only Intense",
+        "brand": "Afnan",
+        "gt_top10_count": 10,
+        "old_overlap": "2/10",
+        "content_overlap": "0/10"
+      },
+      {
+        "id": 1825,
+        "name": "Terre d'Hermes",
+        "brand": "Hermes",
+        "gt_top10_count": 10,
+        "old_overlap": "0/10",
+        "content_overlap": "0/10"
+      },
+      {
+        "id": 84224,
+        "name": "Blue Talisman",
+        "brand": "Ex Nihilo",
+        "gt_top10_count": 10,
+        "old_overlap": "0/10",
+        "content_overlap": "1/10"
+      },
+      {
+        "id": 108244,
+        "name": "Turathi Electric",
+        "brand": "Afnan",
+        "gt_top10_count": 10,
+        "old_overlap": "0/10",
+        "content_overlap": "1/10"
+      },
+      {
+        "id": 50384,
+        "name": "Cloud",
+        "brand": "Ariana Grande",
+        "gt_top10_count": 10,
+        "old_overlap": "0/10",
+        "content_overlap": "1/10"
+      },
+      {
+        "id": 53,
+        "name": "Kouros",
+        "brand": "Yves Saint Laurent",
+        "gt_top10_count": 10,
+        "old_overlap": "0/10",
+        "content_overlap": "2/10"
+      },
+      {
+        "id": 43632,
+        "name": "Black Phantom",
+        "brand": "By Kilian",
+        "gt_top10_count": 10,
+        "old_overlap": "0/10",
+        "content_overlap": "3/10"
+      }
+    ]
+  },
+  "acceptance_cases": [
+    {
+      "pair": "SNOI -> Aventus",
+      "content_only_rank": "> 10",
+      "curated_rank": "#1",
+      "final_production_rank": "#1"
+    },
+    {
+      "pair": "SNOI -> Hacivat",
+      "content_only_rank": "> 10",
+      "curated_rank": "#2",
+      "final_production_rank": "#2"
+    },
+    {
+      "pair": "Turathi Electric -> Blue Talisman",
+      "content_only_rank": "> 10",
+      "curated_rank": "#1",
+      "final_production_rank": "#1"
+    },
+    {
+      "pair": "Aventus -> SNOI",
+      "content_only_rank": "> 10",
+      "curated_rank": "#1",
+      "final_production_rank": "#1"
+    },
+    {
+      "pair": "Blue Talisman -> Turathi Electric",
+      "content_only_rank": "> 10",
+      "curated_rank": "#1",
+      "final_production_rank": "#1"
+    }
+  ],
+  "validation_metrics": {
+    "num_queries": 1000,
+    "old_baseline": {
+      "hit10": {
+        "mean": 29.1,
+        "ci95": [
+          26.4,
+          31.8
+        ]
+      },
+      "topGT": {
+        "mean": 10.76666666666668,
+        "ci95": [
+          9.69999999999999,
+          11.900000000000022
+        ]
+      },
+      "prec10": {
+        "mean": 3.6,
+        "ci95": [
+          3.23,
+          3.98
+        ]
+      },
+      "mrr": {
+        "mean": 0.22099960317460318,
+        "ci95": [
+          0.1981162698412698,
+          0.24556111111111104
+        ]
+      },
+      "ndcg10": {
+        "mean": 14.656490963879548,
+        "ci95": [
+          12.988145974326496,
+          16.364229015491002
+        ]
+      }
+    },
+    "content_only": {
+      "hit10": {
+        "mean": 44.1,
+        "ci95": [
+          41.4,
+          47.2
+        ]
+      },
+      "topGT": {
+        "mean": 13.833333333333366,
+        "ci95": [
+          12.566666666666697,
+          15.266666666666703
+        ]
+      },
+      "prec10": {
+        "mean": 7.66,
+        "ci95": [
+          6.97,
+          8.45
+        ]
+      },
+      "mrr": {
+        "mean": 0.31360873015872986,
+        "ci95": [
+          0.29050198412698414,
+          0.33978492063492066
+        ]
+      },
+      "ndcg10": {
+        "mean": 13.815830652291355,
+        "ci95": [
+          12.571905094082556,
+          15.215307361504552
+        ]
+      }
+    }
+  },
+  "test_metrics": {
+    "num_queries": 1000,
+    "old_baseline": {
+      "hit10": {
+        "mean": 28.4,
+        "ci95": [
+          25.6,
+          31.1
+        ]
+      },
+      "topGT": {
+        "mean": 10.900000000000006,
+        "ci95": [
+          9.733333333333338,
+          12.066666666666686
+        ]
+      },
+      "prec10": {
+        "mean": 3.61,
+        "ci95": [
+          3.21,
+          3.99
+        ]
+      },
+      "mrr": {
+        "mean": 0.20998531746031743,
+        "ci95": [
+          0.1865757936507936,
+          0.2335412698412698
+        ]
+      },
+      "ndcg10": {
+        "mean": 14.213442220939116,
+        "ci95": [
+          12.565745926479314,
+          15.929831338854955
+        ]
+      }
+    },
+    "content_only": {
+      "hit10": {
+        "mean": 42.3,
+        "ci95": [
+          39.1,
+          45.4
+        ]
+      },
+      "topGT": {
+        "mean": 14.433333333333382,
+        "ci95": [
+          13.166666666666687,
+          15.766666666666728
+        ]
+      },
+      "prec10": {
+        "mean": 6.79,
+        "ci95": [
+          6.17,
+          7.42
+        ]
+      },
+      "mrr": {
+        "mean": 0.293226984126984,
+        "ci95": [
+          0.26690873015873,
+          0.3193869047619047
+        ]
+      },
+      "ndcg10": {
+        "mean": 14.445390313007648,
+        "ci95": [
+          13.001735409298092,
+          15.93290192402634
+        ]
+      }
+    }
+  }
+}

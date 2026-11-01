@@ -10,7 +10,7 @@ services:
     environment:
       - NODE_ENV=production
       - PORT=3000
-      - DATABASE_PATH=/app/data/perfumes.db
+      - DATABASE_PATH=/app/data/perfumes.public.db
     volumes:
       # Mount the local SQLite database read-only
       - ./data:/app/data:ro

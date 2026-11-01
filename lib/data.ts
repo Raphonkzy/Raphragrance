@@ -178,14 +178,57 @@ export function getFragranceById(id: number, useGolden = false): Fragrance | und
 
 
 
+function computeSharedNotes(target: Fragrance, candidate: Fragrance): string[] {
+  const targetNotes = new Set<string>();
+  const addTarget = (notes?: string[]) => {
+    if (notes) {
+      for (const n of notes) {
+        const clean = n.trim().toLowerCase();
+        if (clean) targetNotes.add(clean);
+      }
+    }
+  };
+  addTarget(target.notes?.top);
+  addTarget(target.notes?.heart);
+  addTarget(target.notes?.base);
+  addTarget(target.notes?.flat);
+
+  const shared: string[] = [];
+  const seenShared = new Set<string>();
+
+  const checkCand = (notes?: string[]) => {
+    if (notes) {
+      for (const n of notes) {
+        const clean = n.trim().toLowerCase();
+        if (clean && targetNotes.has(clean) && !seenShared.has(clean)) {
+          seenShared.add(clean);
+          shared.push(n.trim());
+          if (shared.length >= 3) return;
+        }
+      }
+    }
+  };
+
+  checkCand(candidate.notes?.top);
+  if (shared.length < 3) checkCand(candidate.notes?.heart);
+  if (shared.length < 3) checkCand(candidate.notes?.base);
+  if (shared.length < 3) checkCand(candidate.notes?.flat);
+
+  return shared;
+}
+
 /**
  * Retrieve similar fragrances from the precomputed `similar` table in SQLite.
- * Supports:
- * - Content-only (default, INCLUDE_COMMUNITY_EDGES != "true"): strictly formula & olfactory DNA matches.
- * - Hybrid (INCLUDE_COMMUNITY_EDGES == "true"): community graph edges prioritized, padded with content matches.
+ * Order of precedence:
+ * 1. Curated overrides (from data/similar_overrides.csv merged as source = 'curated')
+ * 2. Community edges (if INCLUDE_COMMUNITY_EDGES == "true" and full DB loaded)
+ * 3. Content-based olfactory DNA matches (padded to limit)
  * Blazing fast (< 1ms response time) using indexed B-Tree lookup on `(fragrance_id, source, rank)`.
  */
-export function getSimilarFragrances(target: Fragrance, limit = 4): (Fragrance & { similaritySource?: "community" | "content" })[] {
+export function getSimilarFragrances(
+  target: Fragrance,
+  limit = 4
+): (Fragrance & { similaritySource?: "curated" | "community" | "content"; sharedNotes?: string[] })[] {
   const db = getDb();
   if (!db) {
     const topAcc = target.accords?.[0]?.name;
@@ -197,12 +240,34 @@ export function getSimilarFragrances(target: Fragrance, limit = 4): (Fragrance &
   const includeCommunity = process.env.INCLUDE_COMMUNITY_EDGES === "true";
 
   try {
-    const results: (Fragrance & { similaritySource?: "community" | "content" })[] = [];
+    const results: (Fragrance & { similaritySource?: "curated" | "community" | "content"; sharedNotes?: string[] })[] = [];
     const seenIds = new Set<number>();
     seenIds.add(target.id);
 
-    // 1. If hybrid mode is active, fetch community edges first
-    if (includeCommunity) {
+    // 1. Fetch curated overrides first (both builds)
+    const curatedRows = db.prepare(`
+      SELECT s.similar_id, s.score, s.source, p.*
+      FROM similar s
+      JOIN perfumes p ON p.id = s.similar_id
+      WHERE s.fragrance_id = ? AND s.source = 'curated'
+      ORDER BY s.rank ASC
+      LIMIT ?
+    `).all(target.id, limit);
+
+    for (const r of curatedRows) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const row = r as any;
+      if (!seenIds.has(row.id)) {
+        const f = rowToFragrance(row);
+        const sharedNotes = computeSharedNotes(target, f);
+        results.push({ ...f, similaritySource: "curated", sharedNotes });
+        seenIds.add(f.id);
+        if (results.length >= limit) break;
+      }
+    }
+
+    // 2. If hybrid mode is active, fetch community edges
+    if (includeCommunity && results.length < limit) {
       const commRows = db.prepare(`
         SELECT s.similar_id, s.score, s.source, p.*
         FROM similar s
@@ -215,13 +280,17 @@ export function getSimilarFragrances(target: Fragrance, limit = 4): (Fragrance &
       for (const r of commRows) {
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const row = r as any;
-        const f = rowToFragrance(row);
-        results.push({ ...f, similaritySource: "community" });
-        seenIds.add(f.id);
+        if (!seenIds.has(row.id)) {
+          const f = rowToFragrance(row);
+          const sharedNotes = computeSharedNotes(target, f);
+          results.push({ ...f, similaritySource: "community", sharedNotes });
+          seenIds.add(f.id);
+          if (results.length >= limit) break;
+        }
       }
     }
 
-    // 2. Pad remaining recommendations with content matches
+    // 3. Pad remaining recommendations with content matches
     const needed = limit - results.length;
     if (needed > 0) {
       const contentRows = db.prepare(`
@@ -238,7 +307,8 @@ export function getSimilarFragrances(target: Fragrance, limit = 4): (Fragrance &
         const row = r as any;
         if (!seenIds.has(row.id)) {
           const f = rowToFragrance(row);
-          results.push({ ...f, similaritySource: "content" });
+          const sharedNotes = computeSharedNotes(target, f);
+          results.push({ ...f, similaritySource: "content", sharedNotes });
           seenIds.add(f.id);
           if (results.length >= limit) break;
         }
