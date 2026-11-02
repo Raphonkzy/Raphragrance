@@ -37,14 +37,307 @@ function bootstrapMetric(values, B = 1000, seed = 42) {
   return { mean, ci95: [low, high] };
 }
 
+// Full candidate ranking helper to determine REAL content-only integer rank
+function buildCandidateIndex() {
+  const rows = db.prepare(`
+    SELECT id, name, brand, vote_count, accords, notes_top, notes_middle, notes_base, notes_flat, gender
+    FROM perfumes
+  `).all();
+  const numP = rows.length;
+
+  const noteToId = new Map();
+  const accordToId = new Map();
+  function getNoteId(n) { let id = noteToId.get(n); if (id === undefined) { id = noteToId.size; noteToId.set(n, id); } return id; }
+  function getAccordId(a) { let id = accordToId.get(a); if (id === undefined) { id = accordToId.size; accordToId.set(a, id); } return id; }
+
+  const pData = [];
+  for (let i = 0; i < numP; i++) {
+    const r = rows[i];
+    const topNotes = (r.notes_top || '').split('|').map(normalizeNoteDict).filter(Boolean);
+    const midNotes = (r.notes_middle || '').split('|').map(normalizeNoteDict).filter(Boolean);
+    const baseNotes = (r.notes_base || '').split('|').map(normalizeNoteDict).filter(Boolean);
+    const flatNotes = (r.notes_flat || '').split('|').map(normalizeNoteDict).filter(Boolean);
+
+    const hasPyramid = (topNotes.length + midNotes.length + baseNotes.length > 0);
+    const isFlatOnly = !hasPyramid && flatNotes.length > 0;
+
+    const nMap = new Map();
+    if (isFlatOnly) {
+      for (const n of flatNotes) nMap.set(getNoteId(n), Math.max(nMap.get(getNoteId(n)) || 0, 1.0));
+    } else {
+      for (const n of topNotes) nMap.set(getNoteId(n), Math.max(nMap.get(getNoteId(n)) || 0, 1.0));
+      for (const n of midNotes) nMap.set(getNoteId(n), Math.max(nMap.get(getNoteId(n)) || 0, 1.2));
+      for (const n of baseNotes) nMap.set(getNoteId(n), Math.max(nMap.get(getNoteId(n)) || 0, 1.4));
+    }
+
+    let accords = [];
+    if (r.accords) {
+      accords = r.accords.split('|').filter(Boolean).map(p => {
+        const [name, val] = p.split(':');
+        return { id: getAccordId((name || '').trim().toLowerCase()), val: Number(val) || 0 };
+      });
+    }
+
+    pData.push({
+      id: r.id,
+      name: r.name,
+      brand: r.brand || '',
+      gender: (r.gender || 'unisex').toLowerCase(),
+      vote_count: r.vote_count || 0,
+      noteMap: nMap,
+      accords,
+      hasAccords: accords.length > 0
+    });
+  }
+
+  const numNotes = noteToId.size;
+  const noteDF = new Int32Array(numNotes);
+  for (const p of pData) for (const nid of p.noteMap.keys()) noteDF[nid]++;
+
+  const noteIDF = new Float32Array(numNotes);
+  for (let nid = 0; nid < numNotes; nid++) {
+    const df = noteDF[nid];
+    noteIDF[nid] = Math.log(1 + (numP - df + 0.5) / (df + 0.5));
+  }
+
+  const idToInternal = new Map();
+  const pNorms = new Float32Array(numP);
+  const pAccNorms = new Float32Array(numP);
+  const pQueryNoteSums = new Float32Array(numP);
+  const pNoteArrays = [];
+  const pAccordArrays = [];
+
+  const noteIndex = Array.from({ length: numNotes }, () => []);
+  const accordIndex = Array.from({ length: accordToId.size }, () => []);
+
+  for (let i = 0; i < numP; i++) {
+    const p = pData[i];
+    idToInternal.set(p.id, i);
+
+    const nEntries = Array.from(p.noteMap.entries()).sort((a, b) => a[0] - b[0]);
+    const nIds = new Int32Array(nEntries.length);
+    const nVals = new Float32Array(nEntries.length);
+    let nNorm = 0;
+    let qSum = 0;
+    for (let j = 0; j < nEntries.length; j++) {
+      const nid = nEntries[j][0];
+      const w = nEntries[j][1];
+      const tfidf = w * noteIDF[nid];
+      nIds[j] = nid;
+      nVals[j] = tfidf;
+      nNorm += tfidf * tfidf;
+      qSum += tfidf;
+      noteIndex[nid].push(i);
+    }
+    pNorms[i] = Math.sqrt(nNorm);
+    pQueryNoteSums[i] = qSum;
+    pNoteArrays.push({ ids: nIds, vals: nVals });
+
+    if (p.accords.length > 0) {
+      const aEntries = [...p.accords].sort((a, b) => a.id - b.id);
+      const aCount = aEntries.length;
+      const meanVal = aEntries.reduce((sum, a) => sum + a.val, 0) / aCount;
+      const aIds = new Int32Array(aCount);
+      const aVals = new Float32Array(aCount);
+      let aNorm = 0;
+      for (let j = 0; j < aCount; j++) {
+        const a = aEntries[j];
+        const z = a.val - meanVal;
+        aIds[j] = a.id;
+        aVals[j] = z;
+        aNorm += z * z;
+      }
+      pAccNorms[i] = Math.sqrt(aNorm);
+      pAccordArrays.push({ ids: aIds, vals: aVals });
+      for (let j = 0; j < Math.min(3, aCount); j++) {
+        accordIndex[aEntries[j].id].push(i);
+      }
+    } else {
+      pAccNorms[i] = 0;
+      pAccordArrays.push({ ids: new Int32Array(0), vals: new Float32Array(0) });
+    }
+  }
+
+  class MinHeap {
+    constructor(maxSize) { this.maxSize = maxSize; this.heap = []; }
+    push(idx, val) {
+      if (this.heap.length < this.maxSize) {
+        this.heap.push({ idx, val });
+        this._up(this.heap.length - 1);
+      } else if (val > this.heap[0].val) {
+        this.heap[0] = { idx, val };
+        this._down(0);
+      }
+    }
+    _up(i) {
+      while (i > 0) {
+        const p = (i - 1) >> 1;
+        if (this.heap[p].val > this.heap[i].val) {
+          const tmp = this.heap[p]; this.heap[p] = this.heap[i]; this.heap[i] = tmp;
+          i = p;
+        } else break;
+      }
+    }
+    _down(i) {
+      const len = this.heap.length;
+      while ((i << 1) + 1 < len) {
+        let left = (i << 1) + 1;
+        let right = left + 1;
+        let smallest = (right < len && this.heap[right].val < this.heap[left].val) ? right : left;
+        if (this.heap[smallest].val < this.heap[i].val) {
+          const tmp = this.heap[smallest]; this.heap[smallest] = this.heap[i]; this.heap[i] = tmp;
+          i = smallest;
+        } else break;
+      }
+    }
+  }
+
+  const candScores = new Float32Array(numP);
+  const touchedCands = new Int32Array(numP);
+
+  function getFullCandidateRanking(qid, candLimit = 250) {
+    const tIdx = idToInternal.get(qid);
+    if (tIdx === undefined) return { ranked: [], candidateIds: new Set() };
+
+    const tNotes = pNoteArrays[tIdx];
+    const tNorm = pNorms[tIdx];
+    const tAccords = pAccordArrays[tIdx];
+    const tAccNorm = pAccNorms[tIdx];
+    const tHasAcc = pData[tIdx].hasAccords;
+    const tGender = pData[tIdx].gender;
+    const tQSum = pQueryNoteSums[tIdx];
+
+    let touchedCount = 0;
+    for (let j = 0; j < tNotes.ids.length; j++) {
+      const nid = tNotes.ids[j];
+      const qVal = tNotes.vals[j];
+      const postings = noteIndex[nid];
+      for (let k = 0; k < postings.length; k++) {
+        const cIdx = postings[k];
+        if (cIdx === tIdx) continue;
+        if (candScores[cIdx] === 0) touchedCands[touchedCount++] = cIdx;
+        candScores[cIdx] += qVal;
+      }
+    }
+    const topAccCount = Math.min(3, tAccords.ids.length);
+    for (let j = 0; j < topAccCount; j++) {
+      const aid = tAccords.ids[j];
+      const postings = accordIndex[aid];
+      for (let k = 0; k < postings.length; k++) {
+        const cIdx = postings[k];
+        if (cIdx === tIdx) continue;
+        if (candScores[cIdx] === 0) touchedCands[touchedCount++] = cIdx;
+        candScores[cIdx] += 1.5;
+      }
+    }
+
+    const heap = new MinHeap(candLimit);
+    for (let i = 0; i < touchedCount; i++) {
+      const cIdx = touchedCands[i];
+      const rough = candScores[cIdx] / Math.sqrt(Math.max(1, pNorms[cIdx]));
+      heap.push(cIdx, rough);
+      candScores[cIdx] = 0;
+    }
+
+    const candidates = heap.heap;
+    const candidateIds = new Set(candidates.map(c => pData[c.idx].id));
+    const scored = [];
+
+    for (let i = 0; i < candidates.length; i++) {
+      const cIdx = candidates[i].idx;
+      const cand = pData[cIdx];
+      const cNotes = pNoteArrays[cIdx];
+      const cNorm = pNorms[cIdx];
+      const cAcc = pAccordArrays[cIdx];
+      const cAccNorm = pAccNorms[cIdx];
+      const cHasAcc = cand.hasAccords;
+      const cGender = cand.gender;
+      const cQSum = pQueryNoteSums[cIdx];
+
+      let genderPenalty = 0;
+      if ((tGender === 'male' && cGender === 'female') || (tGender === 'female' && cGender === 'male')) {
+        genderPenalty = 0.08;
+      }
+
+      let noteDot = 0, sharedQ = 0, sharedC = 0;
+      let p1 = 0, p2 = 0;
+      while (p1 < tNotes.ids.length && p2 < cNotes.ids.length) {
+        if (tNotes.ids[p1] === cNotes.ids[p2]) {
+          const v1 = tNotes.vals[p1];
+          const v2 = cNotes.vals[p2];
+          noteDot += v1 * v2;
+          sharedQ += v1;
+          sharedC += v2;
+          p1++; p2++;
+        } else if (tNotes.ids[p1] < cNotes.ids[p2]) p1++;
+        else p2++;
+      }
+
+      if (noteDot === 0 && !tHasAcc) continue;
+
+      const noteSim = (tNorm > 0 && cNorm > 0) ? (noteDot / (tNorm * cNorm)) : 0;
+      const containmentQtoC = tQSum > 0 ? (sharedQ / tQSum) : 0;
+      const containmentCtoQ = cQSum > 0 ? (sharedC / cQSum) : 0;
+
+      let accordSim = 0;
+      let top1Match = 0;
+      if (tHasAcc && cHasAcc && tAccNorm > 0 && cAccNorm > 0) {
+        let accDot = 0;
+        let a1 = 0, a2 = 0;
+        while (a1 < tAccords.ids.length && a2 < cAcc.ids.length) {
+          if (tAccords.ids[a1] === cAcc.ids[a2]) {
+            accDot += tAccords.vals[a1] * cAcc.vals[a2];
+            a1++; a2++;
+          } else if (tAccords.ids[a1] < cAcc.ids[a2]) a1++;
+          else a2++;
+        }
+        accordSim = Math.max(0, (accDot / (tAccNorm * cAccNorm) + 1) / 2);
+        if (tAccords.ids.length > 0 && cAcc.ids.length > 0 && tAccords.ids[0] === cAcc.ids[0]) top1Match = 1;
+      } else {
+        accordSim = noteSim;
+      }
+
+      const score = (
+        0.35 * noteSim +
+        0.25 * containmentQtoC +
+        0.10 * containmentCtoQ +
+        0.40 * accordSim +
+        0.05 * top1Match -
+        genderPenalty +
+        (Math.log10(Math.max(1, cand.vote_count)) * 1e-6)
+      );
+
+      scored.push({ id: cand.id, brand: cand.brand, score });
+    }
+
+    scored.sort((a, b) => b.score - a.score);
+
+    const ranked = [];
+    const brandCount = new Map();
+    for (const s of scored) {
+      const cnt = brandCount.get(s.brand) || 0;
+      if (cnt < 2) {
+        ranked.push(s.id);
+        brandCount.set(s.brand, cnt + 1);
+      }
+    }
+
+    return { ranked, candidateIds };
+  }
+
+  return { getFullCandidateRanking };
+}
+
 async function runMasterEvaluation() {
   console.log('=== RAPHRAGRANCE UNIFIED REPRODUCIBILITY EVALUATION ===\n');
 
   let gitCommit = 'unknown';
+  let isDirty = true;
   try {
     gitCommit = execSync('git rev-parse HEAD', { encoding: 'utf8' }).trim();
+    isDirty = execSync('git status --porcelain', { encoding: 'utf8' }).trim().length > 0;
   } catch (e) {
-    console.warn('Could not read git rev:', e.message);
+    console.warn('Could not read git status:', e.message);
   }
 
   const splitJsonRaw = fs.readFileSync('data/eval_split.json', 'utf8');
@@ -216,7 +509,31 @@ async function runMasterEvaluation() {
   // 2. Test Set Evaluation
   const testResults = evaluateSet(splitData.test, 'Test Set');
 
-  // 3. Catalog Coverage
+  // 3. Five Original Target Evaluation (Gate 1.5)
+  // Targets: TopGT-Rec@10 >= 20.00%, Hit@10 >= 50.00%, Prec@10 >= 9.00%, MRR >= 0.35, nDCG@10 >= 18.00%
+  const targetsDef = [
+    { name: "TopGT Recall@10", key: "topGT", target: 20.00, isPct: true },
+    { name: "Hit@10", key: "hit10", target: 50.00, isPct: true },
+    { name: "Precision@10", key: "prec10", target: 9.00, isPct: true },
+    { name: "MRR", key: "mrr", target: 0.35, isPct: false },
+    { name: "nDCG@10", key: "ndcg10", target: 18.00, isPct: true }
+  ];
+
+  const targetStatus = targetsDef.map(t => {
+    const metric = testResults.contentMetrics[t.key];
+    const mean = Number(metric.mean.toFixed(t.isPct ? 2 : 4));
+    const ci95 = [Number(metric.ci95[0].toFixed(t.isPct ? 2 : 4)), Number(metric.ci95[1].toFixed(t.isPct ? 2 : 4))];
+    const passes = mean >= t.target;
+    return {
+      metric: t.name,
+      target_threshold: t.isPct ? `>= ${t.target}%` : `>= ${t.target}`,
+      measured_mean: t.isPct ? `${mean}%` : `${mean}`,
+      ci95: t.isPct ? `[${ci95[0]}%, ${ci95[1]}%]` : `[${ci95[0]}, ${ci95[1]}]`,
+      status: passes ? "PASS" : "FAIL"
+    };
+  });
+
+  // 4. Catalog Coverage
   console.log('Calculating Catalog Coverage...');
   const totalFragrances = fullDb.prepare('SELECT COUNT(*) as c FROM perfumes').get().c;
   
@@ -261,7 +578,7 @@ async function runMasterEvaluation() {
     }
   };
 
-  // 4. 30% Held-Out Edge Recovery Test
+  // 5. 30% Held-Out Edge Recovery Test
   console.log('Calculating Held-Out 30% Edge Recovery on Test Set...');
   function makePrng(seed) {
     let s = seed % 2147483647;
@@ -339,30 +656,19 @@ async function runMasterEvaluation() {
     }
   };
 
-  // 5. 15 Anchor Fragrance Overlap
-  const ANCHORS = [
-    { id: 9828, name: "Aventus", brand: "Creed" },
-    { id: 1418, name: "Bleu de Chanel", brand: "Chanel" },
-    { id: 31861, name: "Sauvage", brand: "Dior" },
-    { id: 39314, name: "Layton", brand: "Parfums de Marly" },
-    { id: 33519, name: "Baccarat Rouge 540", brand: "Maison Francis Kurkdjian" },
-    { id: 51411, name: "Lost Cherry", brand: "Tom Ford" },
-    { id: 44174, name: "Hacivat", brand: "Nishane" },
-    { id: 62615, name: "Angels' Share", brand: "By Kilian" },
-    { id: 68271, name: "Supremacy Not Only Intense", brand: "Afnan" },
-    { id: 1825, name: "Terre d'Hermes", brand: "Hermes" },
-    { id: 84224, name: "Blue Talisman", brand: "Ex Nihilo" },
-    { id: 108244, name: "Turathi Electric", brand: "Afnan" },
-    { id: 50384, name: "Cloud", brand: "Ariana Grande" },
-    { id: 53, name: "Kouros", brand: "Yves Saint Laurent" },
-    { id: 43632, name: "Black Phantom", brand: "By Kilian" }
-  ];
+  // 6. Verified 19 Anchor Overlap (Gate 1.1: loaded from data/anchors.json with DB lookup)
+  console.log('Calculating Overlap across Verified Anchors from data/anchors.json...');
+  const anchorsJson = JSON.parse(fs.readFileSync('data/anchors.json', 'utf8'));
+  const anchorStmt = fullDb.prepare("SELECT id, name, brand FROM perfumes WHERE id = ?");
 
   let sumOldOverlap = 0;
   let sumContentOverlap = 0;
   const anchorDetails = [];
 
-  for (const a of ANCHORS) {
+  for (const item of anchorsJson) {
+    const a = anchorStmt.get(item.id);
+    if (!a) throw new Error(`Anchor ID ${item.id} not found in database!`);
+
     const qgt = adjFull.get(a.id) || new Map();
     const sortedGT = Array.from(qgt.entries()).sort((x, y) => y[1] - x[1]);
     const top10GT = new Set(sortedGT.slice(0, 10).map(e => e[0]));
@@ -388,14 +694,18 @@ async function runMasterEvaluation() {
   }
 
   const anchorOverlapSummary = {
-    methodology: "Strict top-10 community neighbors (sym_net) overlap across 15 anchor perfumes",
-    old_engine_avg: Number((sumOldOverlap / ANCHORS.length).toFixed(2)),
-    content_only_avg: Number((sumContentOverlap / ANCHORS.length).toFixed(2)),
-    headline_retraction: "Earlier claims of 5.0/10 and 4.4/10 evaluated against an unranked, loose bag of all community votes. Strict apples-to-apples top-10 community neighbor overlap is 0.6/10 (Old Engine) vs 1.2/10 (Content-Only).",
+    methodology: `Strict top-10 community neighbors (sym_net) overlap across ${anchorsJson.length} verified anchor perfumes from data/anchors.json`,
+    total_anchors: anchorsJson.length,
+    old_engine_avg: Number((sumOldOverlap / anchorsJson.length).toFixed(2)),
+    content_only_avg: Number((sumContentOverlap / anchorsJson.length).toFixed(2)),
+    content_only_top10_overlap_mean: `${(sumContentOverlap / anchorsJson.length).toFixed(2)}/10`,
     details: anchorDetails
   };
 
-  // 6. Curated Acceptance Cases Ranks
+  // 7. Acceptance Cases: Real integer ranks from full candidate ranking (Gate 1.4 & 1.6)
+  console.log('Calculating Real Content Ranks for Acceptance Cases...');
+  const { getFullCandidateRanking } = buildCandidateIndex();
+
   const acceptancePairs = [
     { q: 68271, t: 9828, name: "SNOI -> Aventus" },
     { q: 68271, t: 44174, name: "SNOI -> Hacivat" },
@@ -412,17 +722,38 @@ async function runMasterEvaluation() {
   `);
 
   const acceptanceStatus = acceptancePairs.map(p => {
-    const cRows = stmtContentRecs.all(p.q).map(r => r.similar_id);
-    const contentRank = cRows.indexOf(p.t) + 1;
+    // 1. Exact candidate ranking (top 250 retrieval pool)
+    const { ranked, candidateIds } = getFullCandidateRanking(p.q, 250);
+    const inCandidates = candidateIds.has(p.t);
+    const contentRankIdx = ranked.indexOf(p.t);
+    const realContentRank = inCandidates ? (contentRankIdx !== -1 ? contentRankIdx + 1 : 'not retrieved') : 'not retrieved';
 
+    // 2. Curated rank from similar table
     const curRows = stmtCuratedRecs.all(p.q).map(r => r.similar_id);
-    const curatedRank = curRows.indexOf(p.t) + 1;
+    const curIdx = curRows.indexOf(p.t);
+    const curatedRank = curIdx !== -1 ? curIdx + 1 : null;
+
+    // 3. Final production rank
+    let finalRank = null;
+    if (curatedRank !== null) {
+      finalRank = curatedRank;
+    } else if (typeof realContentRank === 'number' && realContentRank <= 30) {
+      finalRank = realContentRank;
+    }
+
+    const passesTop10Final = finalRank !== null && finalRank <= 10;
+    const passesTop10Content = typeof realContentRank === 'number' && realContentRank <= 10;
+    const passesOnlyBecauseCurated = passesTop10Final && !passesTop10Content;
 
     return {
       pair: p.name,
-      content_only_rank: contentRank > 0 ? `#${contentRank}` : '> 10',
-      curated_rank: curatedRank > 0 ? `#${curatedRank}` : 'none',
-      final_production_rank: curatedRank > 0 ? `#${curatedRank}` : (contentRank > 0 ? `#${contentRank}` : '> 10')
+      query_id: p.q,
+      target_id: p.t,
+      content_only_candidate_rank: typeof realContentRank === 'number' ? `#${realContentRank}` : realContentRank,
+      curated_rank: curatedRank !== null ? `#${curatedRank}` : "none",
+      final_production_rank: finalRank !== null ? `#${finalRank}` : "> 30",
+      passes_top10: passesTop10Final,
+      passes_only_because_of_curated: passesOnlyBecauseCurated
     };
   });
 
@@ -430,12 +761,18 @@ async function runMasterEvaluation() {
     meta: {
       generated_at: new Date().toISOString(),
       git_commit: gitCommit,
+      dirty: isDirty,
       eval_split_sha256: splitHash,
       random_seeds: {
         bootstrap_seed: 42,
         held_out_seed: 42
       },
-      evaluation_protocol: "Single unified frozen evaluation run. Test set was not tuned on; only final evaluation was rerun."
+      evaluation_protocol: "Single unified frozen evaluation run. Test set was not tuned on; only final evaluation was rerun.",
+      baseline_definition: {
+        commit: "d200118e7a524bc8c0bdf483b22ffd012a34c2f3",
+        repository: "D:/Raffa/Mengoding/Raphragrance",
+        description: "Original baseline engine: candidate retrieval via SQLite LIKE on top-2 accords (60+40 candidates, min vote_count 15/25), note Jaccard similarity (0.35) + accord intersection/union (0.35) + gender bias (0.10/-0.15) + vote score (0.20) with brand cap 2."
+      }
     },
     engine_configuration: {
       note_normalizer: "normalizeNoteDict (Captive Dictionary included for canonicalization)",
@@ -453,9 +790,10 @@ async function runMasterEvaluation() {
       brand_diversity_cap: 2,
       precomputed_top_k: 30
     },
+    target_status: targetStatus,
     coverage,
     held_out_30pct_test: heldOutTest,
-    anchor_15_overlap: anchorOverlapSummary,
+    anchor_19_overlap: anchorOverlapSummary,
     acceptance_cases: acceptanceStatus,
     validation_metrics: {
       num_queries: splitData.validation.filter(qid => adjFull.has(qid) && adjFull.get(qid).size > 0).length,
