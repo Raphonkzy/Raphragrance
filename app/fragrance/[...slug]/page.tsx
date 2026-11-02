@@ -38,6 +38,10 @@ export default async function FragranceDetailPage({
   const topAccord = fragrance.accords && fragrance.accords.length > 0 ? fragrance.accords[0].name : null;
   const [fill, ink] = getColorPair(topAccord);
 
+  const cleaned = fragrance.name.replace(/[^a-zA-Z0-9\s]/g, "").trim();
+  const words = cleaned.split(/\s+/).filter(Boolean);
+  const initials = words.length === 0 ? "" : words.length === 1 ? words[0].slice(0, 2).toUpperCase() : (words[0][0] + words[1][0]).toUpperCase();
+
   const style = {
     "--c": fill,
     "--i": ink,
@@ -50,7 +54,7 @@ export default async function FragranceDetailPage({
       ? "Women"
       : "Unisex";
 
-  const similar = getSimilarFragrances(fragrance, 3);
+  const similar = getSimilarFragrances(fragrance, 10);
 
   const [wScore, spScore, suScore, faScore] = normalizeSeasons(fragrance.seasons);
 
@@ -99,13 +103,23 @@ export default async function FragranceDetailPage({
               alt={`${fragrance.brand} ${fragrance.name} bottle`}
               width={280}
               height={373}
+              referrerPolicy="no-referrer"
               fetchPriority="high"
               loading="eager"
               decoding="sync"
             />
-          ) : (
-            <BottleSvg />
-          )}
+          ) : null}
+          <div
+            className="im-fallback"
+            style={{
+              display: fragrance.imageUrl ? "none" : "flex",
+              background: fill,
+              color: ink,
+            }}
+            aria-hidden="true"
+          >
+            <span className="im-initials">{initials}</span>
+          </div>
         </div>
       </section>
 

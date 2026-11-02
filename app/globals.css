@@ -458,18 +458,43 @@ button:disabled {
   transition: transform 0.35s ease;
 }
 
+.im-fallback {
+  grid-area: 1 / 1;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.35s ease;
+}
+
+.im-fallback .im-initials {
+  font-family: var(--fg);
+  font-size: 34px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  user-select: none;
+}
+
+.hero .im .im-fallback .im-initials {
+  font-size: 58px;
+}
+
 .tile:hover .im svg,
-.tile:hover .im img {
+.tile:hover .im img,
+.tile:hover .im .im-fallback {
   transform: scale(1.05);
 }
 
 @media (prefers-reduced-motion: reduce) {
   .im svg,
-  .im img {
+  .im img,
+  .im-fallback {
     transition: none;
   }
   .tile:hover .im svg,
-  .tile:hover .im img {
+  .tile:hover .im img,
+  .tile:hover .im .im-fallback {
     transform: none;
   }
 }

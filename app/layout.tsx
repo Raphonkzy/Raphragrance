@@ -48,7 +48,7 @@ export default function RootLayout({
         <link rel="dns-prefetch" href="https://fimgs.net" />
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{var t=localStorage.getItem('rph-theme');if(!t){t=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}document.documentElement.setAttribute('data-theme',t);}catch(e){}})();window.addEventListener('error',function(e){if(e.target&&e.target.tagName==='IMG')e.target.style.display='none';},true);`,
+            __html: `(function(){try{var t=localStorage.getItem('rph-theme');if(!t){t=window.matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';}document.documentElement.setAttribute('data-theme',t);}catch(e){}})();window.addEventListener('error',function(e){if(e.target&&e.target.tagName==='IMG'){e.target.style.display='none';var p=e.target.parentElement;if(p){var fb=p.querySelector('.im-fallback');if(fb)fb.style.display='flex';}}},true);`,
           }}
         />
       </head>

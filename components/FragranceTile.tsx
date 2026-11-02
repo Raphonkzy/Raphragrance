@@ -13,6 +13,15 @@ export function BottleSvg() {
   );
 }
 
+function getInitials(name: string): string {
+  if (!name) return "";
+  const cleaned = name.replace(/[^a-zA-Z0-9\s]/g, "").trim();
+  const words = cleaned.split(/\s+/).filter(Boolean);
+  if (words.length === 0) return "";
+  if (words.length === 1) return words[0].slice(0, 2).toUpperCase();
+  return (words[0][0] + words[1][0]).toUpperCase();
+}
+
 interface FragranceTileProps {
   fragrance: CatalogFragrance | Fragrance;
   priority?: boolean;
@@ -21,6 +30,7 @@ interface FragranceTileProps {
 export function FragranceTile({ fragrance, priority = false }: FragranceTileProps) {
   const topAccord = fragrance.accords && fragrance.accords.length > 0 ? fragrance.accords[0].name : null;
   const [fill, ink] = getColorPair(topAccord);
+  const initials = getInitials(fragrance.name);
 
   const style = {
     "--c": fill,
@@ -50,12 +60,22 @@ export function FragranceTile({ fragrance, priority = false }: FragranceTileProp
             loading={priority ? "eager" : "lazy"}
             fetchPriority={priority ? "high" : "low"}
             decoding={priority ? "sync" : "async"}
+            referrerPolicy="no-referrer"
             width={250}
             height={333}
           />
-        ) : (
-          <BottleSvg />
-        )}
+        ) : null}
+        <div
+          className="im-fallback"
+          style={{
+            display: fragrance.imageUrl ? "none" : "flex",
+            background: fill,
+            color: ink,
+          }}
+          aria-hidden="true"
+        >
+          <span className="im-initials">{initials}</span>
+        </div>
       </div>
 
       <div className="lb">
