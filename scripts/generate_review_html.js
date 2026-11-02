@@ -1,40 +1,35 @@
 const fs = require('fs');
+const path = require('path');
+const { execSync } = require('child_process');
 const { DatabaseSync } = require('node:sqlite');
 
 const publicDb = new DatabaseSync('data/perfumes.public.db');
 const fullDb = new DatabaseSync('data/perfumes.full.db');
 
-// Seeded PRNG for deterministic stratified sampling
+let gitCommit = 'unknown';
+try {
+  gitCommit = execSync('git rev-parse HEAD', { encoding: 'utf8' }).trim();
+} catch (e) {
+  console.warn('Could not read git rev:', e.message);
+}
+
+// PRNG for deterministic stratified sampling
 function makePrng(seed = 12345) {
   let s = seed % 2147483647;
   if (s <= 0) s += 2147483646;
   return function() {
-    state = (s * 16807) % 2147483647;
-    s = state;
-    return (state - 1) / 2147483646;
+    s = (s * 16807) % 2147483647;
+    return (s - 1) / 2147483646;
   };
 }
 const rng = makePrng(999);
 
-const namedIds = [
-  9828,   // Aventus
-  31861,  // Sauvage
-  33519,  // Baccarat Rouge 540
-  12201,  // Santal 33
-  1825,   // Tobacco Vanille
-  43871,  // Delina
-  39314,  // Layton
-  51411,  // Lost Cherry
-  62615,  // Angels' Share
-  50757,  // Y Eau de Parfum
-  68271,  // Supremacy Not Only Intense
-  108244, // Turathi Electric
-  84224   // Blue Talisman
-];
-
+// Gate 1.1 & Gate 9: Load all verified anchors from data/anchors.json
+const anchorsJson = JSON.parse(fs.readFileSync('data/anchors.json', 'utf8'));
+const namedIds = anchorsJson.map(a => a.id);
 const namedSet = new Set(namedIds);
 
-// Stratified sampling (8 each)
+// Stratified sampling
 function sampleRows(query, limit = 8) {
   const all = publicDb.prepare(query).all();
   const pool = all.filter(r => !namedSet.has(r.id));
@@ -60,7 +55,7 @@ const stmtPerfume = fullDb.prepare("SELECT id, name, brand, vote_count, accords,
 
 const targets = [];
 
-// 1. Add Named Anchors
+// 1. Add Named Anchors (All 19)
 for (const id of namedIds) {
   const p = stmtPerfume.get(id);
   if (p) targets.push({ ...p, stratum: "Named Anchor" });
@@ -100,13 +95,22 @@ function getSharedNotes(targetNotes, candNotes) {
   return Array.from(new Set(shared));
 }
 
+const stmtPublicCurated = publicDb.prepare(`
+  SELECT s.similar_id, s.score, s.source, p.*
+  FROM similar s
+  JOIN perfumes p ON p.id = s.similar_id
+  WHERE s.fragrance_id = ? AND s.source = 'curated'
+  ORDER BY s.rank ASC
+  LIMIT 10
+`);
+
 const stmtPublicContent = publicDb.prepare(`
   SELECT s.similar_id, s.score, s.source, p.*
   FROM similar s
   JOIN perfumes p ON p.id = s.similar_id
-  WHERE s.fragrance_id = ?
+  WHERE s.fragrance_id = ? AND s.source = 'content'
   ORDER BY s.rank ASC
-  LIMIT 10
+  LIMIT 30
 `);
 
 const stmtFullCurated = fullDb.prepare(`
@@ -124,7 +128,7 @@ const stmtFullCommunity = fullDb.prepare(`
   JOIN perfumes p ON p.id = s.similar_id
   WHERE s.fragrance_id = ? AND s.source = 'community'
   ORDER BY s.rank ASC
-  LIMIT 10
+  LIMIT 30
 `);
 
 const stmtFullContent = fullDb.prepare(`
@@ -133,14 +137,38 @@ const stmtFullContent = fullDb.prepare(`
   JOIN perfumes p ON p.id = s.similar_id
   WHERE s.fragrance_id = ? AND s.source = 'content'
   ORDER BY s.rank ASC
-  LIMIT 20
+  LIMIT 30
 `);
 
 function getTargetPackage(target) {
   const targetNotes = parseNotes(target);
 
-  // Content list (Public DB)
-  const contentRaw = stmtPublicContent.all(target.id);
+  // Content list (Public DB) with brand diversity cap <= 2
+  const contentRaw = [];
+  const contentSeen = new Set([target.id]);
+  const contentBrandCounts = new Map();
+
+  function tryAddContent(r) {
+    if (contentSeen.has(r.id)) return false;
+    const cnt = contentBrandCounts.get(r.brand) || 0;
+    if (cnt >= 2) return false;
+    contentBrandCounts.set(r.brand, cnt + 1);
+    contentSeen.add(r.id);
+    contentRaw.push(r);
+    return true;
+  }
+
+  for (const r of stmtPublicCurated.all(target.id)) {
+    tryAddContent(r);
+    if (contentRaw.length >= 10) break;
+  }
+  if (contentRaw.length < 10) {
+    for (const r of stmtPublicContent.all(target.id)) {
+      tryAddContent(r);
+      if (contentRaw.length >= 10) break;
+    }
+  }
+
   const contentItems = contentRaw.map((r, idx) => {
     const cNotes = parseNotes(r);
     const shared = getSharedNotes(targetNotes, cNotes);
@@ -165,23 +193,34 @@ function getTargetPackage(target) {
     };
   });
 
-  // Hybrid list (Full DB)
+  // Hybrid list (Full DB) with brand diversity cap <= 2
   const hybridRaw = [];
-  const seenIds = new Set([target.id]);
+  const hybridSeen = new Set([target.id]);
+  const hybridBrandCounts = new Map();
+
+  function tryAddHybrid(r) {
+    if (hybridSeen.has(r.id)) return false;
+    const cnt = hybridBrandCounts.get(r.brand) || 0;
+    if (cnt >= 2) return false;
+    hybridBrandCounts.set(r.brand, cnt + 1);
+    hybridSeen.add(r.id);
+    hybridRaw.push(r);
+    return true;
+  }
 
   for (const r of stmtFullCurated.all(target.id)) {
-    if (!seenIds.has(r.id)) { hybridRaw.push(r); seenIds.add(r.id); }
+    tryAddHybrid(r);
     if (hybridRaw.length >= 10) break;
   }
   if (hybridRaw.length < 10) {
     for (const r of stmtFullCommunity.all(target.id)) {
-      if (!seenIds.has(r.id)) { hybridRaw.push(r); seenIds.add(r.id); }
+      tryAddHybrid(r);
       if (hybridRaw.length >= 10) break;
     }
   }
   if (hybridRaw.length < 10) {
     for (const r of stmtFullContent.all(target.id)) {
-      if (!seenIds.has(r.id)) { hybridRaw.push(r); seenIds.add(r.id); }
+      tryAddHybrid(r);
       if (hybridRaw.length >= 10) break;
     }
   }
@@ -221,185 +260,171 @@ function getTargetPackage(target) {
       gender: target.gender,
       vote_count: target.vote_count,
       stratum: target.stratum,
-      accords: target.accords,
-      notes: targetNotes.slice(0, 8).join(', '),
-      image_url: target.image_url
+      image_url: target.image_url,
+      notes: targetNotes.slice(0, 15).join(', ')
     },
     contentItems,
     hybridItems
   };
 }
 
-const packagedData = targets.map(getTargetPackage);
+console.log('Generating packages for each target...');
+const packages = targets.map(getTargetPackage);
 
-// Generate self-contained HTML
+// HTML Template with XSS sanitization and robust import/export
 const html = `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Raphragrance Similarity Engine - Human Review Interface</title>
+  <title>Raphragrance Similarity Quality Review</title>
   <style>
     :root {
-      --bg: #FBFBFA;
-      --card-bg: #FFFFFF;
-      --border: #E8E8E4;
-      --text: #191918;
-      --mu: #5F5F5A;
-      --accent: #B24E2B;
-      --green: #2E7D32;
-      --amber: #ED6C02;
-      --red: #D32F2F;
+      --bg: #F8F8F6;
+      --card: #FFFFFF;
+      --fg: #1A1A18;
+      --mu: #6E6E6A;
+      --line: #E5E5E0;
+      --accent: #2563EB;
+      --green: #10B981;
+      --red: #EF5350;
+      --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     }
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --bg: #0C0C0C;
-        --card-bg: #141414;
-        --border: #262626;
-        --text: #F2F2F0;
-        --mu: #9A9A95;
-        --accent: #E07A5F;
-        --green: #4CAF50;
-        --amber: #FFB74D;
-        --red: #EF5350;
-      }
-    }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      font-family: var(--font);
       background: var(--bg);
-      color: var(--text);
-      line-height: 1.45;
-      padding: 24px;
+      color: var(--fg);
+      -webkit-font-smoothing: antialiased;
     }
-    .container { max-width: 1540px; margin: 0 auto; }
     header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--line);
+      padding: 16px 32px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      padding-bottom: 20px;
-      margin-bottom: 24px;
-      border-bottom: 1px solid var(--border);
     }
-    h1 { font-size: 24px; font-weight: 700; }
-    .subtitle { color: var(--mu); font-size: 14px; margin-top: 4px; }
-    .header-actions { display: flex; gap: 12px; align-items: center; }
-    button.export-btn {
+    .title { font-size: 20px; font-weight: 700; }
+    .subtitle { font-size: 13px; color: var(--mu); margin-top: 2px; }
+    .meta-bar {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      font-size: 14px;
+    }
+    .btn-export, .btn-import {
       background: var(--accent);
       color: #fff;
       border: none;
-      padding: 10px 18px;
-      border-radius: 6px;
+      padding: 8px 16px;
+      border-radius: 8px;
       font-weight: 600;
-      font-size: 14px;
       cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
+      font-size: 13px;
     }
-    button.export-btn:hover { opacity: 0.9; }
-    .filters {
+    .btn-import { background: #4B5563; }
+    .btn-export:hover { opacity: 0.9; }
+    .filter-bar {
+      padding: 12px 32px;
+      background: #fff;
+      border-bottom: 1px solid var(--line);
       display: flex;
       gap: 8px;
-      margin-bottom: 24px;
-      flex-wrap: wrap;
+      overflow-x: auto;
     }
     .filter-btn {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      color: var(--text);
       padding: 6px 14px;
       border-radius: 20px;
+      border: 1px solid var(--line);
+      background: transparent;
       font-size: 13px;
       cursor: pointer;
-      font-weight: 500;
+      color: var(--mu);
     }
     .filter-btn.active {
-      background: var(--text);
-      color: var(--bg);
-      border-color: var(--text);
+      background: var(--fg);
+      color: #fff;
+      border-color: var(--fg);
     }
-    .review-grid {
-      display: flex;
-      flex-direction: column;
-      gap: 32px;
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 32px;
     }
     .fragrance-card {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 20px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      margin-bottom: 32px;
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.02);
     }
     .card-header {
+      padding: 18px 24px;
+      background: #FAFAF9;
+      border-bottom: 1px solid var(--line);
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 16px;
-      padding-bottom: 12px;
-      border-bottom: 1px solid var(--border);
     }
     .stratum-tag {
       font-size: 11px;
+      font-weight: 700;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
-      padding: 3px 8px;
-      border-radius: 4px;
-      background: var(--border);
-      color: var(--mu);
-      font-weight: 600;
+      padding: 4px 8px;
+      border-radius: 6px;
+      background: #E5E7EB;
+      color: #374151;
     }
     .side-by-side {
       display: grid;
-      grid-template-columns: 300px 1fr 1fr;
-      gap: 24px;
-    }
-    @media (max-width: 1200px) {
-      .side-by-side { grid-template-columns: 1fr; }
+      grid-template-columns: 280px 1fr 1fr;
+      divide-x: 1px solid var(--line);
     }
     .target-col {
+      padding: 24px;
+      background: #FDFDFD;
+      border-right: 1px solid var(--line);
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 16px;
     }
     .target-image-wrap {
       width: 100%;
       height: 240px;
-      background: var(--bg);
-      border-radius: 8px;
+      background: #FFFFFF;
+      border-radius: 12px;
       display: flex;
       align-items: center;
       justify-content: center;
-      overflow: hidden;
-      border: 1px solid var(--border);
+      border: 1px solid var(--line);
     }
     .target-image-wrap img {
-      max-height: 90%;
-      max-width: 90%;
+      max-height: 80%;
+      max-width: 80%;
       object-fit: contain;
     }
-    .target-brand { font-size: 13px; text-transform: uppercase; color: var(--mu); font-weight: 600; }
-    .target-name { font-size: 18px; font-weight: 700; margin-top: 2px; }
-    .target-meta { font-size: 12px; color: var(--mu); margin-top: 4px; }
-    .target-notes-box {
-      font-size: 12px;
-      background: var(--bg);
-      padding: 10px;
-      border-radius: 6px;
-      border: 1px solid var(--border);
-    }
+    .target-brand { font-size: 13px; font-weight: 600; color: var(--mu); text-transform: uppercase; }
+    .target-name { font-size: 18px; font-weight: 700; margin: 2px 0 6px; }
+    .target-meta { font-size: 12px; color: var(--mu); }
+    .target-notes-box { font-size: 12px; line-height: 1.4; }
     .rec-col {
-      background: var(--bg);
-      border-radius: 10px;
-      padding: 16px;
-      border: 1px solid var(--border);
+      padding: 24px;
+      border-right: 1px solid var(--line);
       display: flex;
       flex-direction: column;
     }
+    .rec-col:last-child { border-right: none; }
     .rec-col-title {
-      font-size: 15px;
+      font-size: 14px;
       font-weight: 700;
-      margin-bottom: 12px;
+      margin-bottom: 16px;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -407,135 +432,102 @@ const html = `<!DOCTYPE html>
     .rec-list {
       display: flex;
       flex-direction: column;
-      gap: 10px;
+      gap: 12px;
       flex: 1;
     }
     .rec-item {
       display: flex;
-      align-items: center;
       gap: 12px;
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: 8px;
+      align-items: center;
       padding: 8px 12px;
+      border-radius: 10px;
+      background: #FAFAF9;
+      border: 1px solid var(--line);
     }
-    .rec-rank {
-      font-size: 12px;
-      font-weight: 700;
-      color: var(--mu);
-      min-width: 24px;
-    }
-    .rec-thumb {
-      width: 44px;
-      height: 44px;
-      background: var(--bg);
-      border-radius: 4px;
-      object-fit: contain;
-      flex-shrink: 0;
-    }
-    .rec-info {
-      flex: 1;
-      min-width: 0;
-    }
-    .rec-brand { font-size: 11px; text-transform: uppercase; color: var(--mu); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .rec-rank { font-size: 12px; font-weight: 700; color: var(--mu); width: 20px; }
+    .rec-thumb { width: 44px; height: 44px; object-fit: contain; background: #fff; border-radius: 6px; }
+    .rec-info { flex: 1; min-width: 0; }
+    .rec-brand { font-size: 11px; font-weight: 600; color: var(--mu); }
     .rec-name { font-size: 13px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .rec-label {
-      font-size: 12px;
-      font-weight: 500;
-      color: var(--mu);
-      margin-top: 2px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
+    .rec-label { font-size: 11px; color: #4B5563; }
     .rating-section {
-      margin-top: 14px;
-      padding-top: 12px;
-      border-top: 1px solid var(--border);
+      margin-top: 20px;
+      padding-top: 16px;
+      border-top: 1px dashed var(--line);
     }
-    .btn-group {
-      display: flex;
-      gap: 6px;
-      margin-bottom: 8px;
-    }
+    .btn-group { display: flex; gap: 8px; margin-bottom: 8px; }
     .btn-rate {
       flex: 1;
-      padding: 6px;
-      border-radius: 5px;
-      border: 1px solid var(--border);
-      background: var(--card-bg);
-      color: var(--text);
+      padding: 8px;
+      border: 1px solid var(--line);
+      background: #fff;
+      border-radius: 8px;
       font-size: 12px;
       font-weight: 600;
       cursor: pointer;
-      text-align: center;
     }
-    .btn-rate.good.active { background: var(--green); color: #fff; border-color: var(--green); }
-    .btn-rate.ok.active { background: var(--amber); color: #fff; border-color: var(--amber); }
-    .btn-rate.bad.active { background: var(--red); color: #fff; border-color: var(--red); }
+    .btn-rate.good.active { background: #D1FAE5; color: #065F46; border-color: #10B981; }
+    .btn-rate.ok.active { background: #FEF3C7; color: #92400E; border-color: #F59E0B; }
+    .btn-rate.bad.active { background: #FEE2E2; color: #991B1B; border-color: #EF4444; }
     .comment-input {
       width: 100%;
-      padding: 8px 10px;
-      font-size: 12px;
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      background: var(--card-bg);
-      color: var(--text);
-    }
-    .stats-bar {
-      background: var(--card-bg);
-      border: 1px solid var(--border);
+      box-sizing: border-box;
+      padding: 8px 12px;
+      border: 1px solid var(--line);
       border-radius: 8px;
-      padding: 12px 18px;
-      margin-bottom: 24px;
-      display: flex;
-      gap: 24px;
-      font-size: 13px;
-      color: var(--mu);
+      font-size: 12px;
     }
-    .stats-bar strong { color: var(--text); }
   </style>
 </head>
 <body>
-  <div class="container">
-    <header>
-      <div>
-        <h1>Similarity Engine - Human Review Interface</h1>
-        <div class="subtitle">Blind/Side-by-side verification: Content-Only (Public DB) vs Hybrid Mode (Full DB) across 53 Stratified Fragrances</div>
-      </div>
-      <div class="header-actions">
-        <button class="export-btn" onclick="exportRatings()">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-          Export Ratings (JSON)
-        </button>
-      </div>
-    </header>
-
-    <div class="stats-bar">
-      <div>Total Fragrances: <strong id="stat-total">53</strong></div>
-      <div>Rated Content-Only: <strong id="stat-content-rated">0</strong> / 53</div>
-      <div>Rated Hybrid: <strong id="stat-hybrid-rated">0</strong> / 53</div>
-      <div>Status: <span id="save-status" style="color: var(--green); font-weight: 600;">Saved locally</span></div>
+  <header>
+    <div>
+      <div class="title">Raphragrance Similarity Quality Review Tool</div>
+      <div class="subtitle">Blind/Side-by-side verification: Content-Only (Public DB) vs Hybrid Mode (Full DB) across ${packages.length} Stratified Fragrances</div>
     </div>
-
-    <div class="filters">
-      <button class="filter-btn active" onclick="filterCards('all')">All (53)</button>
-      <button class="filter-btn" onclick="filterCards('Named Anchor')">Named Anchors (13)</button>
-      <button class="filter-btn" onclick="filterCards('Popular')">Popular (8)</button>
-      <button class="filter-btn" onclick="filterCards('Mid')">Mid (8)</button>
-      <button class="filter-btn" onclick="filterCards('Long-Tail')">Long-Tail (8)</button>
-      <button class="filter-btn" onclick="filterCards('Clone Houses')">Clone Houses (8)</button>
-      <button class="filter-btn" onclick="filterCards('Flat-Only Notes')">Flat-Only Notes (8)</button>
+    <div class="meta-bar">
+      <div>Total Fragrances: <strong id="stat-total">${packages.length}</strong></div>
+      <div>Rated Content-Only: <strong id="stat-content-rated">0</strong> / ${packages.length}</div>
+      <div>Rated Hybrid: <strong id="stat-hybrid-rated">0</strong> / ${packages.length}</div>
+      <label class="btn-import">
+        Import JSON
+        <input type="file" id="import-input" accept=".json" style="display:none;" onchange="importRatings(event)">
+      </label>
+      <button class="btn-export" onclick="exportRatings()">Export Ratings JSON</button>
+      <span id="save-status" style="font-size: 12px; color: var(--mu);"></span>
     </div>
+  </header>
 
-    <div class="review-grid" id="grid">
-      <!-- Cards rendered here -->
-    </div>
+  <div class="filter-bar">
+    <button class="filter-btn active" data-stratum="all" onclick="filterCards('all')">All (${packages.length})</button>
+    <button class="filter-btn" data-stratum="Named Anchor" onclick="filterCards('Named Anchor')">Named Anchors (${namedIds.length})</button>
+    <button class="filter-btn" data-stratum="Popular" onclick="filterCards('Popular')">Popular</button>
+    <button class="filter-btn" data-stratum="Mid" onclick="filterCards('Mid')">Mid</button>
+    <button class="filter-btn" data-stratum="Long-Tail" onclick="filterCards('Long-Tail')">Long-Tail</button>
+    <button class="filter-btn" data-stratum="Clone Houses" onclick="filterCards('Clone Houses')">Clone Houses</button>
+    <button class="filter-btn" data-stratum="Flat-Only Notes" onclick="filterCards('Flat-Only Notes')">Flat-Only Notes</button>
   </div>
 
+  <div class="container" id="grid"></div>
+
+  <script id="data-payload" type="application/json">
+${JSON.stringify(packages)}
+  </script>
+
   <script>
-    const data = ${JSON.stringify(packagedData)};
-    const STORAGE_KEY = "raphragrance_similarity_review_v1";
+    const data = JSON.parse(document.getElementById("data-payload").textContent);
+    const STORAGE_KEY = "aphragrance_review_state_v2";
+    const GIT_COMMIT = "${gitCommit}";
+
+    function escapeHtml(str) {
+      if (str === null || str === undefined) return "";
+      return String(str)
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+    }
 
     let state = {};
     try {
@@ -613,25 +605,25 @@ const html = `<!DOCTYPE html>
         card.innerHTML = \`
           <div class="card-header">
             <div>
-              <span class="stratum-tag">\${t.stratum}</span>
-              <strong style="margin-left: 8px;">\${t.brand} - \${t.name}</strong> (\${t.year || 'N/A'}, \${t.vote_count} votes)
+              <span class="stratum-tag">\${escapeHtml(t.stratum)}</span>
+              <strong style="margin-left: 8px;">\${escapeHtml(t.brand)} - \${escapeHtml(t.name)}</strong> (\${escapeHtml(t.year) || 'N/A'}, \${escapeHtml(t.vote_count)} votes)
             </div>
-            <div style="font-size: 12px; color: var(--mu);">ID: \${t.id}</div>
+            <div style="font-size: 12px; color: var(--mu);">ID: \${escapeHtml(t.id)}</div>
           </div>
           <div class="side-by-side">
             <!-- Target Fragrance Info -->
             <div class="target-col">
               <div class="target-image-wrap">
-                <img src="\${targetImg}" alt="\${t.name}" onerror="this.src='\${placeholderSvg}'" />
+                <img src="\${escapeHtml(targetImg)}" alt="\${escapeHtml(t.name)}" onerror="this.src='\${placeholderSvg}'" />
               </div>
               <div>
-                <div class="target-brand">\${t.brand}</div>
-                <div class="target-name">\${t.name}</div>
-                <div class="target-meta">\${t.gender} &bull; \${t.year || 'Year unknown'} &bull; \${t.vote_count} votes</div>
+                <div class="target-brand">\${escapeHtml(t.brand)}</div>
+                <div class="target-name">\${escapeHtml(t.name)}</div>
+                <div class="target-meta">\${escapeHtml(t.gender)} &bull; \${escapeHtml(t.year) || 'Year unknown'} &bull; \${escapeHtml(t.vote_count)} votes</div>
               </div>
               <div class="target-notes-box">
                 <div style="font-weight: 600; margin-bottom: 2px;">Target Notes:</div>
-                <div style="color: var(--mu);">\${t.notes || 'No pyramid notes'}</div>
+                <div style="color: var(--mu);">\${escapeHtml(t.notes) || 'No pyramid notes'}</div>
               </div>
             </div>
 
@@ -644,12 +636,12 @@ const html = `<!DOCTYPE html>
               <div class="rec-list">
                 \${item.contentItems.map(r => \`
                   <div class="rec-item">
-                    <span class="rec-rank">#\${r.rank}</span>
-                    <img class="rec-thumb" src="\${r.image_url || placeholderSvg}" onerror="this.src='\${placeholderSvg}'" />
+                    <span class="rec-rank">#\${escapeHtml(r.rank)}</span>
+                    <img class="rec-thumb" src="\${escapeHtml(r.image_url || placeholderSvg)}" onerror="this.src='\${placeholderSvg}'" />
                     <div class="rec-info">
-                      <div class="rec-brand">\${r.brand}</div>
-                      <div class="rec-name" title="\${r.name}">\${r.name}</div>
-                      <div class="rec-label">\${r.label}</div>
+                      <div class="rec-brand">\${escapeHtml(r.brand)}</div>
+                      <div class="rec-name" title="\${escapeHtml(r.name)}">\${escapeHtml(r.name)}</div>
+                      <div class="rec-label">\${escapeHtml(r.label)}</div>
                     </div>
                   </div>
                 \`).join('')}
@@ -660,7 +652,7 @@ const html = `<!DOCTYPE html>
                   <button class="btn-rate ok \${contentRating === 'ok' ? 'active' : ''}" data-rate="ok" onclick="setRating(\${t.id}, 'content', 'ok')">OK</button>
                   <button class="btn-rate bad \${contentRating === 'bad' ? 'active' : ''}" data-rate="bad" onclick="setRating(\${t.id}, 'content', 'bad')">Bad</button>
                 </div>
-                <input class="comment-input" type="text" placeholder="Content feedback / comments..." value="\${contentComment.replace(/"/g, '&quot;')}" oninput="setComment(\${t.id}, 'content', this.value)" />
+                <input class="comment-input" type="text" placeholder="Content feedback / comments..." value="\${escapeHtml(contentComment)}" oninput="setComment(\${t.id}, 'content', this.value)" />
               </div>
             </div>
 
@@ -673,12 +665,12 @@ const html = `<!DOCTYPE html>
               <div class="rec-list">
                 \${item.hybridItems.map(r => \`
                   <div class="rec-item">
-                    <span class="rec-rank">#\${r.rank}</span>
-                    <img class="rec-thumb" src="\${r.image_url || placeholderSvg}" onerror="this.src='\${placeholderSvg}'" />
+                    <span class="rec-rank">#\${escapeHtml(r.rank)}</span>
+                    <img class="rec-thumb" src="\${escapeHtml(r.image_url || placeholderSvg)}" onerror="this.src='\${placeholderSvg}'" />
                     <div class="rec-info">
-                      <div class="rec-brand">\${r.brand}</div>
-                      <div class="rec-name" title="\${r.name}">\${r.name}</div>
-                      <div class="rec-label">\${r.label}</div>
+                      <div class="rec-brand">\${escapeHtml(r.brand)}</div>
+                      <div class="rec-name" title="\${escapeHtml(r.name)}">\${escapeHtml(r.name)}</div>
+                      <div class="rec-label">\${escapeHtml(r.label)}</div>
                     </div>
                   </div>
                 \`).join('')}
@@ -689,7 +681,7 @@ const html = `<!DOCTYPE html>
                   <button class="btn-rate ok \${hybridRating === 'ok' ? 'active' : ''}" data-rate="ok" onclick="setRating(\${t.id}, 'hybrid', 'ok')">OK</button>
                   <button class="btn-rate bad \${hybridRating === 'bad' ? 'active' : ''}" data-rate="bad" onclick="setRating(\${t.id}, 'hybrid', 'bad')">Bad</button>
                 </div>
-                <input class="comment-input" type="text" placeholder="Hybrid feedback / comments..." value="\${hybridComment.replace(/"/g, '&quot;')}" oninput="setComment(\${t.id}, 'hybrid', this.value)" />
+                <input class="comment-input" type="text" placeholder="Hybrid feedback / comments..." value="\${escapeHtml(hybridComment)}" oninput="setComment(\${t.id}, 'hybrid', this.value)" />
               </div>
             </div>
           </div>
@@ -704,26 +696,51 @@ const html = `<!DOCTYPE html>
     function filterCards(stratum) {
       document.querySelectorAll(".filter-btn").forEach(b => {
         b.classList.remove("active");
-        if (b.textContent.toLowerCase().includes(stratum.toLowerCase())) b.classList.add("active");
+        if (b.dataset.stratum === stratum) b.classList.add("active");
       });
       renderCards(stratum);
     }
 
     function exportRatings() {
       const payload = {
+        schema_version: "1.0.0",
+        git_commit: GIT_COMMIT,
         exported_at: new Date().toISOString(),
         total_fragrances: data.length,
+        target_ids: data.map(d => d.target.id),
         ratings: state
       };
       const blob = new Blob([JSON.stringify(payload, null, 2)], { type: "application/json" });
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = "aphragrance-similarity-review.json";
+      a.download = "raphragrance-similarity-review.json";
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
+    }
+
+    function importRatings(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const parsed = JSON.parse(e.target.result);
+          if (parsed && parsed.ratings) {
+            state = Object.assign({}, state, parsed.ratings);
+            saveState();
+            renderCards('all');
+            alert("Successfully imported ratings from " + file.name);
+          } else {
+            alert("Invalid rating file: missing 'ratings' object.");
+          }
+        } catch (err) {
+          alert("Error parsing JSON file: " + err.message);
+        }
+      };
+      reader.readAsText(file);
     }
 
     renderCards('all');
@@ -734,3 +751,5 @@ const html = `<!DOCTYPE html>
 
 fs.writeFileSync('reports/similar-review.html', html, 'utf8');
 console.log('✓ Successfully generated reports/similar-review.html (self-contained review interface)');
+fullDb.close();
+publicDb.close();
