@@ -11,6 +11,7 @@ out/
 data/*
 !data/.gitkeep
 !data/similar_overrides.csv
+!data/anchors.json
 *.jsonl
 *.csv
 !data/similar_overrides.csv

@@ -12,33 +12,15 @@ function buildDualDatabases() {
 
   const mainDb = new DatabaseSync(mainDbPath);
 
-  // 1. Validate and load curated overrides
+  // 1. Validate and load curated overrides via canonical loader
   console.log('Step 1: Validating data/similar_overrides.csv...');
-  const csvContent = fs.readFileSync('data/similar_overrides.csv', 'utf8').trim();
-  const lines = csvContent.split(/\r?\n/).filter(Boolean);
-  const header = lines[0].split(',').map(s => s.trim());
-  if (header[0] !== 'a_slug' || header[1] !== 'b_slug') {
-    throw new Error('Invalid CSV header: expected a_slug,b_slug,strength,note');
-  }
-
+  const { parseAndValidateCuratedOverrides } = require('../lib/curated_loader');
+  const csvContent = fs.readFileSync('data/similar_overrides.csv', 'utf8');
   const slugToIdStmt = mainDb.prepare('SELECT id, name, brand FROM perfumes WHERE slug = ?');
-  const overrides = [];
+  const overrides = parseAndValidateCuratedOverrides(csvContent, slug => slugToIdStmt.get(slug));
 
-  for (let i = 1; i < lines.length; i++) {
-    const parts = lines[i].split(',');
-    const a_slug = parts[0].trim();
-    const b_slug = parts[1].trim();
-    const strength = Number(parts[2]) || 1.0;
-    const note = (parts.slice(3).join(',') || '').trim();
-
-    const rowA = slugToIdStmt.get(a_slug);
-    const rowB = slugToIdStmt.get(b_slug);
-
-    if (!rowA) throw new Error(`Override validation failed: slug not found in database: "${a_slug}"`);
-    if (!rowB) throw new Error(`Override validation failed: slug not found in database: "${b_slug}"`);
-
-    console.log(`  ✓ Validated override: ${rowA.name} (${rowA.brand}) <-> ${rowB.name} (${rowB.brand})`);
-    overrides.push({ idA: rowA.id, idB: rowB.id, strength, note });
+  for (const o of overrides) {
+    console.log(`  ✓ Validated override: ${o.slugA} <-> ${o.slugB} (${o.strength}, ${o.note})`);
   }
 
   // 2. Prepare curated insert pairs (bidirectional)

@@ -84,6 +84,21 @@ if (fs.existsSync(publicDbPath)) {
     process.exit(1);
   }
 
+  // 5. Validate data/similar_overrides.csv loader rules (Gate 2.3)
+  const overridesPath = path.join(rootDir, 'data', 'similar_overrides.csv');
+  if (fs.existsSync(overridesPath)) {
+    const { parseAndValidateCuratedOverrides } = require('../lib/curated_loader');
+    const csvContent = fs.readFileSync(overridesPath, 'utf8');
+    const slugStmt = db.prepare('SELECT id, name, brand FROM perfumes WHERE slug = ?');
+    try {
+      const parsed = parseAndValidateCuratedOverrides(csvContent, slug => slugStmt.get(slug));
+      console.log(`✓ Curated overrides validated: ${parsed.length} pairs conform to all safety rules.`);
+    } catch (err) {
+      console.error(`\n[BUILD SAFETY ERROR] Curated overrides validation failed: ${err.message}`);
+      process.exit(1);
+    }
+  }
+
   db.close();
   console.log('✓ Public database safety verified: 0 community rows, 0 edge tables, critical indices present.');
 }
