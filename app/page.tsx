@@ -1,7 +1,22 @@
+import type { Metadata } from "next";
 import { getFragrances } from "../lib/data";
 import { Nav } from "../components/Nav";
 import { Footer } from "../components/Footer";
 import { CatalogView } from "../components/CatalogView";
+
+export const metadata: Metadata = {
+  title: "Raphragrance — Olfactory Intelligence Archive",
+  description: "Explore over 130,000 fragrances, olfactory note pyramids, accord breakdowns, and algorithmic similarity recommendations.",
+  alternates: {
+    canonical: "https://raphragrance.com",
+  },
+  openGraph: {
+    title: "Raphragrance — Olfactory Intelligence Archive",
+    description: "Explore over 130,000 fragrances, olfactory note pyramids, accord breakdowns, and algorithmic similarity recommendations.",
+    url: "https://raphragrance.com",
+    type: "website",
+  },
+};
 
 export default function CatalogPage() {
   const fragrances = getFragrances(false);
@@ -36,10 +51,12 @@ export default function CatalogPage() {
         />
       )}
       <Nav />
-      <CatalogView
-        initialFragrances={catalogFragrances}
-        totalDatabaseCount={totalCount}
-      />
+      <main id="main-content">
+        <CatalogView
+          initialFragrances={catalogFragrances}
+          totalDatabaseCount={totalCount}
+        />
+      </main>
       <Footer />
     </>
   );

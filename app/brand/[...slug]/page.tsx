@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import type { CSSProperties } from "react";
+import type { Metadata } from "next";
 import { getFragrancesByBrand } from "../../../lib/data";
 import { getColorPair } from "../../../lib/palette";
 import { Nav } from "../../../components/Nav";
@@ -9,13 +10,25 @@ import { FragranceTile } from "../../../components/FragranceTile";
 
 interface PageProps {
   params: Promise<{ slug: string[] }>;
-  searchParams: Promise<{ fixture?: string }>;
+  searchParams?: Promise<{ fixture?: string }>;
+}
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const brandName = decodeURIComponent(slug.join("/"));
+  return {
+    title: `${brandName} Fragrances — Raphragrance Archive`,
+    description: `Browse perfume catalog and archived olfactory releases by ${brandName}.`,
+    alternates: {
+      canonical: `https://raphragrance.com/brand/${encodeURIComponent(brandName)}`,
+    },
+  };
 }
 
 export default async function BrandPage({ params, searchParams }: PageProps) {
   const { slug } = await params;
-  const { fixture } = await searchParams;
-  const useGolden = fixture === "golden";
+  const sp = searchParams ? await searchParams : {};
+  const useGolden = sp.fixture === "golden";
 
   const brandName = decodeURIComponent(slug.join("/"));
   const brandFragrances = getFragrancesByBrand(brandName);
@@ -58,8 +71,9 @@ export default async function BrandPage({ params, searchParams }: PageProps) {
     <>
       <Nav />
 
-      {/* Brand Hero */}
-      <section className="hero" style={heroStyle}>
+      <main id="main-content">
+        {/* Brand Hero */}
+        <section className="hero" style={heroStyle}>
         <div>
           <Link href="/brands" className="back">
             ← All brands
@@ -106,6 +120,7 @@ export default async function BrandPage({ params, searchParams }: PageProps) {
           </div>
         </section>
       </div>
+      </main>
 
       <Footer />
     </>

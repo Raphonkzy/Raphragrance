@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import type { CSSProperties } from "react";
+import type { Metadata } from "next";
 import { getFragranceBySlug, getFragrances, getSimilarFragrances } from "../../../lib/data";
 import { getColorPair } from "../../../lib/palette";
 import { formatVotes, lonL, silL, normalizeSeasons } from "../../../lib/format";
@@ -18,6 +19,45 @@ export function generateStaticParams() {
   return all.map((f) => ({
     slug: f.slug.split("/"),
   }));
+}
+
+export async function generateMetadata({
+  params,
+  searchParams,
+}: PageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const sp = searchParams ? await searchParams : {};
+  const rawSlug = slug.join("/");
+  const fragrance = getFragranceBySlug(rawSlug, sp.fixture === "golden");
+  if (!fragrance) return { title: "Fragrance Not Found — Raphragrance" };
+
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://raphragrance.com";
+  const canonicalUrl = `${baseUrl}/fragrance/${fragrance.slug}`;
+  const title = `${fragrance.name} by ${fragrance.brand} — Raphragrance`;
+  const description = fragrance.description
+    ? fragrance.description.slice(0, 160)
+    : `${fragrance.name} is a ${fragrance.gender || "unisex"} fragrance launched by ${fragrance.brand} in ${fragrance.year || "unknown"}. Explore notes, accords, ratings, and similar fragrances.`;
+
+  return {
+    title,
+    description,
+    alternates: {
+      canonical: canonicalUrl,
+    },
+    openGraph: {
+      title,
+      description,
+      url: canonicalUrl,
+      type: "website",
+      images: fragrance.imageUrl ? [{ url: fragrance.imageUrl, alt: `${fragrance.brand} ${fragrance.name}` }] : [],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: fragrance.imageUrl ? [fragrance.imageUrl] : [],
+    },
+  };
 }
 
 export default async function FragranceDetailPage({
@@ -65,6 +105,29 @@ export default async function FragranceDetailPage({
     { label: "Fall", score: faScore },
   ];
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: fragrance.name,
+    brand: {
+      "@type": "Brand",
+      name: fragrance.brand,
+    },
+    description: fragrance.description || `${fragrance.name} by ${fragrance.brand}`,
+    image: fragrance.imageUrl || undefined,
+    ...(fragrance.rating && fragrance.voteCount
+      ? {
+          aggregateRating: {
+            "@type": "AggregateRating",
+            ratingValue: fragrance.rating.toFixed(2),
+            ratingCount: fragrance.voteCount,
+            bestRating: "5",
+            worstRating: "1",
+          },
+        }
+      : {}),
+  };
+
   return (
     <>
       <link rel="preconnect" href="https://fimgs.net" />
@@ -77,10 +140,15 @@ export default async function FragranceDetailPage({
           fetchPriority="high"
         />
       )}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <Nav />
 
-      {/* Hero */}
-      <section className="hero" style={style}>
+      <main id="main-content">
+        {/* Hero */}
+        <section className="hero" style={style}>
         <div>
           <Link href="/" className="back" prefetch={false}>
             ← All fragrances
@@ -298,6 +366,7 @@ export default async function FragranceDetailPage({
           </section>
         )}
       </div>
+      </main>
 
       <Footer />
     </>

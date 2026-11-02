@@ -85,6 +85,25 @@ button:disabled {
   pointer-events: none;
 }
 
+/* Skip Link */
+.skip-link {
+  position: absolute;
+  top: -60px;
+  left: 16px;
+  background: var(--tx);
+  color: var(--bg);
+  padding: 8px 16px;
+  z-index: 1000;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 13px;
+  text-decoration: none;
+  transition: top 0.15s ease;
+}
+.skip-link:focus {
+  top: 16px;
+}
+
 /* Nav */
 .nav {
   display: flex;

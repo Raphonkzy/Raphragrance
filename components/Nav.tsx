@@ -9,6 +9,9 @@ export function Nav() {
 
   return (
     <>
+      <a href="#main-content" className="skip-link">
+        Skip to main content
+      </a>
       <header className="nav">
         <Link href="/" className="logo" prefetch={false}>
           raphragrance
