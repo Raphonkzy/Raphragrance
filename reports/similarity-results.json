@@ -1,13 +1,19 @@
 {
   "meta": {
-    "generated_at": "2026-11-01T16:26:01.022Z",
-    "git_commit": "2c04e20dce740210d80e8c7b9e83c85726286fe9",
+    "generated_at": "2026-11-02T03:42:28.452Z",
+    "git_commit": "7bd7edacba5f64a3f1f4157406d17ed212d515bd",
+    "dirty": false,
     "eval_split_sha256": "585bc4eb5a8467f3bee906c99fc9c02f96004070e38c5dbf7dbdd347c86b4e08",
     "random_seeds": {
       "bootstrap_seed": 42,
       "held_out_seed": 42
     },
-    "evaluation_protocol": "Single unified frozen evaluation run. Test set was not tuned on; only final evaluation was rerun."
+    "evaluation_protocol": "Single unified frozen evaluation run. Test set was not tuned on; only final evaluation was rerun.",
+    "baseline_definition": {
+      "commit": "d200118e7a524bc8c0bdf483b22ffd012a34c2f3",
+      "repository": "D:/Raffa/Mengoding/Raphragrance",
+      "description": "Original baseline engine: candidate retrieval via SQLite LIKE on top-2 accords (60+40 candidates, min vote_count 15/25), note Jaccard similarity (0.35) + accord intersection/union (0.35) + gender bias (0.10/-0.15) + vote score (0.20) with brand cap 2."
+    }
   },
   "engine_configuration": {
     "note_normalizer": "normalizeNoteDict (Captive Dictionary included for canonicalization)",
@@ -25,6 +31,43 @@
     "brand_diversity_cap": 2,
     "precomputed_top_k": 30
   },
+  "target_status": [
+    {
+      "metric": "TopGT Recall@10",
+      "target_threshold": ">= 20%",
+      "measured_mean": "14.43%",
+      "ci95": "[13.17%, 15.77%]",
+      "status": "FAIL"
+    },
+    {
+      "metric": "Hit@10",
+      "target_threshold": ">= 50%",
+      "measured_mean": "42.3%",
+      "ci95": "[39.1%, 45.4%]",
+      "status": "FAIL"
+    },
+    {
+      "metric": "Precision@10",
+      "target_threshold": ">= 9%",
+      "measured_mean": "6.79%",
+      "ci95": "[6.17%, 7.42%]",
+      "status": "FAIL"
+    },
+    {
+      "metric": "MRR",
+      "target_threshold": ">= 0.35",
+      "measured_mean": "0.2932",
+      "ci95": "[0.2669, 0.3194]",
+      "status": "FAIL"
+    },
+    {
+      "metric": "nDCG@10",
+      "target_threshold": ">= 18%",
+      "measured_mean": "14.45%",
+      "ci95": "[13%, 15.93%]",
+      "status": "FAIL"
+    }
+  ],
   "coverage": {
     "total_fragrances": 131930,
     "ge1_community_share": {
@@ -66,11 +109,12 @@
       "recall_pct": 10.057142857142857
     }
   },
-  "anchor_15_overlap": {
-    "methodology": "Strict top-10 community neighbors (sym_net) overlap across 15 anchor perfumes",
-    "old_engine_avg": 0.6,
-    "content_only_avg": 1.2,
-    "headline_retraction": "Earlier claims of 5.0/10 and 4.4/10 evaluated against an unranked, loose bag of all community votes. Strict apples-to-apples top-10 community neighbor overlap is 0.6/10 (Old Engine) vs 1.2/10 (Content-Only).",
+  "anchor_19_overlap": {
+    "methodology": "Strict top-10 community neighbors (sym_net) overlap across 19 verified anchor perfumes from data/anchors.json",
+    "total_anchors": 19,
+    "old_engine_avg": 0.58,
+    "content_only_avg": 1.11,
+    "content_only_top10_overlap_mean": "1.11/10",
     "details": [
       {
         "id": 9828,
@@ -78,14 +122,6 @@
         "brand": "Creed",
         "gt_top10_count": 10,
         "old_overlap": "1/10",
-        "content_overlap": "1/10"
-      },
-      {
-        "id": 1418,
-        "name": "Bleu de Chanel",
-        "brand": "Chanel",
-        "gt_top10_count": 7,
-        "old_overlap": "0/10",
         "content_overlap": "1/10"
       },
       {
@@ -97,20 +133,52 @@
         "content_overlap": "0/10"
       },
       {
-        "id": 39314,
-        "name": "Layton",
-        "brand": "Parfums de Marly",
-        "gt_top10_count": 10,
-        "old_overlap": "0/10",
-        "content_overlap": "5/10"
-      },
-      {
         "id": 33519,
         "name": "Baccarat Rouge 540",
         "brand": "Maison Francis Kurkdjian",
         "gt_top10_count": 10,
         "old_overlap": "1/10",
         "content_overlap": "0/10"
+      },
+      {
+        "id": 12201,
+        "name": "Santal 33",
+        "brand": "Le Labo",
+        "gt_top10_count": 10,
+        "old_overlap": "0/10",
+        "content_overlap": "0/10"
+      },
+      {
+        "id": 1825,
+        "name": "Tobacco Vanille",
+        "brand": "Tom Ford",
+        "gt_top10_count": 10,
+        "old_overlap": "0/10",
+        "content_overlap": "0/10"
+      },
+      {
+        "id": 17,
+        "name": "Terre d'Hermès",
+        "brand": "Hermès",
+        "gt_top10_count": 10,
+        "old_overlap": "0/10",
+        "content_overlap": "1/10"
+      },
+      {
+        "id": 43871,
+        "name": "Delina",
+        "brand": "Parfums de Marly",
+        "gt_top10_count": 10,
+        "old_overlap": "0/10",
+        "content_overlap": "0/10"
+      },
+      {
+        "id": 39314,
+        "name": "Layton",
+        "brand": "Parfums de Marly",
+        "gt_top10_count": 10,
+        "old_overlap": "0/10",
+        "content_overlap": "5/10"
       },
       {
         "id": 51411,
@@ -137,28 +205,20 @@
         "content_overlap": "0/10"
       },
       {
+        "id": 50757,
+        "name": "Y Eau de Parfum",
+        "brand": "Yves Saint Laurent",
+        "gt_top10_count": 10,
+        "old_overlap": "0/10",
+        "content_overlap": "2/10"
+      },
+      {
         "id": 68271,
         "name": "Supremacy Not Only Intense",
         "brand": "Afnan",
         "gt_top10_count": 10,
         "old_overlap": "2/10",
         "content_overlap": "0/10"
-      },
-      {
-        "id": 1825,
-        "name": "Terre d'Hermes",
-        "brand": "Hermes",
-        "gt_top10_count": 10,
-        "old_overlap": "0/10",
-        "content_overlap": "0/10"
-      },
-      {
-        "id": 84224,
-        "name": "Blue Talisman",
-        "brand": "Ex Nihilo",
-        "gt_top10_count": 10,
-        "old_overlap": "0/10",
-        "content_overlap": "1/10"
       },
       {
         "id": 108244,
@@ -169,6 +229,22 @@
         "content_overlap": "1/10"
       },
       {
+        "id": 84224,
+        "name": "Blue Talisman",
+        "brand": "Ex Nihilo",
+        "gt_top10_count": 10,
+        "old_overlap": "0/10",
+        "content_overlap": "1/10"
+      },
+      {
+        "id": 9099,
+        "name": "Bleu de Chanel",
+        "brand": "Chanel",
+        "gt_top10_count": 10,
+        "old_overlap": "2/10",
+        "content_overlap": "2/10"
+      },
+      {
         "id": 50384,
         "name": "Cloud",
         "brand": "Ariana Grande",
@@ -177,12 +253,12 @@
         "content_overlap": "1/10"
       },
       {
-        "id": 53,
+        "id": 735,
         "name": "Kouros",
         "brand": "Yves Saint Laurent",
         "gt_top10_count": 10,
         "old_overlap": "0/10",
-        "content_overlap": "2/10"
+        "content_overlap": "1/10"
       },
       {
         "id": 43632,
@@ -197,33 +273,53 @@
   "acceptance_cases": [
     {
       "pair": "SNOI -> Aventus",
-      "content_only_rank": "> 10",
+      "query_id": 68271,
+      "target_id": 9828,
+      "content_only_candidate_rank": "#72",
       "curated_rank": "#1",
-      "final_production_rank": "#1"
+      "final_production_rank": "#1",
+      "passes_top10": true,
+      "passes_only_because_of_curated": true
     },
     {
       "pair": "SNOI -> Hacivat",
-      "content_only_rank": "> 10",
+      "query_id": 68271,
+      "target_id": 44174,
+      "content_only_candidate_rank": "not retrieved",
       "curated_rank": "#2",
-      "final_production_rank": "#2"
+      "final_production_rank": "#2",
+      "passes_top10": true,
+      "passes_only_because_of_curated": true
     },
     {
       "pair": "Turathi Electric -> Blue Talisman",
-      "content_only_rank": "> 10",
+      "query_id": 108244,
+      "target_id": 84224,
+      "content_only_candidate_rank": "#15",
       "curated_rank": "#1",
-      "final_production_rank": "#1"
+      "final_production_rank": "#1",
+      "passes_top10": true,
+      "passes_only_because_of_curated": true
     },
     {
       "pair": "Aventus -> SNOI",
-      "content_only_rank": "> 10",
+      "query_id": 9828,
+      "target_id": 68271,
+      "content_only_candidate_rank": "not retrieved",
       "curated_rank": "#1",
-      "final_production_rank": "#1"
+      "final_production_rank": "#1",
+      "passes_top10": true,
+      "passes_only_because_of_curated": true
     },
     {
       "pair": "Blue Talisman -> Turathi Electric",
-      "content_only_rank": "> 10",
+      "query_id": 84224,
+      "target_id": 108244,
+      "content_only_candidate_rank": "#66",
       "curated_rank": "#1",
-      "final_production_rank": "#1"
+      "final_production_rank": "#1",
+      "passes_top10": true,
+      "passes_only_because_of_curated": true
     }
   ],
   "validation_metrics": {
