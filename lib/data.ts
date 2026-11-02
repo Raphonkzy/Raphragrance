@@ -37,7 +37,7 @@ function parseNotes(
   };
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+ 
 export function rowToFragrance(r: any): Fragrance {
   return {
     id: r.id,
@@ -247,7 +247,7 @@ export function getSimilarFragrances(
 
     // Helper to evaluate and add recommendation respecting brand diversity cap <= 2
     const tryAddRecommendation = (
-      row: any, // eslint-disable-line @typescript-eslint/no-explicit-any
+      row: any,  
       source: "curated" | "community" | "content"
     ): boolean => {
       if (seenIds.has(row.id)) return false;
@@ -337,7 +337,7 @@ export function getBrandsSummary(q?: string): { brand: string; count: number }[]
         FROM perfumes 
         WHERE brand IS NOT NULL AND brand != ''
       `;
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+       
       const params: any[] = [];
       if (q && q.trim()) {
         query += ` AND brand LIKE ?`;
@@ -536,12 +536,20 @@ export function getFragrancesByBrand(brand: string, limit = 100): Fragrance[] {
   const db = getDb();
   if (db) {
     try {
-      const rows = db.prepare(`
+      let rows = db.prepare(`
         SELECT * FROM perfumes 
-        WHERE brand = ? COLLATE NOCASE 
+        WHERE brand = ? 
         ORDER BY vote_count DESC, id DESC 
         LIMIT ?
       `).all(brand, limit);
+      if (rows.length === 0) {
+        rows = db.prepare(`
+          SELECT * FROM perfumes 
+          WHERE brand = ? COLLATE NOCASE 
+          ORDER BY vote_count DESC, id DESC 
+          LIMIT ?
+        `).all(brand, limit);
+      }
       return rows.map(rowToFragrance);
     } catch (e) {
       console.error("DB getFragrancesByBrand error:", e);

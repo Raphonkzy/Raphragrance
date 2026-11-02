@@ -54,7 +54,7 @@ export async function GET(request: Request) {
 
   try {
     const whereClauses: string[] = [];
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+     
     const params: any[] = [];
 
     // Search query: tokenize keywords
@@ -63,7 +63,7 @@ export async function GET(request: Request) {
       const tokens = q.split(/\s+/).filter(Boolean);
       // Try fast indexed prefix lookup first
       const prefixClauses: string[] = [];
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+       
       const prefixParams: any[] = [];
       for (const token of tokens) {
         prefixClauses.push("(name LIKE ? OR brand LIKE ?)");
