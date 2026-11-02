@@ -1,103 +1,111 @@
-# Data Provenance and Licensing Policy
+# Data Provenance and Architecture Decisions
 
-## 1. Provenance of Fragrance Data
-
-Raphragrance's dataset originates from scraped public profiles on **Fragrantica.com** (captured circa May 2026, timestamp `1780102667`).
-
-### 1.1 Complete Audit of `data/perfumes.public.db` Schema
-
-The public database artifact `data/perfumes.public.db` is strictly partitioned. It contains exactly two tables:
-
-#### Table 1: `perfumes` (31 Columns)
-| Column Name | SQLite Type | Description / Origin |
-|:---|:---|:---|
-| `id` | INT | Fragrantica Internal Numeric ID |
-| `slug` | TEXT | URL slug identifier (`{Brand}/{Perfume-Name}`) |
-| `name` | TEXT | Perfume commercial name |
-| `brand` | TEXT | Perfume brand / house name |
-| `year` | INT | Launch / release year |
-| `collection` | TEXT | Brand sub-collection |
-| `gender` | TEXT | Target gender (`men`, `women`, `unisex`) |
-| `url` | TEXT | Canonical profile URL |
-| `rating_avg` | REAL | Aggregated user rating (1.0 to 5.0) |
-| `vote_count` | INT | Total ratings count |
-| `longevity_avg` | REAL | User longevity rating |
-| `sillage_avg` | REAL | User sillage rating |
-| `price_value_avg`| REAL | User price/value rating |
-| `have_count` | INT | User cabinet "have" count |
-| `had_count` | INT | User cabinet "had" count |
-| `want_count` | INT | User cabinet "want" count |
-| `winter_votes` | INT | Seasonal wear votes (winter) |
-| `spring_votes` | INT | Seasonal wear votes (spring) |
-| `summer_votes` | INT | Seasonal wear votes (summer) |
-| `autumn_votes` | INT | Seasonal wear votes (autumn) |
-| `day_votes` | INT | Time-of-day wear votes (day) |
-| `night_votes` | INT | Time-of-day wear votes (night) |
-| `people_votes` | INT | Total people voting on wearability |
-| `accords` | TEXT | Olfactory accord bars with strength (`accord:strength|...`) |
-| `notes_top` | TEXT | Head/top notes (pipe-separated) |
-| `notes_middle` | TEXT | Heart/middle notes (pipe-separated) |
-| `notes_base` | TEXT | Base notes (pipe-separated) |
-| `notes_flat` | TEXT | Unstructured fallback notes (pipe-separated) |
-| `perfumers` | TEXT | Credited perfumer(s) |
-| `description` | TEXT | Editorial description / marketing copy |
-| `image_url` | TEXT | CDN asset URL |
-
-#### Table 2: `similar` (5 Columns)
-| Column Name | SQLite Type | Description |
-|:---|:---|:---|
-| `fragrance_id` | INTEGER | Query perfume ID |
-| `similar_id` | INTEGER | Target recommended perfume ID |
-| `rank` | INTEGER | Recommendation rank (1..30) |
-| `score` | REAL | Computed similarity score |
-| `source` | TEXT | Provenance tag: strictly `'content'` (3,881,308 rows) or `'curated'` (6 rows) |
-
-#### Negative Confirmation: Prohibited Columns & Tables
-- **NO `ai_summary`**: Scraped AI-generated summaries are completely absent.
-- **NO `reminds_me_of`**: Fragrantica's user-voted similarity edges are completely absent.
-- **NO `also_liked`**: Collaborative filtering edges are completely absent.
-- **NO edge or community tables**: `perfumes.public.db` contains ZERO rows with `source = 'community'`.
+This document outlines the origins, data handling boundaries, statistical derivations, and operational risks associated with data in Raphragrance.
 
 ---
 
-## 2. What Was Learned from Community Signals for the Content Engine?
+## 1. Provenance and Catalog Origin
 
-The content-only similarity engine operates entirely from marketing olfactory pyramids (notes and accords) and brand metadata. The **only** information derived from community edges (`reminds_me_of`) is:
+The entire fragrance catalog in Raphragrance—including fragrance names, brand designations, launch years, olfactory accord hierarchies, pyramid notes (top, middle, base, flat), editorial marketing copy, user rating averages, and bottle image links—originates from scraped public profiles on **Fragrantica.com** (captured circa May 2026).
 
-1. **Global Hyperparameter Weights**:
-   A set of 6 scalar floating-point coefficients tuned on the Training split:
-   - `noteSim`: `0.35` (TF-IDF weighted cosine similarity on canonical notes)
+### 1.1 Repository Data Shipping Policy
+- **The Git repository ships no raw data.**
+- Neither raw JSONL dumps (`perfumes.jsonl`), raw scraping logs, intermediate evaluation splits (`eval_split.json`), nor database binaries (`perfumes.db`, `perfumes.public.db`, `perfumes.full.db`) are tracked or stored in Git history.
+- The only data files tracked in Git are:
+  - `data/.gitkeep` (directory structure preservation)
+  - `data/anchors.json` (19 verified evaluation anchor IDs and slugs)
+  - `data/similar_overrides.csv` (version-controlled owner curated overrides)
+
+This policy is enforced by `.gitignore`:
+```gitignore
+# Data (large files, local only)
+data/*
+!data/.gitkeep
+!data/similar_overrides.csv
+!data/anchors.json
+*.jsonl
+*.csv
+!data/similar_overrides.csv
+scripts/eval_split.json
+```
+
+---
+
+## 2. Public vs. Hybrid Database Boundaries
+
+To decouple the application from scraped collaborative-filtering user graphs, the platform builds two distinct SQLite database artifacts:
+
+### 2.1 Public Database (`data/perfumes.public.db`)
+- **Default production artifact**: This is the only database copied into the production container image.
+- **Zero community graph rows**: The `similar` table contains strictly `source = 'content'` (algorithmic TF-IDF note & accord matching) and `source = 'curated'` (owner-provided clone/counterpart pairs).
+- **Zero edge tables**: Contains no `reminds_me_of`, `also_liked`, or user voting graph tables.
+- **Verification**: Verified at build time by `scripts/verify-build-safety.js` in CI and Docker builds.
+
+### 2.2 Full Database (`data/perfumes.full.db`)
+- **Experimental hybrid artifact**: Combines content calculations with 79,048 directed community edges (`source = 'community'`) for internal benchmarking and optional development exploration.
+- **Fail-closed guardrails**:
+  - Unset `INCLUDE_COMMUNITY_EDGES` -> defaults strictly to `data/perfumes.public.db`.
+  - `INCLUDE_COMMUNITY_EDGES=true` but `data/perfumes.full.db` is missing -> immediate hard startup error (no silent fallback).
+  - `INCLUDE_COMMUNITY_EDGES=true` in production (`NODE_ENV=production`) -> refuses to start unless an explicit second environment flag `ALLOW_FULL_DB_IN_PROD=true` is set.
+  - Hybrid recommendations strictly enforce a brand diversity cap of at most 2 fragrances per brand.
+
+---
+
+## 3. What Was Derived from Community Data
+
+Community data (`reminds_me_of` voting edges from Fragrantica) was used strictly for offline optimization and offline evaluation. Specifically:
+
+1. **Six Global Hyperparameter Weights**:
+   The content-only similarity engine uses 6 global scalar weights learned via training-set optimization:
+   - `noteSim`: `0.35` (TF-IDF cosine similarity on canonical notes)
    - `containmentQtoC`: `0.25` (asymmetric containment of query notes in candidate)
    - `containmentCtoQ`: `0.10` (asymmetric containment of candidate notes in query)
    - `accordSim`: `0.40` (mean-centered cosine correlation across accords)
-   - `top1AccordMatch`: `0.05` (indicator bonus for matching primary accord)
-   - `isClone`: `0.00` (disabled in aggregate engine to avoid subjective brand bias)
-   - `gender_penalty`: `0.08` (soft penalty for cross-gender recommendations)
+   - `top1AccordMatch`: `0.05` (bonus for matching primary accord)
+   - `gender_penalty`: `0.08` (penalty for opposite-gender recommendations)
+   *(Note: The brand-based `isClone` weight was ablated and set to `0.00` to prevent brand bias).*
 
-2. **No Data Leakage / Memorization**:
-   - No individual edges, pairs, or graph clusters were memorized or transferred into the content engine.
-   - Pairwise recommendations in `perfumes.public.db` are generated purely via algorithmic cosine and containment calculations over note and accord features.
-   - Benchmark acceptance clone pairs that cannot be resolved by marketing notes alone are handled explicitly and transparently via version-controlled curated overrides (`data/similar_overrides.csv`).
+2. **Evaluation Ground Truth**:
+   Community neighbor edges were used as the ground truth benchmark for Hit@10, TopGT Recall@10, and nDCG@10 metrics across validation and test splits (`data/eval_split.json`).
+
+No individual user graphs or relational edges are embedded into the content algorithm. Content similarity calculates pairwise distance purely from the fragrance's note lists, accord bars, and gender attributes.
 
 ---
 
-## 3. Licensing Boundaries and Strict Safety Rules
+## 4. Hotlinking Decision and CDN Strategy
 
-The original raw dataset (`perfumes.jsonl`) contains scraped community metadata. To maintain ethical, legal, and operational safety:
+Fragrance bottle photos are hotlinked directly from `https://fimgs.net` (Fragrantica's image CDN).
+- **No image scraping or hosting**: Images are not downloaded, stored, transformed, or re-hosted on Raphragrance infrastructure.
+- **Technical implementation**:
+  - Image requests include `referrerPolicy="no-referrer"` to prevent sending the application's origin header to third-party servers.
+  - Images declare fixed width and height dimensions (`width={250}` and `height={333}` for tiles; `width={280}` and `height={373}` for hero displays) with `aspect-ratio: 1/1` containers to eliminate Cumulative Layout Shift (CLS).
+  - All images use `loading="lazy"` except the detail page hero image (`loading="eager"`).
+  - An inline client fallback instantly replaces failed or blocked image loads (`onError`) with a tile styled in the fragrance's primary accord color displaying the fragrance initials.
 
-1. **NO RAW DUMPS IN REPO**:
-   - `perfumes.jsonl`, raw SQL dumps, and intermediate evaluation splits must **NEVER** be committed into Git repositories.
-   - Enforced by `.gitignore`:
-     ```gitignore
-     data/*
-     !data/.gitkeep
-     *.jsonl
-     *.csv
-     ```
-2. **NO RAW DUMPS OR SCRAPED EDGES IN DOCKER / PRODUCTION IMAGES**:
-   - Production Docker images must only receive `data/perfumes.public.db`.
-   - Enforced by `.dockerignore` and `scripts/verify-build-safety.js`.
-3. **ISOLATION OF COMMUNITY SIGNALS & DUAL ARTIFACTS**:
-   - Production builds consume `data/perfumes.public.db` by default (strictly containing content rows and curated overrides, with 0 community rows and no edge tables).
-   - Hybrid builds consume `data/perfumes.full.db` when `INCLUDE_COMMUNITY_EDGES=true` is explicitly set.
-   - Note on data boundaries: Because the entire fragrance catalog originates from scraped public profiles, the content-only build (`perfumes.public.db`) excludes the community vote graph (`reminds_me_of`), while preserving olfactory note pyramids, accords, and brand metadata.
+---
+
+## 5. Risks and Owner Decisions
+
+*Notice: This section outlines operational, legal, and architectural trade-offs for technical governance. It does not constitute formal legal advice.*
+
+### 5.1 Scraped Catalog Data
+- **Context**: The catalog contains ~131,930 perfume profiles with note pyramids, accord definitions, and descriptions scraped from Fragrantica.
+- **Risks**: Fragrantica's Terms of Service restrict automated data collection and commercial republishing. While factual information (such as perfume names, brand names, release years, and standard raw fragrance ingredients) generally lacks copyright protection in many jurisdictions, compilation rights (database directives) and proprietary marketing copy may carry legal risk.
+- **Owner Decision Needed**:
+  - **Option A (Current)**: Keep public distribution restricted to factual fragrance profiles and precomputed content-only similarities (`perfumes.public.db`), retaining community edges strictly for offline research.
+  - **Option B**: Replace scraped editorial marketing descriptions with public-domain manufacturer press releases or synthetic sensory summaries.
+
+### 5.2 Hotlinked Images
+- **Context**: Bottle imagery is loaded in client browsers directly from `fimgs.net`.
+- **Risks**:
+  - The third-party CDN operator can block requests based on IP, user-agent, or referrers at any time.
+  - Image URLs can break, change paths, or rot without notice.
+  - Hotlinking shifts bandwidth load to third-party infrastructure, which can prompt copyright or anti-hotlinking countermeasures.
+- **Owner Decision Needed**:
+  - **Option A (Current)**: Maintain zero-rehost hotlinking with `no-referrer` and client-side accord-colored fallback tiles.
+  - **Option B**: Transition to independent self-hosted object storage (e.g., Cloudflare R2 / S3) populated with licensed brand bottle renders or user-submitted photography.
+  - **Option C**: Replace bottle imagery entirely with the dynamic SVG bottle silhouette styled in the fragrance's primary accord color.
+
+### 5.3 Community Edge Exposure
+- **Context**: `INCLUDE_COMMUNITY_EDGES` toggles whether community recommendation edges appear in the UI.
+- **Policy**: Kept **OFF by default** in production (`ALLOW_FULL_DB_IN_PROD=true` required).

@@ -1,8 +1,8 @@
-import type { Fragrance, FragranceAccord, FragranceNotes } from "./types";
-import { getDb } from "./db";
-import { scaleSillage } from "./format";
-import goldenData from "../fixtures/golden.json";
-import fixtureData from "../fixtures/fragrances.json";
+import type { Fragrance, FragranceAccord, FragranceNotes } from "./types.ts";
+import { getDb } from "./db.ts";
+import { scaleSillage } from "./format.ts";
+import goldenData from "../fixtures/golden.json" with { type: "json" };
+import fixtureData from "../fixtures/fragrances.json" with { type: "json" };
 
 const golden = goldenData as unknown as Fragrance[];
 const catalog = (fixtureData as unknown as Fragrance[]).map((f) => ({
@@ -227,7 +227,7 @@ function computeSharedNotes(target: Fragrance, candidate: Fragrance): string[] {
  */
 export function getSimilarFragrances(
   target: Fragrance,
-  limit = 4
+  limit = 10
 ): (Fragrance & { similaritySource?: "curated" | "community" | "content"; sharedNotes?: string[] })[] {
   const db = getDb();
   if (!db) {
@@ -243,6 +243,24 @@ export function getSimilarFragrances(
     const results: (Fragrance & { similaritySource?: "curated" | "community" | "content"; sharedNotes?: string[] })[] = [];
     const seenIds = new Set<number>();
     seenIds.add(target.id);
+    const brandCounts = new Map<string, number>();
+
+    // Helper to evaluate and add recommendation respecting brand diversity cap <= 2
+    const tryAddRecommendation = (
+      row: any, // eslint-disable-line @typescript-eslint/no-explicit-any
+      source: "curated" | "community" | "content"
+    ): boolean => {
+      if (seenIds.has(row.id)) return false;
+      const bCount = brandCounts.get(row.brand) || 0;
+      if (bCount >= 2) return false;
+
+      const f = rowToFragrance(row);
+      const sharedNotes = computeSharedNotes(target, f);
+      results.push({ ...f, similaritySource: source, sharedNotes });
+      seenIds.add(f.id);
+      brandCounts.set(f.brand, bCount + 1);
+      return true;
+    };
 
     // 1. Fetch curated overrides first (both builds)
     const curatedRows = db.prepare(`
@@ -251,22 +269,15 @@ export function getSimilarFragrances(
       JOIN perfumes p ON p.id = s.similar_id
       WHERE s.fragrance_id = ? AND s.source = 'curated'
       ORDER BY s.rank ASC
-      LIMIT ?
-    `).all(target.id, limit);
+      LIMIT 10
+    `).all(target.id);
 
     for (const r of curatedRows) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      const row = r as any;
-      if (!seenIds.has(row.id)) {
-        const f = rowToFragrance(row);
-        const sharedNotes = computeSharedNotes(target, f);
-        results.push({ ...f, similaritySource: "curated", sharedNotes });
-        seenIds.add(f.id);
-        if (results.length >= limit) break;
-      }
+      tryAddRecommendation(r, "curated");
+      if (results.length >= limit) break;
     }
 
-    // 2. If hybrid mode is active, fetch community edges
+    // 2. If hybrid mode is active, fetch community edges (strictly respects brand cap of 2)
     if (includeCommunity && results.length < limit) {
       const commRows = db.prepare(`
         SELECT s.similar_id, s.score, s.source, p.*
@@ -274,44 +285,29 @@ export function getSimilarFragrances(
         JOIN perfumes p ON p.id = s.similar_id
         WHERE s.fragrance_id = ? AND s.source = 'community'
         ORDER BY s.rank ASC
-        LIMIT ?
-      `).all(target.id, limit);
+        LIMIT 30
+      `).all(target.id);
 
       for (const r of commRows) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const row = r as any;
-        if (!seenIds.has(row.id)) {
-          const f = rowToFragrance(row);
-          const sharedNotes = computeSharedNotes(target, f);
-          results.push({ ...f, similaritySource: "community", sharedNotes });
-          seenIds.add(f.id);
-          if (results.length >= limit) break;
-        }
+        tryAddRecommendation(r, "community");
+        if (results.length >= limit) break;
       }
     }
 
     // 3. Pad remaining recommendations with content matches
-    const needed = limit - results.length;
-    if (needed > 0) {
+    if (results.length < limit) {
       const contentRows = db.prepare(`
         SELECT s.similar_id, s.score, s.source, p.*
         FROM similar s
         JOIN perfumes p ON p.id = s.similar_id
         WHERE s.fragrance_id = ? AND s.source = 'content'
         ORDER BY s.rank ASC
-        LIMIT ?
-      `).all(target.id, limit * 2);
+        LIMIT 40
+      `).all(target.id);
 
       for (const r of contentRows) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const row = r as any;
-        if (!seenIds.has(row.id)) {
-          const f = rowToFragrance(row);
-          const sharedNotes = computeSharedNotes(target, f);
-          results.push({ ...f, similaritySource: "content", sharedNotes });
-          seenIds.add(f.id);
-          if (results.length >= limit) break;
-        }
+        tryAddRecommendation(r, "content");
+        if (results.length >= limit) break;
       }
     }
 
