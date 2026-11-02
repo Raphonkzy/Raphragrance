@@ -12,7 +12,7 @@ WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# Run palette contrast verification and Next.js build
+# Run font check, safety verification, palette contrast, and Next.js standalone build
 ENV NEXT_TELEMETRY_DISABLED=1
 ENV OUTPUT_STANDALONE=1
 RUN npm run build
@@ -36,14 +36,16 @@ COPY --from=builder /app/public ./public
 COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
 COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
 
-# Mount point / directory for perfumes.db
+# Copy strictly perfumes.public.db (prohibiting perfumes.full.db, perfumes.db, *.jsonl)
 RUN mkdir -p /app/data && chown nextjs:nodejs /app/data
+COPY --chown=nextjs:nodejs data/perfumes.public.db ./data/perfumes.public.db
 
 USER nextjs
 
 EXPOSE 3000
 
+# Healthcheck endpoint
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
-  CMD node -e "fetch('http://localhost:3000/api/health').then(r => r.ok ? process.exit(0) : process.exit(1)).catch(() => process.exit(1))"
+  CMD wget --no-verbose --tries=1 --spider http://localhost:3000/healthz || exit 1
 
 CMD ["node", "server.js"]
