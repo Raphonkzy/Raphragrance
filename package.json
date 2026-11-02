@@ -2,8 +2,8 @@
     "version": "0.1.0",
     "name": "raphragrance-rebuilt",
     "scripts": {
-        "lint": "next lint",
-        "build": "node scripts/verify-build-safety.js && node scripts/verify-palette.js && next build",
+        "lint": "eslint .",
+        "build": "node scripts/check-fonts.js && node scripts/verify-build-safety.js && node scripts/verify-palette.js && next build",
         "dev": "next dev --turbopack",
         "start": "next start",
         "benchmark:latency": "node scripts/measure_http_endpoint_latency.js",
