@@ -1,7 +1,7 @@
 {
   "meta": {
-    "generated_at": "2026-11-02T03:42:28.452Z",
-    "git_commit": "7bd7edacba5f64a3f1f4157406d17ed212d515bd",
+    "generated_at": "2026-11-03T03:20:52.768Z",
+    "git_commit": "ac12bf9b42daaa541a1947b466165b4f4aea3c29",
     "dirty": false,
     "eval_split_sha256": "585bc4eb5a8467f3bee906c99fc9c02f96004070e38c5dbf7dbdd347c86b4e08",
     "random_seeds": {
@@ -272,7 +272,10 @@
   },
   "acceptance_cases": [
     {
-      "pair": "SNOI -> Aventus",
+      "pair": "Supremacy Not Only Intense -> Aventus",
+      "query_slug": "Afnan/Supremacy-Not-Only-Intense",
+      "target_slug": "Creed/Aventus",
+      "kind": "owner-curated",
       "query_id": 68271,
       "target_id": 9828,
       "content_only_candidate_rank": "#72",
@@ -282,10 +285,13 @@
       "passes_only_because_of_curated": true
     },
     {
-      "pair": "SNOI -> Hacivat",
+      "pair": "Supremacy Not Only Intense -> Hacivat",
+      "query_slug": "Afnan/Supremacy-Not-Only-Intense",
+      "target_slug": "Nishane/Hacivat",
+      "kind": "owner-curated",
       "query_id": 68271,
       "target_id": 44174,
-      "content_only_candidate_rank": "not retrieved",
+      "content_only_candidate_rank": "not retrieved (pool: 250)",
       "curated_rank": "#2",
       "final_production_rank": "#2",
       "passes_top10": true,
@@ -293,6 +299,9 @@
     },
     {
       "pair": "Turathi Electric -> Blue Talisman",
+      "query_slug": "Afnan/Turathi-Electric",
+      "target_slug": "Ex-Nihilo/Blue-Talisman",
+      "kind": "owner-curated",
       "query_id": 108244,
       "target_id": 84224,
       "content_only_candidate_rank": "#15",
@@ -302,10 +311,13 @@
       "passes_only_because_of_curated": true
     },
     {
-      "pair": "Aventus -> SNOI",
+      "pair": "Aventus -> Supremacy Not Only Intense",
+      "query_slug": "Creed/Aventus",
+      "target_slug": "Afnan/Supremacy-Not-Only-Intense",
+      "kind": "owner-curated",
       "query_id": 9828,
       "target_id": 68271,
-      "content_only_candidate_rank": "not retrieved",
+      "content_only_candidate_rank": "not retrieved (pool: 250)",
       "curated_rank": "#1",
       "final_production_rank": "#1",
       "passes_top10": true,
@@ -313,6 +325,9 @@
     },
     {
       "pair": "Blue Talisman -> Turathi Electric",
+      "query_slug": "Ex-Nihilo/Blue-Talisman",
+      "target_slug": "Afnan/Turathi-Electric",
+      "kind": "owner-curated",
       "query_id": 84224,
       "target_id": 108244,
       "content_only_candidate_rank": "#66",
@@ -320,6 +335,32 @@
       "final_production_rank": "#1",
       "passes_top10": true,
       "passes_only_because_of_curated": true
+    },
+    {
+      "pair": "Club de Nuit Intense Man -> Aventus",
+      "query_slug": "Armaf/Club-de-Nuit-Intense-Man",
+      "target_slug": "Creed/Aventus",
+      "kind": "uncurated-probe",
+      "query_id": 34696,
+      "target_id": 9828,
+      "content_only_candidate_rank": "not retrieved (pool: 250)",
+      "curated_rank": "none",
+      "final_production_rank": "> 30",
+      "passes_top10": false,
+      "passes_only_because_of_curated": false
+    },
+    {
+      "pair": "Khamrah -> Angels' Share",
+      "query_slug": "Lattafa-Perfumes/Khamrah",
+      "target_slug": "By-Kilian/Angels-Share",
+      "kind": "uncurated-probe",
+      "query_id": 75805,
+      "target_id": 62615,
+      "content_only_candidate_rank": "not retrieved (pool: 250)",
+      "curated_rank": "none",
+      "final_production_rank": "> 30",
+      "passes_top10": false,
+      "passes_only_because_of_curated": false
     }
   ],
   "validation_metrics": {
