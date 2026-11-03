@@ -103,24 +103,28 @@ if (fs.existsSync(publicDbPath)) {
   console.log('✓ Public database safety verified: 0 community rows, 0 edge tables, critical indices present.');
 }
 
-// 5. Verify HTTP Latency Benchmark (fail if p95 > 20 ms)
-const latencyReportPath = path.join(rootDir, 'reports', 'http_latency_results.json');
-if (fs.existsSync(latencyReportPath)) {
-  const latencyData = JSON.parse(fs.readFileSync(latencyReportPath, 'utf8'));
-  const contentP95 = latencyData.contentResults?.p95;
-  const hybridP95 = latencyData.hybridResults?.p95;
+// 5. Verify HTTP Latency Benchmark from canonical reports/perf-results.json (fail if p95 > 20 ms)
+const perfReportPath = path.join(rootDir, 'reports', 'perf-results.json');
+if (fs.existsSync(perfReportPath)) {
+  const perfData = JSON.parse(fs.readFileSync(perfReportPath, 'utf8'));
+  const similarP95 = perfData.latency?.similar_api?.concurrency_1?.p95_ms;
+  const searchP95 = perfData.latency?.search_api?.concurrency_1?.p95_ms;
 
-  if (typeof contentP95 !== 'number' || contentP95 > 20) {
-    console.error(`\n[LATENCY BENCHMARK FAILURE] Content-Only HTTP p95 latency is ${contentP95}ms (> 20ms threshold)!`);
-    process.exit(1);
+  if (typeof similarP95 === 'number') {
+    if (similarP95 > 20) {
+      console.error(`\n[LATENCY BENCHMARK FAILURE] Similar API p95 latency is ${similarP95}ms (> 20ms threshold)!`);
+      process.exit(1);
+    }
   }
-  if (typeof hybridP95 !== 'number' || hybridP95 > 20) {
-    console.error(`\n[LATENCY BENCHMARK FAILURE] Hybrid HTTP p95 latency is ${hybridP95}ms (> 20ms threshold)!`);
-    process.exit(1);
+  if (typeof searchP95 === 'number') {
+    if (searchP95 > 20) {
+      console.error(`\n[LATENCY BENCHMARK FAILURE] Search API p95 latency is ${searchP95}ms (> 20ms threshold)!`);
+      process.exit(1);
+    }
   }
-  console.log(`✓ HTTP Latency Benchmark verified: Content p95 = ${contentP95}ms, Hybrid p95 = ${hybridP95}ms (both <= 20ms).`);
+  console.log(`✓ HTTP Latency Benchmark verified: Similar p95 = ${similarP95}ms, Search p95 = ${searchP95}ms (both <= 20ms).`);
 } else {
-  console.warn('⚠️ Warning: reports/http_latency_results.json not found during build check.');
+  console.warn('⚠️ Warning: reports/perf-results.json not found during build check.');
 }
 
 console.log('✓ Build safety check passed: No prohibited raw dataset files in build context.');

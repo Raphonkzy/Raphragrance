@@ -139,5 +139,511 @@
       "run2Ms": 2.72,
       "cacheControl": "public, max-age=60, s-maxage=3600, stale-while-revalidate=86400"
     }
-  ]
+  ],
+  "lighthouse_mobile_5runs": {
+    "catalog_home": {
+      "name": "Catalog Home (/)",
+      "path": "/",
+      "gate": {
+        "lcp_required_pass": true,
+        "lcp_stretch_pass": false,
+        "cls_pass": true,
+        "tbt_pass": false
+      },
+      "median": {
+        "performance_score": 91,
+        "accessibility_score": 100,
+        "best_practices_score": 100,
+        "seo_score": 100,
+        "lcp_s": 2.27,
+        "lcp_ms": 2267.8,
+        "fcp_s": 0.91,
+        "fcp_ms": 911.8,
+        "tbt_ms": 328,
+        "cls": 0,
+        "lcp_element_selector": "main#catalog-grid > a.tile > div.im > img",
+        "lcp_breakdown": {
+          "ttfb_ms": 40.2,
+          "load_delay_ms": 14.7,
+          "load_duration_ms": 26.5,
+          "render_delay_ms": 61.9
+        }
+      },
+      "all_5_runs": [
+        {
+          "run": 1,
+          "perf": 91,
+          "a11y": 100,
+          "bp": 100,
+          "seo": 100,
+          "fcp_ms": 911.8,
+          "lcp_ms": 2267.8,
+          "tbt_ms": 345.5,
+          "cls": 0,
+          "lcp_selector": "main#catalog-grid > a.tile > div.im > img",
+          "lcp_breakdown": {
+            "ttfb_ms": 40.2,
+            "load_delay_ms": 14.7,
+            "load_duration_ms": 26.5,
+            "render_delay_ms": 61.9
+          }
+        },
+        {
+          "run": 2,
+          "perf": 92,
+          "a11y": 100,
+          "bp": 100,
+          "seo": 100,
+          "fcp_ms": 919.5,
+          "lcp_ms": 2279.2,
+          "tbt_ms": 291,
+          "cls": 0,
+          "lcp_selector": "main#catalog-grid > a.tile > div.im > img",
+          "lcp_breakdown": {
+            "ttfb_ms": 41.2,
+            "load_delay_ms": 11.9,
+            "load_duration_ms": 27.4,
+            "render_delay_ms": 57.1
+          }
+        },
+        {
+          "run": 3,
+          "perf": 91,
+          "a11y": 100,
+          "bp": 100,
+          "seo": 100,
+          "fcp_ms": 909.7,
+          "lcp_ms": 2264.6,
+          "tbt_ms": 328,
+          "cls": 0,
+          "lcp_selector": "main#catalog-grid > a.tile > div.im > img",
+          "lcp_breakdown": {
+            "ttfb_ms": 30.7,
+            "load_delay_ms": 10.5,
+            "load_duration_ms": 25.4,
+            "render_delay_ms": 50.4
+          }
+        },
+        {
+          "run": 4,
+          "perf": 92,
+          "a11y": 100,
+          "bp": 100,
+          "seo": 100,
+          "fcp_ms": 910.8,
+          "lcp_ms": 2266.4,
+          "tbt_ms": 300,
+          "cls": 0,
+          "lcp_selector": "main#catalog-grid > a.tile > div.im > img",
+          "lcp_breakdown": {
+            "ttfb_ms": 38.3,
+            "load_delay_ms": 13,
+            "load_duration_ms": 28.3,
+            "render_delay_ms": 50.9
+          }
+        },
+        {
+          "run": 5,
+          "perf": 90,
+          "a11y": 100,
+          "bp": 100,
+          "seo": 100,
+          "fcp_ms": 914,
+          "lcp_ms": 2271,
+          "tbt_ms": 352,
+          "cls": 0,
+          "lcp_selector": "main#catalog-grid > a.tile > div.im > img",
+          "lcp_breakdown": {
+            "ttfb_ms": 34.9,
+            "load_delay_ms": 11,
+            "load_duration_ms": 28.6,
+            "render_delay_ms": 54.5
+          }
+        }
+      ]
+    },
+    "catalog_filtered": {
+      "name": "Catalog Filtered (/?gender=men)",
+      "path": "/?gender=men",
+      "gate": {
+        "lcp_required_pass": true,
+        "lcp_stretch_pass": false,
+        "cls_pass": true,
+        "tbt_pass": false
+      },
+      "median": {
+        "performance_score": 91,
+        "accessibility_score": 100,
+        "best_practices_score": 100,
+        "seo_score": 100,
+        "lcp_s": 2.27,
+        "lcp_ms": 2267.8,
+        "fcp_s": 0.91,
+        "fcp_ms": 911.8,
+        "tbt_ms": 336.5,
+        "cls": 0,
+        "lcp_element_selector": "main#catalog-grid > a.tile > div.im > img",
+        "lcp_breakdown": {
+          "ttfb_ms": 25.4,
+          "load_delay_ms": 9.7,
+          "load_duration_ms": 28.9,
+          "render_delay_ms": 50.2
+        }
+      },
+      "all_5_runs": [
+        {
+          "run": 1,
+          "perf": 93,
+          "a11y": 100,
+          "bp": 100,
+          "seo": 100,
+          "fcp_ms": 909.2,
+          "lcp_ms": 2264,
+          "tbt_ms": 280,
+          "cls": 0,
+          "lcp_selector": "main#catalog-grid > a.tile > div.im > img",
+          "lcp_breakdown": {
+            "ttfb_ms": 25.7,
+            "load_delay_ms": 12.3,
+            "load_duration_ms": 26,
+            "render_delay_ms": 47.7
+          }
+        },
+        {
+          "run": 2,
+          "perf": 91,
+          "a11y": 100,
+          "bp": 100,
+          "seo": 100,
+          "fcp_ms": 911.8,
+          "lcp_ms": 2267.8,
+          "tbt_ms": 336.5,
+          "cls": 0,
+          "lcp_selector": "main#catalog-grid > a.tile > div.im > img",
+          "lcp_breakdown": {
+            "ttfb_ms": 25.4,
+            "load_delay_ms": 9.7,
+            "load_duration_ms": 28.9,
+            "render_delay_ms": 50.2
+          }
+        },
+        {
+          "run": 3,
+          "perf": 93,
+          "a11y": 100,
+          "bp": 100,
+          "seo": 100,
+          "fcp_ms": 910.5,
+          "lcp_ms": 2265.9,
+          "tbt_ms": 264,
+          "cls": 0,
+          "lcp_selector": "main#catalog-grid > a.tile > div.im > img",
+          "lcp_breakdown": {
+            "ttfb_ms": 32.1,
+            "load_delay_ms": 13.1,
+            "load_duration_ms": 25.7,
+            "render_delay_ms": 60.9
+          }
+        },
+        {
+          "run": 4,
+          "perf": 89,
+          "a11y": 100,
+          "bp": 100,
+          "seo": 100,
+          "fcp_ms": 912.6,
+          "lcp_ms": 2268.8,
+          "tbt_ms": 405,
+          "cls": 0,
+          "lcp_selector": "main#catalog-grid > a.tile > div.im > img",
+          "lcp_breakdown": {
+            "ttfb_ms": 25.6,
+            "load_delay_ms": 11.5,
+            "load_duration_ms": 27.3,
+            "render_delay_ms": 51.2
+          }
+        },
+        {
+          "run": 5,
+          "perf": 90,
+          "a11y": 100,
+          "bp": 100,
+          "seo": 100,
+          "fcp_ms": 912.9,
+          "lcp_ms": 2269.4,
+          "tbt_ms": 382,
+          "cls": 0,
+          "lcp_selector": "main#catalog-grid > a.tile > div.im > img",
+          "lcp_breakdown": {
+            "ttfb_ms": 32.9,
+            "load_delay_ms": 11.2,
+            "load_duration_ms": 28.7,
+            "render_delay_ms": 69.1
+          }
+        }
+      ]
+    },
+    "fragrance_detail": {
+      "name": "Detail Page (/fragrance/Creed/Aventus)",
+      "path": "/fragrance/Creed/Aventus",
+      "gate": {
+        "lcp_required_pass": true,
+        "lcp_stretch_pass": false,
+        "cls_pass": true,
+        "tbt_pass": false
+      },
+      "median": {
+        "performance_score": 89,
+        "accessibility_score": 100,
+        "best_practices_score": 100,
+        "seo_score": 100,
+        "lcp_s": 2.27,
+        "lcp_ms": 2270.1,
+        "fcp_s": 0.91,
+        "fcp_ms": 913,
+        "tbt_ms": 375.7,
+        "cls": 0,
+        "lcp_element_selector": "main#main-content > section.hero > div.im > img",
+        "lcp_breakdown": {
+          "ttfb_ms": 23.9,
+          "load_delay_ms": 14.4,
+          "load_duration_ms": 37.5,
+          "render_delay_ms": 74.7
+        }
+      },
+      "all_5_runs": [
+        {
+          "run": 1,
+          "perf": 89,
+          "a11y": 100,
+          "bp": 100,
+          "seo": 100,
+          "fcp_ms": 913.3,
+          "lcp_ms": 2270.1,
+          "tbt_ms": 408.9,
+          "cls": 0,
+          "lcp_selector": "main#main-content > section.hero > div.im > img",
+          "lcp_breakdown": {
+            "ttfb_ms": 23.9,
+            "load_delay_ms": 14.4,
+            "load_duration_ms": 37.5,
+            "render_delay_ms": 74.7
+          }
+        },
+        {
+          "run": 2,
+          "perf": 89,
+          "a11y": 100,
+          "bp": 100,
+          "seo": 100,
+          "fcp_ms": 911.1,
+          "lcp_ms": 2266.8,
+          "tbt_ms": 398,
+          "cls": 0,
+          "lcp_selector": "main#main-content > section.hero > div.im > img",
+          "lcp_breakdown": {
+            "ttfb_ms": 26.3,
+            "load_delay_ms": 13.1,
+            "load_duration_ms": 33.5,
+            "render_delay_ms": 76.1
+          }
+        },
+        {
+          "run": 3,
+          "perf": 90,
+          "a11y": 100,
+          "bp": 100,
+          "seo": 100,
+          "fcp_ms": 914.6,
+          "lcp_ms": 2271.9,
+          "tbt_ms": 375.7,
+          "cls": 0,
+          "lcp_selector": "main#main-content > section.hero > div.im > img",
+          "lcp_breakdown": {
+            "ttfb_ms": 27.2,
+            "load_delay_ms": 13.4,
+            "load_duration_ms": 31.9,
+            "render_delay_ms": 84.7
+          }
+        },
+        {
+          "run": 4,
+          "perf": 91,
+          "a11y": 100,
+          "bp": 100,
+          "seo": 100,
+          "fcp_ms": 913,
+          "lcp_ms": 2269.4,
+          "tbt_ms": 335.5,
+          "cls": 0,
+          "lcp_selector": "main#main-content > section.hero > div.im > img",
+          "lcp_breakdown": {
+            "ttfb_ms": 21.7,
+            "load_delay_ms": 13,
+            "load_duration_ms": 35.5,
+            "render_delay_ms": 71.7
+          }
+        },
+        {
+          "run": 5,
+          "perf": 88,
+          "a11y": 100,
+          "bp": 100,
+          "seo": 100,
+          "fcp_ms": 913,
+          "lcp_ms": 3062.6,
+          "tbt_ms": 293,
+          "cls": 0,
+          "lcp_selector": "main#main-content > section.hero > div.im > img",
+          "lcp_breakdown": {
+            "ttfb_ms": 21.9,
+            "load_delay_ms": 12.1,
+            "load_duration_ms": 30,
+            "render_delay_ms": 76.9
+          }
+        }
+      ]
+    },
+    "brand_page": {
+      "name": "Brand Page (/brand/Creed)",
+      "path": "/brand/Creed",
+      "gate": {
+        "lcp_required_pass": true,
+        "lcp_stretch_pass": false,
+        "cls_pass": true,
+        "tbt_pass": false
+      },
+      "median": {
+        "performance_score": 89,
+        "accessibility_score": 100,
+        "best_practices_score": 100,
+        "seo_score": 100,
+        "lcp_s": 2.27,
+        "lcp_ms": 2265.3,
+        "fcp_s": 0.91,
+        "fcp_ms": 910.1,
+        "tbt_ms": 407,
+        "cls": 0,
+        "lcp_element_selector": "div.grid > a.tile > div.im > img",
+        "lcp_breakdown": {
+          "ttfb_ms": 34.5,
+          "load_delay_ms": 13.8,
+          "load_duration_ms": 30.2,
+          "render_delay_ms": 72.6
+        }
+      },
+      "all_5_runs": [
+        {
+          "run": 1,
+          "perf": 85,
+          "a11y": 100,
+          "bp": 100,
+          "seo": 100,
+          "fcp_ms": 1019.3,
+          "lcp_ms": 2532.8,
+          "tbt_ms": 492.7,
+          "cls": 0,
+          "lcp_selector": "div.grid > a.tile > div.im > img",
+          "lcp_breakdown": {
+            "ttfb_ms": 36.8,
+            "load_delay_ms": 12,
+            "load_duration_ms": 29.5,
+            "render_delay_ms": 89.5
+          }
+        },
+        {
+          "run": 2,
+          "perf": 85,
+          "a11y": 100,
+          "bp": 100,
+          "seo": 100,
+          "fcp_ms": 910.1,
+          "lcp_ms": 2265.3,
+          "tbt_ms": 525.5,
+          "cls": 0,
+          "lcp_selector": "div.grid > a.tile > div.im > img",
+          "lcp_breakdown": {
+            "ttfb_ms": 34.5,
+            "load_delay_ms": 13.8,
+            "load_duration_ms": 30.2,
+            "render_delay_ms": 72.6
+          }
+        },
+        {
+          "run": 3,
+          "perf": 89,
+          "a11y": 100,
+          "bp": 100,
+          "seo": 100,
+          "fcp_ms": 909.3,
+          "lcp_ms": 2264.1,
+          "tbt_ms": 407,
+          "cls": 0,
+          "lcp_selector": "div.grid > a.tile > div.im > img",
+          "lcp_breakdown": {
+            "ttfb_ms": 33,
+            "load_delay_ms": 10.5,
+            "load_duration_ms": 32.1,
+            "render_delay_ms": 57.8
+          }
+        },
+        {
+          "run": 4,
+          "perf": 91,
+          "a11y": 100,
+          "bp": 100,
+          "seo": 100,
+          "fcp_ms": 911.9,
+          "lcp_ms": 2268,
+          "tbt_ms": 334.5,
+          "cls": 0,
+          "lcp_selector": "div.grid > a.tile > div.im > img",
+          "lcp_breakdown": {
+            "ttfb_ms": 38.9,
+            "load_delay_ms": 11.6,
+            "load_duration_ms": 30.8,
+            "render_delay_ms": 51.9
+          }
+        },
+        {
+          "run": 5,
+          "perf": 89,
+          "a11y": 100,
+          "bp": 100,
+          "seo": 100,
+          "fcp_ms": 907.5,
+          "lcp_ms": 2261.4,
+          "tbt_ms": 397,
+          "cls": 0,
+          "lcp_selector": "div.grid > a.tile > div.im > img",
+          "lcp_breakdown": {
+            "ttfb_ms": 35,
+            "load_delay_ms": 10.9,
+            "load_duration_ms": 29.8,
+            "render_delay_ms": 65.3
+          }
+        }
+      ]
+    }
+  },
+  "interaction_latency_4x_cpu": {
+    "cpu_slowdown": "4x",
+    "typeahead_avg_ms": 120.7,
+    "typeahead_max_ms": 348.92,
+    "typeahead_dropdown_appeared": true,
+    "filter_chips": [
+      {
+        "name": "Gender: Women",
+        "latency_ms": 245.53
+      },
+      {
+        "name": "Gender: Men",
+        "latency_ms": 514.31
+      },
+      {
+        "name": "Sort: Rating",
+        "latency_ms": 641.91
+      }
+    ]
+  }
 }

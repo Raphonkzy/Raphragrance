@@ -115,17 +115,7 @@ export default async function FragranceDetailPage({
     },
     description: fragrance.description || `${fragrance.name} by ${fragrance.brand}`,
     image: fragrance.imageUrl || undefined,
-    ...(fragrance.rating && fragrance.voteCount
-      ? {
-          aggregateRating: {
-            "@type": "AggregateRating",
-            ratingValue: fragrance.rating.toFixed(2),
-            ratingCount: fragrance.voteCount,
-            bestRating: "5",
-            worstRating: "1",
-          },
-        }
-      : {}),
+    url: `${process.env.NEXT_PUBLIC_SITE_URL || "https://raphragrance.com"}/fragrance/${fragrance.slug}`,
   };
 
   return (

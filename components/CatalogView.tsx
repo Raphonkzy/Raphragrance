@@ -67,14 +67,26 @@ export function CatalogView({
     const g = currentParams.get("gender");
     const s = currentParams.get("sort");
     const acc = currentParams.get("accord");
-    if (q) setQuery(q);
-    if (g) setGender(g);
-    if (s) setSort(s);
+    if (q && q !== initialQuery) setQuery(q);
+    if (g) {
+      const gLow = g.toLowerCase();
+      const normG =
+        gLow === "men" || gLow === "male"
+          ? "Men"
+          : gLow === "women" || gLow === "female"
+          ? "Women"
+          : gLow === "unisex"
+          ? "Unisex"
+          : "All";
+      if (normG !== initialGender) setGender(normG);
+    }
+    if (s && s !== initialSort) setSort(s);
     if (acc) {
-      setSelectedAccords(acc.split(",").filter(Boolean));
+      const parsedAcc = acc.split(",").filter(Boolean);
+      setSelectedAccords(parsedAcc);
       setMoreFiltersOpen(true);
     }
-  }, []);
+  }, [initialQuery, initialGender, initialSort]);
 
   // Synchronize visible count with the computed grid columns so every row is completely filled
   useEffect(() => {
@@ -453,6 +465,11 @@ export function CatalogView({
                 setTimeout(() => setTypeaheadOpen(false), 200);
               }}
               onKeyDown={handleTypeaheadKeyDown}
+              role="combobox"
+              aria-expanded={typeaheadOpen && suggestions.length > 0}
+              aria-haspopup="listbox"
+              aria-autocomplete="list"
+              aria-controls="typeahead-listbox"
               aria-label="Search fragrances"
             />
             <div className="search-actions">
@@ -475,7 +492,7 @@ export function CatalogView({
           </div>
 
           {typeaheadOpen && suggestions.length > 0 && (
-            <div className="typeahead" role="listbox">
+            <div id="typeahead-listbox" className="typeahead" role="listbox">
               {suggestions.map((item, idx) => {
                 const topAcc = item.accords?.[0]?.name;
                 const [fill] = getColorPair(topAcc);
@@ -485,6 +502,8 @@ export function CatalogView({
                     key={item.id}
                     href={`/fragrance/${item.slug}`}
                     className={`typeahead-item ${isSelected ? "selected" : ""}`}
+                    role="option"
+                    aria-selected={isSelected}
                     onClick={() => setTypeaheadOpen(false)}
                     prefetch={false}
                   >

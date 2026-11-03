@@ -18,8 +18,44 @@ export const metadata: Metadata = {
   },
 };
 
-export default function CatalogPage() {
-  const fragrances = getFragrances(false);
+interface PageProps {
+  searchParams?: Promise<{
+    gender?: string;
+    q?: string;
+    sort?: string;
+    accord?: string;
+  }>;
+}
+
+function normalizeGender(g?: string): string {
+  if (!g) return "All";
+  const low = g.toLowerCase();
+  if (low === "men" || low === "male") return "Men";
+  if (low === "women" || low === "female") return "Women";
+  if (low === "unisex") return "Unisex";
+  return "All";
+}
+
+export default async function CatalogPage({ searchParams }: PageProps) {
+  const resolvedParams = searchParams ? await searchParams : {};
+  const initialGender = normalizeGender(resolvedParams.gender);
+  const initialQuery = resolvedParams.q || "";
+  const initialSort = resolvedParams.sort || "Popular";
+  const initialAccords = resolvedParams.accord
+    ? resolvedParams.accord.split(",").filter(Boolean)
+    : [];
+
+  let fragrances = getFragrances(false, 301);
+  if (initialGender !== "All") {
+    const target =
+      initialGender === "Men"
+        ? "male"
+        : initialGender === "Women"
+        ? "female"
+        : "unisex";
+    fragrances = fragrances.filter((f) => f.gender?.toLowerCase() === target);
+  }
+
   const totalCount = 131930;
 
   // Lightweight projection for catalog grid & typeahead to minimize RSC transfer size
@@ -55,6 +91,10 @@ export default function CatalogPage() {
         <CatalogView
           initialFragrances={catalogFragrances}
           totalDatabaseCount={totalCount}
+          initialQuery={initialQuery}
+          initialGender={initialGender}
+          initialSort={initialSort}
+          initialAccords={initialAccords}
         />
       </main>
       <Footer />

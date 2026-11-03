@@ -67,8 +67,20 @@ export default async function BrandPage({ params, searchParams }: PageProps) {
   const years = brandFragrances.map((f) => f.year).filter((y): y is number => y !== null && y > 0);
   const earliestYear = years.length > 0 ? Math.min(...years) : "—";
 
+  const firstImageUrl = brandFragrances[0]?.imageUrl;
+
   return (
     <>
+      <link rel="preconnect" href="https://fimgs.net" />
+      <link rel="dns-prefetch" href="https://fimgs.net" />
+      {firstImageUrl && (
+        <link
+          rel="preload"
+          as="image"
+          href={firstImageUrl}
+          fetchPriority="high"
+        />
+      )}
       <Nav />
 
       <main id="main-content">
@@ -115,7 +127,7 @@ export default async function BrandPage({ params, searchParams }: PageProps) {
           <h2 id="brand-catalog-title">Fragrances by {brandFragrances[0].brand}</h2>
           <div className="grid" style={{ padding: "20px 0 60px" }}>
             {brandFragrances.map((f, idx) => (
-              <FragranceTile key={f.id} fragrance={f} priority={idx < 4} />
+              <FragranceTile key={f.id} fragrance={f} priority={idx === 0} />
             ))}
           </div>
         </section>
