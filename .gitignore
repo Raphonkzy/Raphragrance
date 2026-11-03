@@ -12,6 +12,7 @@ data/*
 !data/.gitkeep
 !data/similar_overrides.csv
 !data/anchors.json
+!data/acceptance_cases.json
 *.jsonl
 *.csv
 !data/similar_overrides.csv

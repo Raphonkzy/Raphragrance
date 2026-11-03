@@ -1,0 +1,37 @@
+[
+  {
+    "query_slug": "Afnan/Supremacy-Not-Only-Intense",
+    "target_slug": "Creed/Aventus",
+    "kind": "owner-curated"
+  },
+  {
+    "query_slug": "Afnan/Supremacy-Not-Only-Intense",
+    "target_slug": "Nishane/Hacivat",
+    "kind": "owner-curated"
+  },
+  {
+    "query_slug": "Afnan/Turathi-Electric",
+    "target_slug": "Ex-Nihilo/Blue-Talisman",
+    "kind": "owner-curated"
+  },
+  {
+    "query_slug": "Creed/Aventus",
+    "target_slug": "Afnan/Supremacy-Not-Only-Intense",
+    "kind": "owner-curated"
+  },
+  {
+    "query_slug": "Ex-Nihilo/Blue-Talisman",
+    "target_slug": "Afnan/Turathi-Electric",
+    "kind": "owner-curated"
+  },
+  {
+    "query_slug": "Armaf/Club-de-Nuit-Intense-Man",
+    "target_slug": "Creed/Aventus",
+    "kind": "uncurated-probe"
+  },
+  {
+    "query_slug": "Lattafa-Perfumes/Khamrah",
+    "target_slug": "By-Kilian/Angels-Share",
+    "kind": "uncurated-probe"
+  }
+]

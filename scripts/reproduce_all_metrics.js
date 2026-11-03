@@ -703,16 +703,26 @@ async function runMasterEvaluation() {
   };
 
   // 7. Acceptance Cases: Real integer ranks from full candidate ranking (Gate 1.4 & 1.6)
-  console.log('Calculating Real Content Ranks for Acceptance Cases...');
+  console.log('Calculating Real Content Ranks for Acceptance Cases from data/acceptance_cases.json...');
   const { getFullCandidateRanking } = buildCandidateIndex();
 
-  const acceptancePairs = [
-    { q: 68271, t: 9828, name: "SNOI -> Aventus" },
-    { q: 68271, t: 44174, name: "SNOI -> Hacivat" },
-    { q: 108244, t: 84224, name: "Turathi Electric -> Blue Talisman" },
-    { q: 9828, t: 68271, name: "Aventus -> SNOI" },
-    { q: 84224, t: 108244, name: "Blue Talisman -> Turathi Electric" }
-  ];
+  const acceptanceCasesJson = JSON.parse(fs.readFileSync('data/acceptance_cases.json', 'utf8'));
+  const slugStmt = fullDb.prepare('SELECT id, name, brand, slug FROM perfumes WHERE slug = ?');
+
+  const acceptancePairs = acceptanceCasesJson.map(c => {
+    const qRow = slugStmt.get(c.query_slug);
+    const tRow = slugStmt.get(c.target_slug);
+    if (!qRow) throw new Error(`Query slug not found in DB: ${c.query_slug}`);
+    if (!tRow) throw new Error(`Target slug not found in DB: ${c.target_slug}`);
+    return {
+      query_slug: c.query_slug,
+      target_slug: c.target_slug,
+      kind: c.kind,
+      q: qRow.id,
+      t: tRow.id,
+      name: `${qRow.name} -> ${tRow.name}`
+    };
+  });
 
   const stmtCuratedRecs = fullDb.prepare(`
     SELECT similar_id, rank, score, source
@@ -721,12 +731,15 @@ async function runMasterEvaluation() {
     ORDER BY rank ASC
   `);
 
+  const retrievalPoolSize = 250;
   const acceptanceStatus = acceptancePairs.map(p => {
     // 1. Exact candidate ranking (top 250 retrieval pool)
-    const { ranked, candidateIds } = getFullCandidateRanking(p.q, 250);
+    const { ranked, candidateIds } = getFullCandidateRanking(p.q, retrievalPoolSize);
     const inCandidates = candidateIds.has(p.t);
     const contentRankIdx = ranked.indexOf(p.t);
-    const realContentRank = inCandidates ? (contentRankIdx !== -1 ? contentRankIdx + 1 : 'not retrieved') : 'not retrieved';
+    const realContentRank = inCandidates
+      ? (contentRankIdx !== -1 ? contentRankIdx + 1 : `not retrieved (pool: ${retrievalPoolSize})`)
+      : `not retrieved (pool: ${retrievalPoolSize})`;
 
     // 2. Curated rank from similar table
     const curRows = stmtCuratedRecs.all(p.q).map(r => r.similar_id);
@@ -747,6 +760,9 @@ async function runMasterEvaluation() {
 
     return {
       pair: p.name,
+      query_slug: p.query_slug,
+      target_slug: p.target_slug,
+      kind: p.kind,
       query_id: p.q,
       target_id: p.t,
       content_only_candidate_rank: typeof realContentRank === 'number' ? `#${realContentRank}` : realContentRank,
