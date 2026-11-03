@@ -71,6 +71,48 @@ export function rowToFragrance(r: any): Fragrance {
   };
 }
 
+class SimpleLRU<K, V> {
+  private map = new Map<K, V>();
+  constructor(private max: number = 2000) {}
+  get(key: K): V | undefined {
+    const val = this.map.get(key);
+    if (val !== undefined) {
+      this.map.delete(key);
+      this.map.set(key, val);
+    }
+    return val;
+  }
+  set(key: K, val: V): void {
+    if (this.map.has(key)) {
+      this.map.delete(key);
+    } else if (this.map.size >= this.max) {
+      const first = this.map.keys().next().value;
+      if (first !== undefined) this.map.delete(first);
+    }
+    this.map.set(key, val);
+  }
+}
+
+const fragranceSlugLRU = new SimpleLRU<string, Fragrance>(2000);
+const fragranceIdLRU = new SimpleLRU<number, Fragrance>(2000);
+const similarLRU = new SimpleLRU<
+  string,
+  (Fragrance & { similaritySource?: "curated" | "community" | "content"; sharedNotes?: string[] })[]
+>(2000);
+
+// Pre-compiled statement cache
+const stmtCache = new Map<string, any>();
+function getCachedStmt(sql: string) {
+  const db = getDb();
+  if (!db) return null;
+  let stmt = stmtCache.get(sql);
+  if (!stmt) {
+    stmt = db.prepare(sql);
+    stmtCache.set(sql, stmt);
+  }
+  return stmt;
+}
+
 /**
  * Load fragrances for catalog / list views.
  */
@@ -82,10 +124,10 @@ export function getFragrances(useGolden = false, limit = 301): Fragrance[] {
   const db = getDb();
   if (db) {
     try {
-      const stmt = db.prepare(
-        "SELECT * FROM perfumes ORDER BY vote_count DESC, id DESC LIMIT ?"
+      const stmt = getCachedStmt(
+        "SELECT * FROM perfumes ORDER BY vote_count DESC LIMIT ?"
       );
-      const rows = stmt.all(limit);
+      const rows = stmt ? stmt.all(limit) : [];
       if (rows && rows.length > 0) {
         return rows.map(rowToFragrance);
       }
@@ -107,7 +149,8 @@ export function getTotalCount(): number {
   const db = getDb();
   if (db) {
     try {
-      const row = db.prepare("SELECT COUNT(*) as c FROM perfumes").get() as { c?: number } | undefined;
+      const stmt = getCachedStmt("SELECT COUNT(*) as c FROM perfumes");
+      const row = stmt ? (stmt.get() as { c?: number } | undefined) : undefined;
       if (row && typeof row.c === "number") {
         cachedTotal = row.c;
         return cachedTotal;
@@ -131,22 +174,31 @@ export function getFragranceBySlug(
     );
   }
 
+  const cached = fragranceSlugLRU.get(slug);
+  if (cached) return cached;
+
   const db = getDb();
   if (db) {
     try {
       const decoded = decodeURIComponent(slug);
-      let row = db.prepare("SELECT * FROM perfumes WHERE slug = ?").get(slug);
+      const stmtExact = getCachedStmt("SELECT * FROM perfumes WHERE slug = ?");
+      let row = stmtExact?.get(slug);
       if (!row && decoded !== slug) {
-        row = db.prepare("SELECT * FROM perfumes WHERE slug = ?").get(decoded);
+        row = stmtExact?.get(decoded);
       }
       if (!row) {
-        row = db.prepare("SELECT * FROM perfumes WHERE slug = ? COLLATE NOCASE").get(decoded);
+        const stmtNoCase = getCachedStmt("SELECT * FROM perfumes WHERE slug = ? COLLATE NOCASE");
+        row = stmtNoCase?.get(decoded);
       }
       if (!row && /^\d+$/.test(slug)) {
-        row = db.prepare("SELECT * FROM perfumes WHERE id = ?").get(Number(slug));
+        const stmtId = getCachedStmt("SELECT * FROM perfumes WHERE id = ?");
+        row = stmtId?.get(Number(slug));
       }
       if (row) {
-        return rowToFragrance(row);
+        const f = rowToFragrance(row);
+        fragranceSlugLRU.set(slug, f);
+        if (decoded !== slug) fragranceSlugLRU.set(decoded, f);
+        return f;
       }
     } catch (e) {
       console.error("DB getFragranceBySlug error:", e);
@@ -166,11 +218,19 @@ export function getFragranceById(id: number, useGolden = false): Fragrance | und
   if (useGolden) {
     return golden.find((f) => f.id === id);
   }
+  const cached = fragranceIdLRU.get(id);
+  if (cached) return cached;
+
   const db = getDb();
   if (db) {
     try {
-      const row = db.prepare("SELECT * FROM perfumes WHERE id = ?").get(id);
-      if (row) return rowToFragrance(row);
+      const stmt = getCachedStmt("SELECT * FROM perfumes WHERE id = ?");
+      const row = stmt?.get(id);
+      if (row) {
+        const f = rowToFragrance(row);
+        fragranceIdLRU.set(id, f);
+        return f;
+      }
     } catch {}
   }
   return catalog.find((f) => f.id === id);
@@ -229,6 +289,10 @@ export function getSimilarFragrances(
   target: Fragrance,
   limit = 10
 ): (Fragrance & { similaritySource?: "curated" | "community" | "content"; sharedNotes?: string[] })[] {
+  const cacheKey = `${target.id}_${limit}_${process.env.INCLUDE_COMMUNITY_EDGES === "true"}`;
+  const cached = similarLRU.get(cacheKey);
+  if (cached) return cached;
+
   const db = getDb();
   if (!db) {
     const topAcc = target.accords?.[0]?.name;
@@ -263,14 +327,15 @@ export function getSimilarFragrances(
     };
 
     // 1. Fetch curated overrides first (both builds)
-    const curatedRows = db.prepare(`
+    const stmtCurated = getCachedStmt(`
       SELECT s.similar_id, s.score, s.source, p.*
       FROM similar s
       JOIN perfumes p ON p.id = s.similar_id
       WHERE s.fragrance_id = ? AND s.source = 'curated'
       ORDER BY s.rank ASC
       LIMIT 10
-    `).all(target.id);
+    `);
+    const curatedRows = stmtCurated ? stmtCurated.all(target.id) : [];
 
     for (const r of curatedRows) {
       tryAddRecommendation(r, "curated");
@@ -279,14 +344,15 @@ export function getSimilarFragrances(
 
     // 2. If hybrid mode is active, fetch community edges (strictly respects brand cap of 2)
     if (includeCommunity && results.length < limit) {
-      const commRows = db.prepare(`
+      const stmtComm = getCachedStmt(`
         SELECT s.similar_id, s.score, s.source, p.*
         FROM similar s
         JOIN perfumes p ON p.id = s.similar_id
         WHERE s.fragrance_id = ? AND s.source = 'community'
         ORDER BY s.rank ASC
         LIMIT 30
-      `).all(target.id);
+      `);
+      const commRows = stmtComm ? stmtComm.all(target.id) : [];
 
       for (const r of commRows) {
         tryAddRecommendation(r, "community");
@@ -296,14 +362,15 @@ export function getSimilarFragrances(
 
     // 3. Pad remaining recommendations with content matches
     if (results.length < limit) {
-      const contentRows = db.prepare(`
+      const stmtContent = getCachedStmt(`
         SELECT s.similar_id, s.score, s.source, p.*
         FROM similar s
         JOIN perfumes p ON p.id = s.similar_id
         WHERE s.fragrance_id = ? AND s.source = 'content'
         ORDER BY s.rank ASC
         LIMIT 40
-      `).all(target.id);
+      `);
+      const contentRows = stmtContent ? stmtContent.all(target.id) : [];
 
       for (const r of contentRows) {
         tryAddRecommendation(r, "content");
@@ -312,6 +379,7 @@ export function getSimilarFragrances(
     }
 
     if (results.length > 0) {
+      similarLRU.set(cacheKey, results);
       return results;
     }
   } catch (e) {
@@ -536,19 +604,21 @@ export function getFragrancesByBrand(brand: string, limit = 100): Fragrance[] {
   const db = getDb();
   if (db) {
     try {
-      let rows = db.prepare(`
+      const stmtExact = getCachedStmt(`
         SELECT * FROM perfumes 
         WHERE brand = ? 
-        ORDER BY vote_count DESC, id DESC 
+        ORDER BY vote_count DESC
         LIMIT ?
-      `).all(brand, limit);
+      `);
+      let rows = stmtExact ? stmtExact.all(brand, limit) : [];
       if (rows.length === 0) {
-        rows = db.prepare(`
+        const stmtNoCase = getCachedStmt(`
           SELECT * FROM perfumes 
           WHERE brand = ? COLLATE NOCASE 
-          ORDER BY vote_count DESC, id DESC 
+          ORDER BY vote_count DESC
           LIMIT ?
-        `).all(brand, limit);
+        `);
+        rows = stmtNoCase ? stmtNoCase.all(brand, limit) : [];
       }
       return rows.map(rowToFragrance);
     } catch (e) {

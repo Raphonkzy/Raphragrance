@@ -27,7 +27,14 @@ export async function GET(request: Request, { params }: RouteProps) {
 
     const similar = getSimilarFragrances(fragrance, limit);
 
-    return NextResponse.json({ data: similar });
+    return NextResponse.json(
+      { data: similar },
+      {
+        headers: {
+          "Cache-Control": "public, max-age=60, s-maxage=3600, stale-while-revalidate=86400",
+        },
+      }
+    );
   } catch (err) {
     console.error("GET /api/fragrances/[id]/similar error:", err);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });

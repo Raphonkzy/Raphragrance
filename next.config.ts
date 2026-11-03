@@ -55,6 +55,42 @@ const nextConfig: NextConfig = {
           },
         ],
       },
+      {
+        source: "/fragrance/:path*",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=60, s-maxage=86400, stale-while-revalidate=86400",
+          },
+        ],
+      },
+      {
+        source: "/brand/:path*",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=60, s-maxage=86400, stale-while-revalidate=86400",
+          },
+        ],
+      },
+      {
+        source: "/api/fragrances/:path*",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=60, s-maxage=3600, stale-while-revalidate=86400",
+          },
+        ],
+      },
+      {
+        source: "/api/search",
+        headers: [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=60, s-maxage=3600, stale-while-revalidate=86400",
+          },
+        ],
+      },
     ];
   },
 };

@@ -1,11 +1,44 @@
 import { NextResponse } from "next/server";
 import { getDb } from "../../../lib/db";
-import { rowToFragrance, getFragrances } from "../../../lib/data";
+import { rowToFragrance, getFragrances, getTotalCount } from "../../../lib/data";
+import { checkRateLimit } from "../../../lib/rate_limit";
 import type { Fragrance } from "../../../lib/types";
 
 export async function GET(request: Request) {
+  const ip = request.headers.get("x-forwarded-for")?.split(",")[0].trim() || "127.0.0.1";
+  const rl = checkRateLimit(ip);
+  if (!rl.allowed) {
+    return NextResponse.json(
+      { error: "Too many requests. Please try again later." },
+      {
+        status: 429,
+        headers: {
+          "Retry-After": Math.ceil((rl.reset - Date.now()) / 1000).toString(),
+        },
+      }
+    );
+  }
+
   const { searchParams } = new URL(request.url);
-  const q = searchParams.get("q")?.trim() || "";
+  const rawQ = searchParams.get("q");
+  if (rawQ !== null && rawQ.length > 200) {
+    return NextResponse.json(
+      { error: "Query exceeds maximum length of 200 characters." },
+      { status: 400 }
+    );
+  }
+  const q = rawQ?.trim() || "";
+
+  if (searchParams.has("limit")) {
+    const rawLimit = Number(searchParams.get("limit"));
+    if (isNaN(rawLimit) || rawLimit < 1 || rawLimit > 100) {
+      return NextResponse.json(
+        { error: "Invalid limit parameter. Must be an integer between 1 and 100." },
+        { status: 400 }
+      );
+    }
+  }
+
   const gender = searchParams.get("gender") || "";
   const sort = searchParams.get("sort") || "popularity";
   const accord = searchParams.get("accord") || "";
@@ -45,25 +78,29 @@ export async function GET(request: Request) {
 
     const total = list.length;
     const paginated = list.slice(offset, offset + limit);
-    return NextResponse.json({
-      data: paginated,
-      total,
-      next_cursor: offset + limit < total ? offset + limit : null,
-    });
+    return NextResponse.json(
+      {
+        data: paginated,
+        total,
+        next_cursor: offset + limit < total ? offset + limit : null,
+      },
+      {
+        headers: {
+          "Cache-Control": "public, max-age=60, s-maxage=3600, stale-while-revalidate=86400",
+        },
+      }
+    );
   }
 
   try {
     const whereClauses: string[] = [];
-     
-    const params: any[] = [];
+    const params: (string | number)[] = [];
 
     // Search query: tokenize keywords
-    let usedPrefixIndex = false;
     if (q) {
       const tokens = q.split(/\s+/).filter(Boolean);
       // Try fast indexed prefix lookup first
       const prefixClauses: string[] = [];
-       
       const prefixParams: any[] = [];
       for (const token of tokens) {
         prefixClauses.push("(name LIKE ? OR brand LIKE ?)");
@@ -72,12 +109,12 @@ export async function GET(request: Request) {
 
       // Check if prefix query yields results
       const testQuery = `SELECT COUNT(*) as c FROM perfumes WHERE ${prefixClauses.join(" AND ")}`;
-      const testCount = db.prepare(testQuery).get(...prefixParams)?.c || 0;
+      const testRow = db.prepare(testQuery).get(...prefixParams) as { c?: number } | undefined;
+      const testCount = testRow?.c || 0;
 
       if (testCount >= 2) {
         whereClauses.push(...prefixClauses);
         params.push(...prefixParams);
-        usedPrefixIndex = true;
       } else {
         // Fallback to substring query across name, brand, and accords
         for (const token of tokens) {
@@ -116,14 +153,19 @@ export async function GET(request: Request) {
     const whereSql = whereClauses.length > 0 ? `WHERE ${whereClauses.join(" AND ")}` : "";
 
     // Count total matching
-    const countQuery = `SELECT COUNT(*) as total FROM perfumes ${whereSql}`;
-    const countRow = db.prepare(countQuery).get(...params);
-    const total = countRow?.total || 0;
+    let total = 0;
+    if (whereClauses.length === 0) {
+      total = getTotalCount();
+    } else {
+      const countQuery = `SELECT COUNT(*) as total FROM perfumes ${whereSql}`;
+      const countRow = db.prepare(countQuery).get(...params) as { total?: number } | undefined;
+      total = countRow?.total || 0;
+    }
 
     // Sorting
-    let orderBy = "vote_count DESC, id DESC";
+    let orderBy = "vote_count DESC";
     if (sort === "rating") {
-      orderBy = "rating_avg DESC, vote_count DESC, id DESC";
+      orderBy = "rating_avg DESC, vote_count DESC";
     } else if (sort === "year_newest" || sort === "year") {
       orderBy = "year DESC, vote_count DESC";
     } else if (sort === "year_oldest") {
@@ -142,11 +184,18 @@ export async function GET(request: Request) {
     const lastItem = data[data.length - 1];
     const nextCursor = data.length === limit && lastItem ? lastItem.id : null;
 
-    return NextResponse.json({
-      data,
-      total,
-      next_cursor: nextCursor,
-    });
+    return NextResponse.json(
+      {
+        data,
+        total,
+        next_cursor: nextCursor,
+      },
+      {
+        headers: {
+          "Cache-Control": "public, max-age=60, s-maxage=3600, stale-while-revalidate=86400",
+        },
+      }
+    );
   } catch (error) {
     console.error("API /api/fragrances error:", error);
     return NextResponse.json({ error: "Failed to fetch fragrances" }, { status: 500 });
