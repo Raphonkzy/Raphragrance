@@ -1,0 +1,143 @@
+{
+  "timestamp": "2026-11-03T03:51:20.108Z",
+  "node_env": "production",
+  "server_cmd": "next build && next start -p 3000",
+  "latency": {
+    "similar_api": {
+      "name": "/api/fragrances/[id]/similar",
+      "type": "api",
+      "gate": {
+        "c1_p95_limit_ms": 20,
+        "c1_p95_actual_ms": 4.94,
+        "c1_pass": true,
+        "c20_errors": 0,
+        "c20_pass": true
+      },
+      "concurrency_1": {
+        "requests": 500,
+        "errors": 0,
+        "p50_ms": 3.34,
+        "p95_ms": 4.94,
+        "p99_ms": 7.12,
+        "mean_ms": 3.56
+      },
+      "concurrency_20": {
+        "requests": 1000,
+        "errors": 0,
+        "rps": 377.1,
+        "service_time_ms": 2.65,
+        "p50_ms": 53.03,
+        "p95_ms": 61.09,
+        "p99_ms": 72.62,
+        "mean_ms": 52.43
+      }
+    },
+    "search_api": {
+      "name": "/api/search?q=...",
+      "type": "api",
+      "gate": {
+        "c1_p95_limit_ms": 20,
+        "c1_p95_actual_ms": 5.75,
+        "c1_pass": true,
+        "c20_errors": 0,
+        "c20_pass": true
+      },
+      "concurrency_1": {
+        "requests": 500,
+        "errors": 0,
+        "p50_ms": 4.04,
+        "p95_ms": 5.75,
+        "p99_ms": 10.29,
+        "mean_ms": 4.28
+      },
+      "concurrency_20": {
+        "requests": 1000,
+        "errors": 0,
+        "rps": 267.8,
+        "service_time_ms": 3.73,
+        "p50_ms": 74.96,
+        "p95_ms": 88.58,
+        "p99_ms": 96.68,
+        "mean_ms": 73.96
+      }
+    },
+    "detail_ssr": {
+      "name": "/fragrance/[slug]",
+      "type": "ssr",
+      "gate": {
+        "c1_p95_limit_ms": 60,
+        "c1_p95_actual_ms": 16.53,
+        "c1_pass": true,
+        "c20_errors": 0,
+        "c20_pass": true
+      },
+      "concurrency_1": {
+        "requests": 500,
+        "errors": 0,
+        "p50_ms": 12.38,
+        "p95_ms": 16.53,
+        "p99_ms": 19.3,
+        "mean_ms": 12.79
+      },
+      "concurrency_20": {
+        "requests": 1000,
+        "errors": 0,
+        "rps": 99.4,
+        "service_time_ms": 10.06,
+        "p50_ms": 204.37,
+        "p95_ms": 227.04,
+        "p99_ms": 232.15,
+        "mean_ms": 200.84
+      }
+    },
+    "home_ssr": {
+      "name": "/",
+      "type": "ssr",
+      "gate": {
+        "c1_p95_limit_ms": 60,
+        "c1_p95_actual_ms": 2.81,
+        "c1_pass": true,
+        "c20_errors": 0,
+        "c20_pass": true
+      },
+      "concurrency_1": {
+        "requests": 500,
+        "errors": 0,
+        "p50_ms": 2.35,
+        "p95_ms": 2.81,
+        "p99_ms": 3.37,
+        "mean_ms": 2.4
+      },
+      "concurrency_20": {
+        "requests": 1000,
+        "errors": 0,
+        "rps": 601.6,
+        "service_time_ms": 1.66,
+        "p50_ms": 32.96,
+        "p95_ms": 35.82,
+        "p99_ms": 39.21,
+        "mean_ms": 32.82
+      }
+    }
+  },
+  "caching_verification": [
+    {
+      "path": "/fragrance/Armaf/Club-De-Nuit-Lionheart-Woman",
+      "run1Ms": 6.72,
+      "run2Ms": 6.32,
+      "cacheControl": "public, max-age=60, s-maxage=86400, stale-while-revalidate=86400"
+    },
+    {
+      "path": "/brand/Creed",
+      "run1Ms": 82.98,
+      "run2Ms": 17.38,
+      "cacheControl": "public, max-age=60, s-maxage=86400, stale-while-revalidate=86400"
+    },
+    {
+      "path": "/api/fragrances/102027/similar?limit=10",
+      "run1Ms": 2.6,
+      "run2Ms": 2.72,
+      "cacheControl": "public, max-age=60, s-maxage=3600, stale-while-revalidate=86400"
+    }
+  ]
+}
