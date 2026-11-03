@@ -44,7 +44,9 @@ function buildDualDatabases() {
     CREATE TABLE perfumes AS SELECT * FROM mainDb.perfumes;
     CREATE UNIQUE INDEX idx_perfumes_id ON perfumes(id);
     CREATE INDEX idx_perfumes_slug ON perfumes(slug);
-    CREATE INDEX idx_perfumes_brand ON perfumes(brand);
+    CREATE INDEX idx_perfumes_name ON perfumes(name COLLATE NOCASE);
+    CREATE INDEX idx_perfumes_brand ON perfumes(brand COLLATE NOCASE);
+    CREATE INDEX idx_perfumes_brand_votes ON perfumes(brand COLLATE NOCASE, vote_count DESC);
     CREATE INDEX idx_perfumes_votes ON perfumes(vote_count DESC);
 
     CREATE TABLE similar (
@@ -108,7 +110,9 @@ function buildDualDatabases() {
     CREATE TABLE perfumes AS SELECT * FROM mainDb.perfumes;
     CREATE UNIQUE INDEX idx_perfumes_id ON perfumes(id);
     CREATE INDEX idx_perfumes_slug ON perfumes(slug);
-    CREATE INDEX idx_perfumes_brand ON perfumes(brand);
+    CREATE INDEX idx_perfumes_name ON perfumes(name COLLATE NOCASE);
+    CREATE INDEX idx_perfumes_brand ON perfumes(brand COLLATE NOCASE);
+    CREATE INDEX idx_perfumes_brand_votes ON perfumes(brand COLLATE NOCASE, vote_count DESC);
     CREATE INDEX idx_perfumes_votes ON perfumes(vote_count DESC);
 
     CREATE TABLE similar (

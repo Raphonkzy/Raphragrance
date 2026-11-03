@@ -73,7 +73,10 @@ export function rowToFragrance(r: any): Fragrance {
 
 class SimpleLRU<K, V> {
   private map = new Map<K, V>();
-  constructor(private max: number = 2000) {}
+  private max: number;
+  constructor(max: number = 2000) {
+    this.max = max;
+  }
   get(key: K): V | undefined {
     const val = this.map.get(key);
     if (val !== undefined) {
@@ -95,6 +98,7 @@ class SimpleLRU<K, V> {
 
 const fragranceSlugLRU = new SimpleLRU<string, Fragrance>(2000);
 const fragranceIdLRU = new SimpleLRU<number, Fragrance>(2000);
+const brandLRU = new SimpleLRU<string, Fragrance[]>(500);
 const similarLRU = new SimpleLRU<
   string,
   (Fragrance & { similaritySource?: "curated" | "community" | "content"; sharedNotes?: string[] })[]
@@ -601,33 +605,34 @@ export function getNotesSummary(q?: string, limit = 100): { name: string; count:
  * Get fragrances by specific brand.
  */
 export function getFragrancesByBrand(brand: string, limit = 100): Fragrance[] {
+  const cacheKey = `${brand.toLowerCase()}_${limit}`;
+  const cached = brandLRU.get(cacheKey);
+  if (cached) return cached;
+
   const db = getDb();
   if (db) {
     try {
-      const stmtExact = getCachedStmt(`
+      const stmt = getCachedStmt(`
         SELECT * FROM perfumes 
-        WHERE brand = ? 
+        WHERE brand = ? COLLATE NOCASE 
         ORDER BY vote_count DESC
         LIMIT ?
       `);
-      let rows = stmtExact ? stmtExact.all(brand, limit) : [];
-      if (rows.length === 0) {
-        const stmtNoCase = getCachedStmt(`
-          SELECT * FROM perfumes 
-          WHERE brand = ? COLLATE NOCASE 
-          ORDER BY vote_count DESC
-          LIMIT ?
-        `);
-        rows = stmtNoCase ? stmtNoCase.all(brand, limit) : [];
+      const rows = stmt ? stmt.all(brand, limit) : [];
+      if (rows && rows.length > 0) {
+        const result = rows.map(rowToFragrance);
+        brandLRU.set(cacheKey, result);
+        return result;
       }
-      return rows.map(rowToFragrance);
     } catch (e) {
       console.error("DB getFragrancesByBrand error:", e);
     }
   }
 
   const decoded = decodeURIComponent(brand).toLowerCase();
-  return catalog.filter((f) => f.brand.toLowerCase() === decoded).slice(0, limit);
+  const fallback = catalog.filter((f) => f.brand.toLowerCase() === decoded).slice(0, limit);
+  brandLRU.set(cacheKey, fallback);
+  return fallback;
 }
 
 export function getFeatured(useGolden = false): Fragrance {

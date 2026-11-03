@@ -97,11 +97,13 @@ export async function GET(request: Request) {
     const params: (string | number)[] = [];
 
     // Search query: tokenize keywords
+    let usedPrefixCount = false;
+    let testCount = 0;
     if (q) {
       const tokens = q.split(/\s+/).filter(Boolean);
       // Try fast indexed prefix lookup first
       const prefixClauses: string[] = [];
-      const prefixParams: any[] = [];
+      const prefixParams: (string | number)[] = [];
       for (const token of tokens) {
         prefixClauses.push("(name LIKE ? OR brand LIKE ?)");
         prefixParams.push(`${token}%`, `${token}%`);
@@ -110,11 +112,12 @@ export async function GET(request: Request) {
       // Check if prefix query yields results
       const testQuery = `SELECT COUNT(*) as c FROM perfumes WHERE ${prefixClauses.join(" AND ")}`;
       const testRow = db.prepare(testQuery).get(...prefixParams) as { c?: number } | undefined;
-      const testCount = testRow?.c || 0;
+      testCount = testRow?.c || 0;
 
-      if (testCount >= 2) {
+      if (testCount >= 1) {
         whereClauses.push(...prefixClauses);
         params.push(...prefixParams);
+        usedPrefixCount = true;
       } else {
         // Fallback to substring query across name, brand, and accords
         for (const token of tokens) {
@@ -156,6 +159,8 @@ export async function GET(request: Request) {
     let total = 0;
     if (whereClauses.length === 0) {
       total = getTotalCount();
+    } else if (usedPrefixCount && !gender && !accord && after === null) {
+      total = testCount;
     } else {
       const countQuery = `SELECT COUNT(*) as total FROM perfumes ${whereSql}`;
       const countRow = db.prepare(countQuery).get(...params) as { total?: number } | undefined;
