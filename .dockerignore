@@ -7,12 +7,13 @@ node_modules
 .next
 out
 
-# Data files (raw datasets, scrapings, sqlite db is mounted or copied in runner)
-data/*
-!data/.gitkeep
+# Data files: strictly exclude private/internal DBs, raw dumps, and eval splits
+data/perfumes.full.db
+data/perfumes.db
+data/eval_split.json
 *.jsonl
 *.csv
-scripts/eval_split.json
+!data/similar_overrides.csv
 
 # Environment
 .env

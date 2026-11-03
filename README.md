@@ -109,8 +109,8 @@ Raphragrance implements strict fail-closed boundaries documented in [`docs/DATA_
 │   ├── palette.ts                 # 24 accord color swatches & WCAG contrast calculations
 │   └── types.ts                   # Core TypeScript domain definitions
 ├── reports/
-│   ├── lighthouse-summary.json    # Mobile 5-run median Lighthouse scores
-│   ├── similarity-results.json    # Frozen canonical similarity benchmark results
+│   ├── perf-results.json          # Canonical performance, latency, and 5-run mobile Lighthouse report
+│   ├── similarity-results.json    # Canonical similarity benchmark results & acceptance cases
 │   └── similar-review.html        # Interactive similarity review dashboard
 ├── scripts/
 │   ├── benchmark_gate5_latency.js # Concurrency-20 HTTP latency benchmark
@@ -208,8 +208,8 @@ node scripts/run_lighthouse_5runs.js
 ### Docker Build & Run
 The multi-stage `Dockerfile` leverages Next.js standalone output and bundles `data/perfumes.public.db`:
 ```bash
-docker build -t raphragrance:v1.0.0-rc1 .
-docker run -p 3000:3000 --read-only raphragrance:v1.0.0-rc1
+docker build -t raphragrance:v1.0.0-rc2 .
+docker run -p 3000:3000 raphragrance:v1.0.0-rc2
 ```
 
 ### Kubernetes (Production)
