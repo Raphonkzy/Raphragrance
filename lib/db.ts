@@ -36,9 +36,7 @@ export function getDb(): DatabaseSync | null {
       if (fs.existsSync(devPath)) {
         dbPath = devPath;
       } else {
-        throw new Error(
-          "[DATA SAFETY FATAL] Required SQLite database not found. Neither 'data/perfumes.public.db' nor 'data/perfumes.db' exists."
-        );
+        return null;
       }
     }
   }

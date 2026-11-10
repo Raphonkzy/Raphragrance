@@ -3,9 +3,11 @@ node_modules/
 .pnp
 .pnp.js
 
-# Next.js build
+# Next.js build & caches
 .next/
 out/
+.turbo/
+.cache/
 
 # Data (large files, local only)
 data/*
@@ -18,26 +20,59 @@ data/*
 !data/similar_overrides.csv
 scripts/eval_split.json
 
-# Environment
-.env
-.env.local
-.env.*.local
+# Databases & Dumps (local binaries & raw data)
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+*.sqlite
+*.sqlite3
+*.dump
+raw_edges.*
 
-# OS
+# Environment & Secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.cert
+*.crt
+
+# IDE & Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*.sublime-workspace
+*.sublime-project
+
+# OS generated files
 .DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
 Thumbs.db
 
 # Logs
 *.log
 npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
 
 # TypeScript
 *.tsbuildinfo
 next-env.d.ts
 
-# Fonts (licensed local fonts)
+# Fonts (licensed commercial fonts)
 assets/fonts/
 
-# Playwright
+# Testing & Coverage
 test-results/
 playwright-report/
+blob-report/
+coverage/
+.nyc_output/
