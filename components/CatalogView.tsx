@@ -257,7 +257,7 @@ export function CatalogView({
       });
     }
 
-    if (selectedAccords.length > 0) {
+    if (selectedAccords.length > 0 && selectedAccords !== initialAccords) {
       list = list.filter((f) =>
         selectedAccords.every((sel) =>
           f.accords.some((a) => a.name.toLowerCase() === sel.toLowerCase())
@@ -265,7 +265,7 @@ export function CatalogView({
       );
     }
 
-    if (query.trim()) {
+    if (query.trim() && query !== initialQuery) {
       const q = query.toLowerCase();
       list = list.filter(
         (f) =>
@@ -290,7 +290,7 @@ export function CatalogView({
     });
 
     return sorted;
-  }, [initialFragrances, gender, selectedAccords, query, sort]);
+  }, [initialFragrances, gender, selectedAccords, query, sort, initialAccords, initialQuery]);
 
   // Typeahead suggestions (API results preferred, local fallback)
   const suggestions = useMemo(() => {

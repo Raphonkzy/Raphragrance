@@ -56,7 +56,11 @@ export async function GET(request: Request) {
         (f) =>
           f.name.toLowerCase().includes(qLow) ||
           f.brand.toLowerCase().includes(qLow) ||
-          f.accords.some((a) => a.name.toLowerCase().includes(qLow))
+          f.accords.some((a) => a.name.toLowerCase().includes(qLow)) ||
+          (f.notes?.top || []).some((n: string) => n.toLowerCase().includes(qLow)) ||
+          (f.notes?.heart || []).some((n: string) => n.toLowerCase().includes(qLow)) ||
+          (f.notes?.base || []).some((n: string) => n.toLowerCase().includes(qLow)) ||
+          (f.notes?.flat || []).some((n: string) => n.toLowerCase().includes(qLow))
       );
     }
     if (gender && gender !== "All") {
@@ -114,16 +118,18 @@ export async function GET(request: Request) {
       const testRow = db.prepare(testQuery).get(...prefixParams) as { c?: number } | undefined;
       testCount = testRow?.c || 0;
 
-      if (testCount >= 1) {
+      if (testCount >= 10) {
         whereClauses.push(...prefixClauses);
         params.push(...prefixParams);
         usedPrefixCount = true;
       } else {
-        // Fallback to substring query across name, brand, and accords
+        // Comprehensive query across name, brand, accords, and notes
         for (const token of tokens) {
-          whereClauses.push("(name LIKE ? OR brand LIKE ? OR accords LIKE ?)");
+          whereClauses.push(
+            "(name LIKE ? OR brand LIKE ? OR accords LIKE ? OR notes_top LIKE ? OR notes_middle LIKE ? OR notes_base LIKE ? OR notes_flat LIKE ?)"
+          );
           const likeVal = `%${token}%`;
-          params.push(likeVal, likeVal, likeVal);
+          params.push(likeVal, likeVal, likeVal, likeVal, likeVal, likeVal, likeVal);
         }
       }
     }

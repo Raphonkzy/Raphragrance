@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { getFragrances } from "../lib/data";
+import { getFragrances, searchFragrancesCatalog } from "../lib/data";
 import { Nav } from "../components/Nav";
 import { Footer } from "../components/Footer";
 import { CatalogView } from "../components/CatalogView";
@@ -45,15 +45,26 @@ export default async function CatalogPage({ searchParams }: PageProps) {
     ? resolvedParams.accord.split(",").filter(Boolean)
     : [];
 
-  let fragrances = getFragrances(false, 301);
-  if (initialGender !== "All") {
-    const target =
-      initialGender === "Men"
-        ? "male"
-        : initialGender === "Women"
-        ? "female"
-        : "unisex";
-    fragrances = fragrances.filter((f) => f.gender?.toLowerCase() === target);
+  let fragrances = [];
+  if (initialQuery.trim() || initialAccords.length > 0) {
+    fragrances = searchFragrancesCatalog({
+      query: initialQuery,
+      gender: initialGender,
+      sort: initialSort,
+      accords: initialAccords,
+      limit: 60,
+    });
+  } else {
+    fragrances = getFragrances(false, 301);
+    if (initialGender !== "All") {
+      const target =
+        initialGender === "Men"
+          ? "male"
+          : initialGender === "Women"
+          ? "female"
+          : "unisex";
+      fragrances = fragrances.filter((f) => f.gender?.toLowerCase() === target);
+    }
   }
 
   const totalCount = 131930;

@@ -639,3 +639,116 @@ export function getFeatured(useGolden = false): Fragrance {
   const list = getFragrances(useGolden, 10);
   return list.reduce((best, f) => (f.voteCount > best.voteCount ? f : best), list[0]);
 }
+
+export interface SearchCatalogParams {
+  query?: string;
+  gender?: string;
+  sort?: string;
+  accords?: string[];
+  limit?: number;
+}
+
+export function searchFragrancesCatalog(params: SearchCatalogParams): Fragrance[] {
+  const { query = "", gender = "All", sort = "Popular", accords = [], limit = 60 } = params;
+  const db = getDb();
+  if (db) {
+    try {
+      const whereClauses: string[] = [];
+      const sqlParams: (string | number)[] = [];
+
+      const trimmedQ = query.trim();
+      if (trimmedQ) {
+        const tokens = trimmedQ.split(/\s+/).filter(Boolean);
+        for (const token of tokens) {
+          whereClauses.push(
+            "(name LIKE ? OR brand LIKE ? OR accords LIKE ? OR notes_top LIKE ? OR notes_middle LIKE ? OR notes_base LIKE ? OR notes_flat LIKE ?)"
+          );
+          const likeVal = `%${token}%`;
+          sqlParams.push(likeVal, likeVal, likeVal, likeVal, likeVal, likeVal, likeVal);
+        }
+      }
+
+      if (gender && gender.toLowerCase() !== "all") {
+        const gLow = gender.toLowerCase();
+        const dbGender =
+          gLow === "men" || gLow === "male"
+            ? "male"
+            : gLow === "women" || gLow === "female"
+            ? "female"
+            : "unisex";
+        whereClauses.push("gender = ? COLLATE NOCASE");
+        sqlParams.push(dbGender);
+      }
+
+      if (accords && accords.length > 0) {
+        for (const acc of accords) {
+          whereClauses.push("accords LIKE ?");
+          sqlParams.push(`%${acc}%`);
+        }
+      }
+
+      const whereSql = whereClauses.length > 0 ? `WHERE ${whereClauses.join(" AND ")}` : "";
+
+      let orderSql = "ORDER BY vote_count DESC";
+      switch (sort.toLowerCase()) {
+        case "rating":
+          orderSql = "ORDER BY rating_avg DESC, vote_count DESC";
+          break;
+        case "year":
+          orderSql = "ORDER BY year DESC, vote_count DESC";
+          break;
+        case "name":
+          orderSql = "ORDER BY name ASC";
+          break;
+        case "popular":
+        default:
+          orderSql = "ORDER BY vote_count DESC";
+          break;
+      }
+
+      const sql = `SELECT * FROM perfumes ${whereSql} ${orderSql} LIMIT ?`;
+      sqlParams.push(limit);
+
+      const rows = db.prepare(sql).all(...sqlParams);
+      if (rows && rows.length > 0) {
+        return rows.map(rowToFragrance);
+      }
+    } catch (e) {
+      console.error("searchFragrancesCatalog DB error:", e);
+    }
+  }
+
+  // Fallback to catalog fixture
+  let list = [...catalog];
+  if (gender && gender.toLowerCase() !== "all") {
+    const gLow = gender.toLowerCase();
+    const target =
+      gLow === "men" || gLow === "male"
+        ? "male"
+        : gLow === "women" || gLow === "female"
+        ? "female"
+        : "unisex";
+    list = list.filter((f) => f.gender?.toLowerCase() === target);
+  }
+  if (accords && accords.length > 0) {
+    list = list.filter((f) =>
+      accords.every((acc) =>
+        f.accords.some((a) => a.name.toLowerCase().includes(acc.toLowerCase()))
+      )
+    );
+  }
+  if (query.trim()) {
+    const qLow = query.trim().toLowerCase();
+    list = list.filter(
+      (f) =>
+        f.name.toLowerCase().includes(qLow) ||
+        f.brand.toLowerCase().includes(qLow) ||
+        f.accords.some((a) => a.name.toLowerCase().includes(qLow)) ||
+        (f.notes.top || []).some((n) => n.toLowerCase().includes(qLow)) ||
+        (f.notes.heart || []).some((n) => n.toLowerCase().includes(qLow)) ||
+        (f.notes.base || []).some((n) => n.toLowerCase().includes(qLow)) ||
+        (f.notes.flat || []).some((n) => n.toLowerCase().includes(qLow))
+    );
+  }
+  return list.slice(0, limit);
+}
